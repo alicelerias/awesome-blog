@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	// "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/alicelerias/blog-golang/api/models"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type Server struct {
@@ -33,7 +33,7 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 
 	server.Router = mux.NewRouter()
 
-	// server.initializeRoutes()
+	server.initializeRoutes()
 }
 
 func (server *Server) Run(addr string) {
