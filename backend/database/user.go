@@ -1,4 +1,4 @@
-package models
+package database
 
 import (
 	"errors"
@@ -7,9 +7,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/alicelerias/blog-golang/models"
 	"github.com/badoux/checkmail"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/net/context"
 )
 
 type User struct {
@@ -92,13 +95,13 @@ func (u *User) Validate(action string) error {
 	}
 }
 
-func (u *User) SaveUser(db *gorm.DB) (*User, error) {
-	var err error
-	err = db.Debug().Create(&u).Error
+func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
+	err := s.db.Debug().Create(&user).Error
 	if err != nil {
-		return &User{}, err
+		return &models.User{}, err
 	}
-	return u, nil
+
+	return user, nil
 }
 
 func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
