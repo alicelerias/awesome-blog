@@ -2,12 +2,12 @@ package database
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	"github.com/alicelerias/blog-golang/models"
 
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 )
@@ -41,18 +41,20 @@ func (u *User) BeforeSave() error {
 func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
 	err := s.db.Debug().Create(&user).Error
 	if err != nil {
+		log.Error()
 		return &models.User{}, err
 	}
 
 	return user, nil
 }
 
-func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]User, error) {
+func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]models.User, error) {
 	var err error
-	users := []User{}
+	users := []models.User{}
 	err = s.db.Debug().Model(&User{}).Limit(100).Find(&users).Error
 	if err != nil {
-		return &[]User{}, err
+		log.Error()
+		return &[]models.User{}, err
 	}
 	return &users, err
 }

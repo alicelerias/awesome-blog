@@ -5,8 +5,9 @@ import (
 	// "errors"
 	// "fmt"
 	// "io/ioutil"
-
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	// "strconv"
 
@@ -35,21 +36,23 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 
 	user, err := server.repository.SaveUser(ctx, user)
 	if err != nil {
+
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"user": user})
 }
 
-// func (server *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
-// 	user := models.User{}
-// 	users, err := user.FindAllUsers(server.DB)
-// 	if err != nil {
-// 		responses.ERROR(w, http.StatusInternalServerError, err)
-// 		return
-// 	}
-// 	responses.JSON(w, http.StatusOK, users)
-// }
+func (server *Server) GetUsers(ctx *gin.Context) {
+	user := models.User{}
+	users, err := server.repository.FindAllUsers(ctx, &user)
+	if err != nil {
+		log.Error()
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"users": users})
+}
 
 // func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 // 	vars := mux.Vars(r)

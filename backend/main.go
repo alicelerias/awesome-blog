@@ -54,7 +54,9 @@ func main() {
 	})
 	r.GET("/", server.Home)
 
-	r.POST("/create", server.CreateUser)
+	r.POST("/user", server.CreateUser)
+
+	r.GET("/users", server.GetUsers)
 
 	r.Run()
 }
