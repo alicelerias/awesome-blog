@@ -13,6 +13,7 @@ type Config struct {
 	Port     string
 	User     string
 	Password string
+	LogLevel string
 }
 
 var config *Config
@@ -28,6 +29,7 @@ func GetConfig() *Config {
 			Port:     os.Getenv("DB_PORT"),
 			User:     os.Getenv("DB_USER"),
 			Password: os.Getenv("DB_PASSWORD"),
+			LogLevel: os.Getenv("LOG_LEVEL"),
 		}
 	}
 

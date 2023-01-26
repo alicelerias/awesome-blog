@@ -5,12 +5,16 @@ import (
 	// "errors"
 	// "fmt"
 	// "io/ioutil"
+
 	"net/http"
+
 	// "strconv"
 
 	// "github.com/alicelerias/blog-golang/api/auth"
 	// "github.com/alicelerias/blog-golang/api/formaterror"
+
 	"github.com/alicelerias/blog-golang/models"
+
 	// "github.com/alicelerias/blog-golang/api/responses"
 	"github.com/gin-gonic/gin"
 	// "github.com/gorilla/mux"
@@ -20,6 +24,12 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 	var user *models.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	user.Prepare()
+	if err := user.Validate(); err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 

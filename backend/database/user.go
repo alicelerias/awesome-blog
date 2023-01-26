@@ -2,13 +2,10 @@ package database
 
 import (
 	"errors"
-	"html"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/alicelerias/blog-golang/models"
-	"github.com/badoux/checkmail"
 
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -41,60 +38,6 @@ func (u *User) BeforeSave() error {
 	return nil
 }
 
-func (u *User) Prepare() {
-	u.ID = 0
-	u.UserName = html.EscapeString(strings.TrimSpace(u.UserName))
-	u.Email = html.EscapeString(strings.TrimSpace(u.Email))
-	u.CreatedAt = time.Now()
-	u.UpdatedAt = time.Now()
-}
-
-func (u *User) Validate(action string) error {
-	switch strings.ToLower(action) {
-	case "update":
-		if u.UserName == "" {
-			return errors.New("Required Username")
-		}
-		if u.Password == "" {
-			return errors.New("Required Password")
-		}
-		if u.Email == "" {
-			return errors.New("Required Email")
-		}
-		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
-		}
-		return nil
-	case "login":
-		if u.Password == "" {
-			return errors.New("Required Password")
-		}
-		if u.Email == "" {
-			return errors.New("Required Email")
-		}
-		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
-		}
-		return nil
-
-	default:
-		if u.UserName == "" {
-			return errors.New("Required Username")
-		}
-		if u.Password == "" {
-			return errors.New("Required Password")
-		}
-		if u.Email == "" {
-			return errors.New("Required Email")
-		}
-		if err := checkmail.ValidateFormat(u.Email); err != nil {
-			return errors.New("Invalid Email")
-		}
-		return nil
-
-	}
-}
-
 func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
 	err := s.db.Debug().Create(&user).Error
 	if err != nil {
@@ -104,10 +47,10 @@ func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) 
 	return user, nil
 }
 
-func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
+func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]User, error) {
 	var err error
 	users := []User{}
-	err = db.Debug().Model(&User{}).Limit(100).Find(&users).Error
+	err = s.db.Debug().Model(&User{}).Limit(100).Find(&users).Error
 	if err != nil {
 		return &[]User{}, err
 	}
