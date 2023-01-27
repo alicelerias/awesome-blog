@@ -59,16 +59,13 @@ func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.Us
 	return &users, err
 }
 
-func (u *User) FindUserByID(db *gorm.DB, uid uint32) (*User, error) {
-	var err error
-	err = db.Debug().Model(User{}).Where("id = ?", uid).Take(&u).Error
-	if err != nil {
-		return &User{}, err
-	}
+func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (user *models.User, err error) {
+	user = &models.User{}
+	err = s.db.First(&user, uid).Error
 	if gorm.IsRecordNotFoundError(err) {
-		return &User{}, errors.New("User Not Found")
+		err = errors.New("User Not Found")
 	}
-	return u, err
+	return
 }
 
 func (u *User) UpdateAuser(db *gorm.DB, uid uint32) (*User, error) {

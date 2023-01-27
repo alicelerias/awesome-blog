@@ -58,5 +58,7 @@ func main() {
 
 	r.GET("/users", server.GetUsers)
 
+	r.GET("/users/:id", server.GetUser)
+
 	r.Run()
 }

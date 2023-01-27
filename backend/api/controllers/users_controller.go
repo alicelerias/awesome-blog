@@ -5,7 +5,10 @@ import (
 	// "errors"
 	// "fmt"
 	// "io/ioutil"
+	"errors"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 
@@ -54,21 +57,23 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"users": users})
 }
 
-// func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
-// 	if err != nil {
-// 		responses.ERROR(w, http.StatusBadRequest, err)
-// 		return
-// 	}
-// 	user := models.User{}
-// 	userGotten, err := user.FindUserByID(server.DB, uint32(uid))
-// 	if err != nil {
-// 		responses.ERROR(w, http.StatusBadRequest, err)
-// 		return
-// 	}
-// 	responses.JSON(w, http.StatusOK, userGotten)
-// }
+func (s *Server) GetUser(ctx *gin.Context) {
+	uid := ctx.Param("id")
+	toUint, err := strconv.ParseInt(uid, 10, 64)
+	fmt.Println("toUint", toUint)
+	fmt.Println("uid", uid)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("missing id"))
+		return
+	}
+	user, err := s.repository.FindUserByID(ctx, toUint)
+	fmt.Println("user", user)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
+}
 
 // func (server *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
 // 	vars := mux.Vars(r)
