@@ -60,5 +60,7 @@ func main() {
 
 	r.GET("/users/:id", server.GetUser)
 
+	r.DELETE("/users/:id", server.DeleteUser)
+
 	r.Run()
 }

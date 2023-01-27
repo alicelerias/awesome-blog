@@ -2,12 +2,12 @@ package database
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/alicelerias/blog-golang/models"
 
 	"github.com/jinzhu/gorm"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 )
@@ -41,7 +41,6 @@ func (u *User) BeforeSave() error {
 func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
 	err := s.db.Debug().Create(&user).Error
 	if err != nil {
-		log.Error()
 		return &models.User{}, err
 	}
 
@@ -53,54 +52,45 @@ func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.Us
 	users := []models.User{}
 	err = s.db.Debug().Model(&User{}).Limit(100).Find(&users).Error
 	if err != nil {
-		log.Error()
 		return &[]models.User{}, err
 	}
 	return &users, err
 }
 
+// func typeExample() {
+// 	var user User
+// 	fmt.Println(user) // nil
+// 	// var userB User = nil
+// 	// fmt.Println(user) // nil
+// 	var userA User = User{}
+// 	fmt.Println(userA) // User{}
+// 	userB := User{}
+// 	fmt.Println(userB) // User{}
+
+// 	var userC *User = &User{}
+// 	fmt.Println(userC) // User{}
+
+// 	userD := &User{}
+// 	fmt.Println(userD) // User{}
+// 	GetValue(userD)
+
+// }
+
 func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (user *models.User, err error) {
+	fmt.Println(user) // nil
 	user = &models.User{}
-	err = s.db.First(&user, uid).Error
+	err = s.db.First(user, uid).Error
 	if gorm.IsRecordNotFoundError(err) {
 		err = errors.New("User Not Found")
 	}
 	return
 }
 
-func (u *User) UpdateAuser(db *gorm.DB, uid uint32) (*User, error) {
-	err := u.BeforeSave()
+func (s *PostgresDBRepository) DeleteAUser(ctx context.Context, uid int64) (err error) {
+	user := &models.User{}
+	err = s.db.Delete(user, uid).Error
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("Error")
 	}
-	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
-		map[string]interface{}{
-			"password":   u.Password,
-			"username":   u.UserName,
-			"email":      u.Email,
-			"updated_at": time.Now(),
-		},
-	)
-
-	if db.Error != nil {
-		return &User{}, db.Error
-	}
-
-	err = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&u).Error
-	if err != nil {
-		return &User{}, err
-	}
-
-	return u, nil
-
-}
-
-func (u *User) DeleteAUser(db *gorm.DB, uid uint32) (int64, error) {
-	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{})
-
-	if db.Error != nil {
-		return 0, db.Error
-	}
-
-	return db.RowsAffected, nil
+	return nil
 }
