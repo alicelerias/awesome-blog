@@ -4,22 +4,12 @@ import (
 	"net/http"
 
 	"github.com/alicelerias/blog-golang/api/controllers"
+	"github.com/alicelerias/blog-golang/api/middlewares"
 	"github.com/alicelerias/blog-golang/config"
 	"github.com/alicelerias/blog-golang/database"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
-
-func ErrorHandler(c *gin.Context) {
-	c.Next()
-	var message interface{}
-	for _, err := range c.Errors {
-		log.Error()
-		message = err.JSON()
-	}
-
-	c.JSON(http.StatusInternalServerError, message)
-}
 
 var logLevelMap = map[string]log.Level{
 	"ERROR":   log.ErrorLevel,
@@ -44,7 +34,7 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(ErrorHandler)
+	r.Use(middlewares.ErrorHandler)
 
 	r.GET("/healthcheck", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
