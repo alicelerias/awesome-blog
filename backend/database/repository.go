@@ -13,7 +13,7 @@ type Repository interface {
 	// BeforeSave() (err error)
 	SaveUser(context.Context, *models.User) (*models.User, error)
 	FindAllUsers(context.Context, *models.User) (*[]models.User, error)
-	FindUserByID(context.Context, int64) (*models.User, error)
+	FindUserByID(context.Context, int64) (*User, error)
 	DeleteAUser(context.Context, int64) error
 }
 
