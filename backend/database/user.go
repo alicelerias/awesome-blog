@@ -28,12 +28,12 @@ func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) 
 	return user, nil
 }
 
-func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]models.User, error) {
+func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]User, error) {
 	var err error
-	users := []models.User{}
+	users := []User{}
 	err = s.db.Debug().Model(&User{}).Limit(100).Find(&users).Error
 	if err != nil {
-		return &[]models.User{}, err
+		return &[]User{}, err
 	}
 	return &users, err
 }
