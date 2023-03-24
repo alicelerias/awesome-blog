@@ -12,11 +12,11 @@ import (
 )
 
 type User struct {
-	ID        uint32    `gorm:"primary_key;auto_increment" json:"id"`
-	UserName  string    `gorm:"size:255;not null;unique" json:"username"`
-	Email     string    `gorm:"size:100;not null;unique" json:"email"`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	ID        uint32    `json:"id"`
+	UserName  string    `json:"username"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
@@ -64,6 +64,15 @@ func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (use
 	if gorm.IsRecordNotFoundError(err) {
 		err = errors.New("User Not Found")
 	}
+	return
+}
+
+func (s *PostgresDBRepository) UpdateAUser(ctx context.Context, values interface{}, uid int64) (u *User, err error) {
+	err = s.db.
+		Where("id = ?", uid).
+		UpdateColumns(values).
+		Take(u).
+		Error
 	return
 }
 
