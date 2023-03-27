@@ -14,6 +14,7 @@ func ErrorHandler(c *gin.Context) {
 		log.Error()
 		message = err.JSON()
 	}
-
-	c.JSON(http.StatusInternalServerError, message)
+	if message != nil {
+		c.JSON(http.StatusInternalServerError, message)
+	}
 }

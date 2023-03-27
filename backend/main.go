@@ -50,6 +50,8 @@ func main() {
 
 	r.GET("/users/:id", server.GetUser)
 
+	r.PUT("/users/:id", server.UpdateUser)
+
 	r.DELETE("/users/:id", server.DeleteUser)
 
 	r.Run()

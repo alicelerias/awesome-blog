@@ -12,9 +12,10 @@ import (
 )
 
 type User struct {
-	ID             uint32    `gorm:"primary_key;auto_increment" json:"id"`
-	UserName       string    `gorm:"size:255;not null;unique" json:"username" validate:"required,min=4,max=15"`
-	Email          string    `gorm:"size:100;not null;unique" json:"email" validate:"required,email"`
+	ID       uint32 `gorm:"primary_key;auto_increment" json:"id"`
+	UserName string `gorm:"size:255;not null;unique" json:"username" validate:"required,min=4,max=15"`
+	Email    string `gorm:"size:100;not null;unique" json:"email" validate:"required,email"`
+	// Bio string `...`
 	Password       string    `gorm:"size:100;not null;" json:"password" validate:"required,min=6,max=15"`
 	PasswordHash   []byte    `gorm:"not null" json:"pwd_hash"`
 	Salt           []byte    `gorm:"not null" json:"salt"`

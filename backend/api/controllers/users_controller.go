@@ -1,28 +1,36 @@
 package controllers
 
 import (
-	// "encoding/json"
-	// "errors"
-	// "fmt"
-	// "io/ioutil"
 	"errors"
 	"fmt"
+
 	"net/http"
-	"strconv"
+
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
-	// "strconv"
-
-	// "github.com/alicelerias/blog-golang/api/auth"
-	// "github.com/alicelerias/blog-golang/api/formaterror"
-
 	"github.com/alicelerias/blog-golang/models"
-
-	// "github.com/alicelerias/blog-golang/api/responses"
 	"github.com/gin-gonic/gin"
-	// "github.com/gorilla/mux"
 )
+
+type User struct {
+	ID        uint32    `json:"id"`
+	UserName  string    `json:"username"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func UserFromModel(model *models.User) *User {
+	return &User{
+		ID:        model.ID,
+		UserName:  model.UserName,
+		Email:     model.Email,
+		CreatedAt: model.CreatedAt,
+		UpdatedAt: model.UpdatedAt,
+	}
+}
 
 func (server *Server) CreateUser(ctx *gin.Context) {
 	var user *models.User
@@ -43,7 +51,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"user": user})
+	ctx.JSON(http.StatusOK, gin.H{"user": UserFromModel(user)})
 }
 
 func (server *Server) GetUsers(ctx *gin.Context) {
@@ -54,33 +62,59 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"users": users})
+	fromModelUsers := []*User{}
+
+	for _, item := range *users {
+		newItem := UserFromModel(&item)
+		fromModelUsers = append(fromModelUsers, newItem)
+	}
+	ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
 }
 
 func (s *Server) GetUser(ctx *gin.Context) {
-	uid := ctx.Param("id")
-	toUint, err := strconv.ParseInt(uid, 10, 64)
+	id, err := parseInt(ctx.Param("id"))
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("missing id"))
 		return
 	}
-	user, err := s.repository.FindUserByID(ctx, toUint)
+	user, err := s.repository.FindUserByID(ctx, id)
 	fmt.Println("user", user)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, UserFromModel(user))
+}
+
+func (s *Server) UpdateUser(ctx *gin.Context) {
+	id, err := parseInt(ctx.Param("id"))
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid ID!"))
+		return
+	}
+
+	whiteList := []string{"user_name"}
+	input, err := getValidJson(ctx.Request.Body, whiteList)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid data!"))
+		return
+	}
+	input["updated_at"] = time.Now()
+	user, err := s.repository.UpdateAUser(ctx, input, id)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, UserFromModel(user))
 }
 
 func (s *Server) DeleteUser(ctx *gin.Context) {
-	uid := ctx.Param("id")
-	toInt, err := strconv.ParseInt(uid, 10, 64)
+	id, err := parseInt(ctx.Param("id"))
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("missing id"))
 	}
 
-	if err := s.repository.DeleteAUser(ctx, toInt); err != nil {
+	if err := s.repository.DeleteAUser(ctx, id); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/alicelerias/blog-golang/models"
 
@@ -11,13 +10,18 @@ import (
 	"golang.org/x/net/context"
 )
 
-type User struct {
-	ID        uint32    `json:"id"`
-	UserName  string    `json:"username"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
+// type UserInput {
+// 	UserName  string    `json:"username"`
+// 	Email     string    `json:"email"`
+// }
+
+//	type UserReponse struct {
+//		ID        uint32    `json:"id"`
+//		UserName  string    `json:"username"`
+//		Email     string    `json:"email"`
+//		CreatedAt time.Time `json:"created_at"`
+//		UpdatedAt time.Time `json:"updated_at"`
+//	}
 
 func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
 	err := s.db.Debug().Create(&user).Error
@@ -28,12 +32,12 @@ func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) 
 	return user, nil
 }
 
-func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]User, error) {
+func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]models.User, error) {
 	var err error
-	users := []User{}
-	err = s.db.Debug().Model(&User{}).Limit(100).Find(&users).Error
+	users := []models.User{}
+	err = s.db.Debug().Model(&models.User{}).Limit(100).Find(&users).Error
 	if err != nil {
-		return &[]User{}, err
+		return &[]models.User{}, err
 	}
 	return &users, err
 }
@@ -57,9 +61,9 @@ func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.Us
 
 // }
 
-func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (user *User, err error) {
+func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (user *models.User, err error) {
 	fmt.Println(user) // nil
-	user = &User{}
+	user = &models.User{}
 	err = s.db.First(user, uid).Error
 	if gorm.IsRecordNotFoundError(err) {
 		err = errors.New("User Not Found")
@@ -67,8 +71,9 @@ func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (use
 	return
 }
 
-func (s *PostgresDBRepository) UpdateAUser(ctx context.Context, values interface{}, uid int64) (u *User, err error) {
-	err = s.db.
+func (s *PostgresDBRepository) UpdateAUser(ctx context.Context, values interface{}, uid int64) (u *models.User, err error) {
+	u = &models.User{}
+	err = s.db.Table("users").
 		Where("id = ?", uid).
 		UpdateColumns(values).
 		Take(u).

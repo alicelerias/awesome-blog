@@ -12,8 +12,9 @@ type Repository interface {
 	// VerifyPassword() (err error)
 	// BeforeSave() (err error)
 	SaveUser(context.Context, *models.User) (*models.User, error)
-	FindAllUsers(context.Context, *models.User) (*[]User, error)
-	FindUserByID(context.Context, int64) (*User, error)
+	FindAllUsers(context.Context, *models.User) (*[]models.User, error)
+	FindUserByID(context.Context, int64) (*models.User, error)
+	UpdateAUser(context.Context, interface{}, int64) (*models.User, error)
 	DeleteAUser(context.Context, int64) error
 }
 
