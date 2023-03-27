@@ -25,18 +25,18 @@ type User struct {
 	UpdatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
-func saltPassword(salt []byte, password string) []byte {
+func SaltPassword(salt []byte, password string) []byte {
 	return append(salt, []byte(password)...)
 }
 
-func hashPassword(password string) (hash, salt []byte) {
+func HashPassword(password string) (hash, salt []byte) {
 	salt = make([]byte, 16)
 	_, err := rand.Read(salt)
 	if err != nil {
 		panic(err)
 	}
 
-	saltedPassword := saltPassword(salt, password)
+	saltedPassword := SaltPassword(salt, password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(saltedPassword, 10)
 	if err != nil {
 		panic(err)
@@ -44,7 +44,7 @@ func hashPassword(password string) (hash, salt []byte) {
 	return hashedPassword, salt
 }
 func (u *User) Prepare() {
-	hash, salt := hashPassword(u.Password)
+	hash, salt := HashPassword(u.Password)
 	u.ID = 0
 	u.UserName = html.EscapeString(strings.TrimSpace(u.UserName))
 	u.Email = html.EscapeString(strings.TrimSpace(u.Email))

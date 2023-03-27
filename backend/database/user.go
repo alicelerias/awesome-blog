@@ -61,7 +61,7 @@ func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.Us
 
 // }
 
-func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (user *models.User, err error) {
+func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid string) (user *models.User, err error) {
 	fmt.Println(user) // nil
 	user = &models.User{}
 	err = s.db.First(user, uid).Error
@@ -71,7 +71,16 @@ func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid int64) (use
 	return
 }
 
-func (s *PostgresDBRepository) UpdateAUser(ctx context.Context, values interface{}, uid int64) (u *models.User, err error) {
+func (s *PostgresDBRepository) GetUser(ctx context.Context, username string) (user *models.User, err error) {
+	user = &models.User{}
+	err = s.db.First(user, username).Error
+	if gorm.IsRecordNotFoundError(err) {
+		err = errors.New("User Not Found")
+	}
+	return
+}
+
+func (s *PostgresDBRepository) UpdateUser(ctx context.Context, values interface{}, uid string) (u *models.User, err error) {
 	u = &models.User{}
 	err = s.db.Table("users").
 		Where("id = ?", uid).
@@ -81,7 +90,7 @@ func (s *PostgresDBRepository) UpdateAUser(ctx context.Context, values interface
 	return
 }
 
-func (s *PostgresDBRepository) DeleteAUser(ctx context.Context, uid int64) (err error) {
+func (s *PostgresDBRepository) DeleteUser(ctx context.Context, uid string) (err error) {
 	user := &models.User{}
 	err = s.db.Delete(user, uid).Error
 	if err != nil {

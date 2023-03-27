@@ -9,13 +9,12 @@ import (
 
 type Repository interface {
 	GetHome() (err error)
-	// VerifyPassword() (err error)
-	// BeforeSave() (err error)
 	SaveUser(context.Context, *models.User) (*models.User, error)
 	FindAllUsers(context.Context, *models.User) (*[]models.User, error)
-	FindUserByID(context.Context, int64) (*models.User, error)
-	UpdateAUser(context.Context, interface{}, int64) (*models.User, error)
-	DeleteAUser(context.Context, int64) error
+	FindUserByID(context.Context, string) (*models.User, error)
+	GetUser(context.Context, string) (*models.User, error)
+	UpdateUser(context.Context, interface{}, string) (*models.User, error)
+	DeleteUser(context.Context, string) error
 }
 
 type PostgresDBRepository struct {
