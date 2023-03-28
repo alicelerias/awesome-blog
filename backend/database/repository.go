@@ -9,7 +9,7 @@ import (
 
 type Repository interface {
 	GetHome() (err error)
-	SaveUser(context.Context, *models.User) (*models.User, error)
+	CreateUser(context.Context, *models.User) error
 	FindAllUsers(context.Context, *models.User) (*[]models.User, error)
 	FindUserByID(context.Context, string) (*models.User, error)
 	GetUser(context.Context, string) (*models.User, error)

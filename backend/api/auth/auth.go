@@ -2,11 +2,11 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/alicelerias/blog-golang/database"
-	"github.com/alicelerias/blog-golang/models"
 	"github.com/alicelerias/blog-golang/types"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,7 +22,10 @@ func Authenticate(ctx context.Context, repository database.Repository, creds *ty
 		return
 	}
 
+	fmt.Println("user", user)
+
 	if !passwordMatch(user.PasswordHash, user.Salt, creds.Password) {
+		fmt.Println("credentials", creds)
 		return nil, NewPasswordDoesntMatchError()
 	}
 	duration := time.Hour
@@ -35,7 +38,7 @@ func Authenticate(ctx context.Context, repository database.Repository, creds *ty
 }
 
 func passwordMatch(passwordHash []byte, salt []byte, password string) bool {
-	saltedPassword := models.SaltPassword(salt, password)
+	saltedPassword := saltPassword(salt, password)
 	err := bcrypt.CompareHashAndPassword(passwordHash, saltedPassword)
 	return err == nil
 }

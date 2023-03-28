@@ -23,13 +23,13 @@ import (
 //		UpdatedAt time.Time `json:"updated_at"`
 //	}
 
-func (s *PostgresDBRepository) SaveUser(ctx context.Context, user *models.User) (*models.User, error) {
+func (s *PostgresDBRepository) CreateUser(ctx context.Context, user *models.User) error {
 	err := s.db.Debug().Create(&user).Error
 	if err != nil {
-		return &models.User{}, err
+		return err
 	}
 
-	return user, nil
+	return nil
 }
 
 func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]models.User, error) {
@@ -73,7 +73,7 @@ func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid string) (us
 
 func (s *PostgresDBRepository) GetUser(ctx context.Context, username string) (user *models.User, err error) {
 	user = &models.User{}
-	err = s.db.First(user, username).Error
+	err = s.db.First(user, "user_name = ?", username).Error
 	if gorm.IsRecordNotFoundError(err) {
 		err = errors.New("User Not Found")
 	}

@@ -10,6 +10,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/alicelerias/blog-golang/api/auth"
 	"github.com/alicelerias/blog-golang/models"
 	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
@@ -26,25 +27,18 @@ func UserFromModel(model *models.User) *types.User {
 }
 
 func (server *Server) CreateUser(ctx *gin.Context) {
-	var user *models.User
+	user := &models.User{}
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	user.Prepare()
-	if err := user.Validate(); err != nil {
+	if err := auth.CreateUser(ctx, server.repository, user); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	user, err := server.repository.SaveUser(ctx, user)
-	if err != nil {
-
-		ctx.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	ctx.JSON(http.StatusOK, gin.H{"user": UserFromModel(user)})
+	ctx.AbortWithStatus(http.StatusCreated)
 }
 
 func (server *Server) GetUsers(ctx *gin.Context) {
