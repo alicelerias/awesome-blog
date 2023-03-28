@@ -50,6 +50,8 @@ func main() {
 
 	r.POST("/logout", server.Logout)
 
+	r.Use(middlewares.AuthenticationMiddleware())
+
 	r.GET("/users", server.GetUsers)
 
 	r.GET("/users/:id", server.GetUser)

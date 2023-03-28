@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -22,10 +21,7 @@ func Authenticate(ctx context.Context, repository database.Repository, creds *ty
 		return
 	}
 
-	fmt.Println("user", user)
-
 	if !passwordMatch(user.PasswordHash, user.Salt, creds.Password) {
-		fmt.Println("credentials", creds)
 		return nil, NewPasswordDoesntMatchError()
 	}
 	duration := time.Hour

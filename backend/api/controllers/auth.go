@@ -23,12 +23,12 @@ func (server *Server) Login(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
-	ctx.SetCookie(configs.AuthCookie, token.AccessToken, 0, "/", configs.Host, true, true)
+	ctx.SetCookie(configs.AuthCookie, token.AccessToken, 0, "/", configs.Host, false, true)
 	ctx.AbortWithStatus(http.StatusOK)
 }
 
 func (server *Server) Logout(ctx *gin.Context) {
 	configs := config.GetConfig()
-	ctx.SetCookie(configs.AuthCookie, "", 0, "/", configs.Host, true, true)
+	ctx.SetCookie(configs.AuthCookie, "", 0, "/", configs.Host, false, true)
 	ctx.AbortWithStatus(http.StatusOK)
 }
