@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserFromModel(model *models.User) *types.User {
+func userFromModel(model *models.User) *types.User {
 	return &types.User{
 		ID:        model.ID,
 		UserName:  model.UserName,
@@ -52,7 +52,7 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 	fromModelUsers := []*types.User{}
 
 	for _, item := range *users {
-		newItem := UserFromModel(&item)
+		newItem := userFromModel(&item)
 		fromModelUsers = append(fromModelUsers, newItem)
 	}
 	ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
@@ -70,7 +70,7 @@ func (s *Server) GetUser(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, UserFromModel(user))
+	ctx.JSON(http.StatusOK, userFromModel(user))
 }
 
 func (s *Server) UpdateUser(ctx *gin.Context) {
@@ -92,7 +92,7 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, UserFromModel(user))
+	ctx.JSON(http.StatusOK, userFromModel(user))
 }
 
 func (s *Server) DeleteUser(ctx *gin.Context) {

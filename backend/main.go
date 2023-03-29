@@ -33,6 +33,7 @@ func main() {
 	server := controllers.NewServer(postgresRepository)
 
 	r := gin.Default()
+	r.Use(middlewares.CORSMiddleware())
 
 	r.Use(middlewares.ErrorHandler)
 
@@ -59,6 +60,12 @@ func main() {
 	r.PUT("/users/:id", server.UpdateUser)
 
 	r.DELETE("/users/:id", server.DeleteUser)
+
+	r.POST("/posts", server.CreatePost)
+
+	r.GET("/posts", server.GetPosts)
+
+	r.DELETE("/posts/:id", server.DeletePost)
 
 	r.Run()
 }

@@ -20,7 +20,7 @@ func GetSignedToken(sub string, username string, exp int64) (token string, err e
 	return
 }
 
-func ValidateToken(tokenString string) error {
+func ValidateToken(tokenString string) (claims jwt.MapClaims, err error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			fmt.Println("error 1")
@@ -30,25 +30,24 @@ func ValidateToken(tokenString string) error {
 		return []byte(config.GetConfig().JWTSecret), nil
 	})
 	if err != nil {
-		fmt.Println("error 2")
-		return err
+		return nil, err
 	}
 
 	if !token.Valid {
-		fmt.Println("error 3")
-		return NewInvalidToken("Invalid token!")
+		return nil, NewInvalidToken("Invalid token!")
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		exp, ok := claims["exp"].(float64)
 		if !ok {
-			fmt.Println("error 4")
-			return NewInvalidToken("Invalid exp value")
+			return nil, NewInvalidToken("Invalid exp value")
 		}
 		if time.Now().Unix() > int64(exp) {
-			fmt.Println("error 5")
-			return NewInvalidToken("Token expired")
+			return nil, NewInvalidToken("Token expired")
 		}
+		return claims, nil
+
 	}
-	return nil
+
+	return claims, nil
 }

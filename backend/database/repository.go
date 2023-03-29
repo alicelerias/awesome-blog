@@ -15,6 +15,10 @@ type Repository interface {
 	GetUser(context.Context, string) (*models.User, error)
 	UpdateUser(context.Context, interface{}, string) (*models.User, error)
 	DeleteUser(context.Context, string) error
+
+	CreatePost(context.Context, *models.Post) error
+	GetPosts(context.Context, *models.Post) (*[]models.Post, error)
+	DeletePost(context.Context, string) error
 }
 
 type PostgresDBRepository struct {

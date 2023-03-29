@@ -10,19 +10,6 @@ import (
 	"golang.org/x/net/context"
 )
 
-// type UserInput {
-// 	UserName  string    `json:"username"`
-// 	Email     string    `json:"email"`
-// }
-
-//	type UserReponse struct {
-//		ID        uint32    `json:"id"`
-//		UserName  string    `json:"username"`
-//		Email     string    `json:"email"`
-//		CreatedAt time.Time `json:"created_at"`
-//		UpdatedAt time.Time `json:"updated_at"`
-//	}
-
 func (s *PostgresDBRepository) CreateUser(ctx context.Context, user *models.User) error {
 	err := s.db.Debug().Create(&user).Error
 	if err != nil {
@@ -41,25 +28,6 @@ func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.Us
 	}
 	return &users, err
 }
-
-// func typeExample() {
-// 	var user User
-// 	fmt.Println(user) // nil
-// 	// var userB User = nil
-// 	// fmt.Println(user) // nil
-// 	var userA User = User{}
-// 	fmt.Println(userA) // User{}
-// 	userB := User{}
-// 	fmt.Println(userB) // User{}
-
-// 	var userC *User = &User{}
-// 	fmt.Println(userC) // User{}
-
-// 	userD := &User{}
-// 	fmt.Println(userD) // User{}
-// 	GetValue(userD)
-
-// }
 
 func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid string) (user *models.User, err error) {
 	fmt.Println(user) // nil
