@@ -18,6 +18,8 @@ type Repository interface {
 
 	CreatePost(context.Context, *models.Post) error
 	GetPosts(context.Context, *models.Post) (*[]models.Post, error)
+	GetPost(context.Context, string) (*models.Post, error)
+	UpdatePost(context.Context, interface{}, string) (*models.Post, error)
 	DeletePost(context.Context, string) error
 }
 

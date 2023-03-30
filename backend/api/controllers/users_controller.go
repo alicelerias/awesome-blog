@@ -50,7 +50,6 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 		return
 	}
 	fromModelUsers := []*types.User{}
-
 	for _, item := range *users {
 		newItem := userFromModel(&item)
 		fromModelUsers = append(fromModelUsers, newItem)
@@ -60,10 +59,6 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 
 func (s *Server) GetUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	// if err != nil {
-	// 	ctx.AbortWithError(http.StatusBadRequest, errors.New("missing id"))
-	// 	return
-	// }
 	user, err := s.repository.FindUserByID(ctx, id)
 	fmt.Println("user", user)
 	if err != nil {
@@ -75,10 +70,6 @@ func (s *Server) GetUser(ctx *gin.Context) {
 
 func (s *Server) UpdateUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	// if err != nil {
-	// 	ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid ID!"))
-	// 	return
-	// }
 
 	whiteList := []string{"user_name"}
 	input, err := getValidJson(ctx.Request.Body, whiteList)
@@ -97,9 +88,6 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 
 func (s *Server) DeleteUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	// if err != nil {
-	// 	ctx.AbortWithError(http.StatusBadRequest, errors.New("missing id"))
-	// }
 
 	if err := s.repository.DeleteUser(ctx, id); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)

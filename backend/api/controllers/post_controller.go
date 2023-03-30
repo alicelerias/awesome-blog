@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/alicelerias/blog-golang/models"
 	"github.com/gin-gonic/gin"
@@ -62,6 +64,34 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"posts": fromModelPosts})
+}
+
+func (server *Server) GetPost(ctx *gin.Context) {
+	id := ctx.Param("id")
+	post, err := server.repository.GetPost(ctx, id)
+	fmt.Println("POST", post)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, postFromModel(post, &post.Author))
+}
+
+func (server *Server) UpdatePost(ctx *gin.Context) {
+	id := ctx.Param("id")
+	whiteList := []string{"title", "content", "img"}
+	input, err := getValidJson(ctx.Request.Body, whiteList)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid data!"))
+		return
+	}
+	input["updated_at"] = time.Now()
+	post, err := server.repository.UpdatePost(ctx, input, id)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, postFromModel(post, &post.Author))
 }
 
 func (server *Server) DeletePost(ctx *gin.Context) {

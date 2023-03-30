@@ -65,6 +65,10 @@ func main() {
 
 	r.GET("/posts", server.GetPosts)
 
+	r.GET("/posts/:id", server.GetPost)
+
+	r.PUT("posts/:id", server.UpdatePost)
+
 	r.DELETE("/posts/:id", server.DeletePost)
 
 	r.Run()
