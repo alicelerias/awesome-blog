@@ -6,7 +6,7 @@ import (
 
 type Post struct {
 	ID        uint64    `gorm:"primary_key;auto_increment" json:"id"`
-	Title     string    `gorm:"size:255;not null;" json:"title"`
+	Title     string    `gorm:"size:255;not null;" json:"title" validate:"title"`
 	Content   string    `gorm:"size:1000;" json:"content"`
 	Img       string    `json:"img"`
 	Author    User      `json:"author"`

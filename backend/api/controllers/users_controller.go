@@ -80,8 +80,8 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 	if err := v.Struct(user); err != nil {
 		for _, e := range err.(validator.ValidationErrors) {
 			ctx.JSON(http.StatusBadRequest, e.Translate(trans))
-			return
 		}
+		return
 
 	}
 

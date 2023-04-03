@@ -37,6 +37,10 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
+	if post.Title == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Title cannot be null"})
+		return
+	}
 	uid, exists := ctx.Get("uid")
 	if !exists {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
@@ -44,6 +48,7 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 	}
 	postUid, _ := strconv.ParseUint(uid.(string), 10, 64)
 	post.AuthorID = uint32(postUid)
+
 	if err := server.repository.CreatePost(ctx, post); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
