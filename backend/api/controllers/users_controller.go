@@ -7,12 +7,17 @@ import (
 
 	"time"
 
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/alicelerias/blog-golang/api/auth"
 	"github.com/alicelerias/blog-golang/models"
 	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
+
+	en_translations "gopkg.in/go-playground/validator.v9/translations/en"
 )
 
 func userFromModel(model *models.User) *types.User {
@@ -33,17 +38,51 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	if user.UserName == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "username cannot be null"})
+	translator := en.New()
+	uni := ut.New(translator, translator)
+
+	trans, found := uni.GetTranslator("en")
+	if !found {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "translator not found"})
 		return
 	}
-	if user.Email == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "email cannot be null"})
+	v := validator.New()
+
+	if err := en_translations.RegisterDefaultTranslations(v, trans); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error on register default translations"})
 		return
 	}
-	if user.Password == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "password cannot be null"})
-		return
+	_ = v.RegisterTranslation("required", trans, func(ut ut.Translator) error {
+		return ut.Add("required", "{0} is a required field", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required", fe.Field())
+		return t
+	})
+
+	_ = v.RegisterTranslation("email", trans, func(ut ut.Translator) error {
+		return ut.Add("email", "{0} must be a valid email", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("email", fe.Field())
+		return t
+	})
+
+	_ = v.RegisterTranslation("passwd", trans, func(ut ut.Translator) error {
+		return ut.Add("passwd", "{0} is not strong enough", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("passwd", fe.Field())
+		return t
+	})
+
+	_ = v.RegisterValidation("passwd", func(fl validator.FieldLevel) bool {
+		return len(fl.Field().String()) > 6
+	})
+
+	if err := v.Struct(user); err != nil {
+		for _, e := range err.(validator.ValidationErrors) {
+			ctx.JSON(http.StatusBadRequest, e.Translate(trans))
+			return
+		}
+
 	}
 
 	if err := auth.CreateUser(ctx, server.repository, user); err != nil {
