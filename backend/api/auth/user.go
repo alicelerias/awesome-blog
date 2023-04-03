@@ -29,18 +29,6 @@ func hashPassword(password string) (hash, salt []byte) {
 	return hashedPassword, salt
 }
 
-// func (u *models.User) Prepare() {
-// 	hash, salt := hashPassword(u.Password)
-// 	u.ID = 0
-// 	u.UserName = html.EscapeString(strings.TrimSpace(u.UserName))
-// 	u.Email = html.EscapeString(strings.TrimSpace(u.Email))
-// 	u.CreatedAt = time.Now()
-// 	u.UpdatedAt = time.Now()
-// 	u.PasswordHash = hash
-// 	u.Salt = salt
-// 	u.Disabled = false
-// }
-
 func CreateUser(ctx context.Context, repository database.Repository, user *models.User) error {
 	return repository.CreateUser(ctx, userToModel(user))
 }
@@ -58,10 +46,3 @@ func userToModel(user *models.User) *models.User {
 		UpdatedAt:    time.Now(),
 	}
 }
-
-// func (u *User) Validate() error {
-// 	validate := validator.New()
-// 	err := validate.Struct(u)
-// 	fmt.Println("erro:", err)
-// 	return err
-// }

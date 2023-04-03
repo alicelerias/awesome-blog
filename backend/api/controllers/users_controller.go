@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 
 	"net/http"
 
@@ -28,8 +27,22 @@ func userFromModel(model *models.User) *types.User {
 
 func (server *Server) CreateUser(ctx *gin.Context) {
 	user := &models.User{}
+
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if user.UserName == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "username cannot be null"})
+		return
+	}
+	if user.Email == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "email cannot be null"})
+		return
+	}
+	if user.Password == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "password cannot be null"})
 		return
 	}
 
@@ -60,7 +73,7 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 func (s *Server) GetUser(ctx *gin.Context) {
 	id := ctx.Param("id")
 	user, err := s.repository.FindUserByID(ctx, id)
-	fmt.Println("user", user)
+
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -94,6 +107,6 @@ func (s *Server) DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "successfully deleted user"})
+	ctx.JSON(http.StatusNoContent, gin.H{"message": "successfully deleted user"})
 
 }

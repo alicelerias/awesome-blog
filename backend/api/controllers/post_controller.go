@@ -37,11 +37,13 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-	uid, _ := ctx.Get("uid")
-	fmt.Println("UUUUUID", uid)
-	postId, _ := strconv.ParseUint(uid.(string), 10, 64)
-	post.AuthorID = uint32(postId)
-
+	uid, exists := ctx.Get("uid")
+	if !exists {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		return
+	}
+	postUid, _ := strconv.ParseUint(uid.(string), 10, 64)
+	post.AuthorID = uint32(postUid)
 	if err := server.repository.CreatePost(ctx, post); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -101,5 +103,5 @@ func (server *Server) DeletePost(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "successfully deleted post"})
+	ctx.JSON(http.StatusNoContent, gin.H{"message": "successfully deleted post"})
 }
