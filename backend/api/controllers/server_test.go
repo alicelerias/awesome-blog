@@ -50,6 +50,9 @@ func TestServer(t *testing.T) {
 	router.PUT("/posts/:id", server.UpdatePost)
 	router.DELETE("/posts/:id", server.DeletePost)
 
+	router.POST("/follow/:id", server.CreateFollow)
+	router.DELETE("/follow/:id", server.Unfollow)
+
 	gin.SetMode(gin.TestMode)
 
 	// Test case 1: test 404
@@ -126,11 +129,11 @@ func TestServer(t *testing.T) {
 
 	// invalid post
 
-	// invalidPayload, _ = json.Marshal(&models.Post{
-	// 	Title: "",
-	// })
-	// res = performRequest("POST", "/posts", router, bytes.NewReader(invalidPayload))
-	// assert.Equal(t, http.StatusBadRequest, res.Code)
+	invalidPayload, _ = json.Marshal(&models.Post{
+		Title: "",
+	})
+	res = performRequest("POST", "/posts", router, bytes.NewReader(invalidPayload))
+	assert.Equal(t, http.StatusBadRequest, res.Code)
 
 	// Test case 8: get posts
 	res = performRequest("GET", "/posts", router, nil)
@@ -167,9 +170,23 @@ func TestServer(t *testing.T) {
 	json.Unmarshal(res.Body.Bytes(), &expectedPostData)
 	assert.Equal(t, "new title", expectedPostData.Title)
 
-	// Test case 6: delete post
+	// Test case 11: delete post
 
 	res = performRequest("DELETE", "/posts/1", router, nil)
+	assert.Equal(t, http.StatusNoContent, res.Code)
+
+	// Test case 12: follow
+
+	res = performRequest("POST", "/follow/1", router, nil)
+	assert.Equal(t, http.StatusCreated, res.Code)
+
+	// user not found
+	// res = performRequest("POST", "/follow/16613163173", router, nil)
+	// assert.Equal(t, http.StatusBadRequest, res.Code)
+
+	// Test case 13: unfollow
+
+	res = performRequest("DELETE", "/follow/1", router, nil)
 	assert.Equal(t, http.StatusNoContent, res.Code)
 
 }
@@ -245,5 +262,17 @@ func (s *MockRepository) UpdatePost(ctx context.Context, value interface{}, id s
 }
 
 func (s *MockRepository) DeletePost(context.Context, string) error {
+	return nil
+}
+
+func (s *MockRepository) Follow(context.Context, *models.Following) error {
+	return nil
+}
+
+func (s *MockRepository) GetFollows(context.Context, *models.Following) (*[]models.Following, error) {
+	return &[]models.Following{}, nil
+}
+
+func (s *MockRepository) Unfollow(context.Context, string, string) error {
 	return nil
 }

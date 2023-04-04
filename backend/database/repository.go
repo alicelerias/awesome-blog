@@ -21,6 +21,10 @@ type Repository interface {
 	GetPost(context.Context, string) (*models.Post, error)
 	UpdatePost(context.Context, interface{}, string) (*models.Post, error)
 	DeletePost(context.Context, string) error
+
+	Follow(context.Context, *models.Following) error
+	GetFollows(context.Context, *models.Following) (*[]models.Following, error)
+	Unfollow(context.Context, string, string) error
 }
 
 type PostgresDBRepository struct {

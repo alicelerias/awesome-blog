@@ -29,6 +29,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	database.MigrateDB(connection)
+
 	postgresRepository := database.NewPostgresDBRepository(connection)
 	server := controllers.NewServer(postgresRepository)
 
@@ -67,9 +70,15 @@ func main() {
 
 	r.GET("/posts/:id", server.GetPost)
 
-	r.PUT("posts/:id", server.UpdatePost)
+	r.PUT("/posts/:id", server.UpdatePost)
 
 	r.DELETE("/posts/:id", server.DeletePost)
+
+	r.POST("/follow/:id", server.CreateFollow)
+
+	r.GET("/follows", server.GetFollows)
+
+	r.DELETE("/follow/:id", server.Unfollow)
 
 	r.Run()
 }
