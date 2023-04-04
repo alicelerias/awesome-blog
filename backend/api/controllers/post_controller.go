@@ -37,10 +37,7 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-	if post.Title == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Title cannot be null"})
-		return
-	}
+
 	uid, exists := ctx.Get("uid")
 	if !exists {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})

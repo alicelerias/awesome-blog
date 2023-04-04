@@ -119,21 +119,13 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusNoContent, res.Code)
 
 	// Test case 7: create post
-	// payload, _ = json.Marshal(&models.Post{
-	// 	Title:   "titleshausahusauashusauh",
-	// 	Content: "content",
-	// })
-	// res = performRequest("POST", "/posts", router, bytes.NewReader(payload))
-
-	// assert.Equal(t, http.StatusCreated, res.Code)
-
-	// invalid post
-
-	invalidPayload, _ = json.Marshal(&models.Post{
-		Title: "",
+	payload, _ = json.Marshal(&models.Post{
+		Title:   "titleshausahusauashusauh",
+		Content: "content",
 	})
-	res = performRequest("POST", "/posts", router, bytes.NewReader(invalidPayload))
-	assert.Equal(t, http.StatusBadRequest, res.Code)
+	res = performRequest("POST", "/posts", router, bytes.NewReader(payload))
+
+	assert.Equal(t, http.StatusCreated, res.Code)
 
 	// Test case 8: get posts
 	res = performRequest("GET", "/posts", router, nil)
