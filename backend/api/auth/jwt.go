@@ -23,7 +23,7 @@ func GetSignedToken(sub string, username string, exp int64) (token string, err e
 func ValidateToken(tokenString string) (claims jwt.MapClaims, err error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			fmt.Println("error 1")
+
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 
 		}

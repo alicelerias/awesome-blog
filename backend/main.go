@@ -80,7 +80,7 @@ func main() {
 
 	r.DELETE("/follow/:id", server.Unfollow)
 
-	r.GET("/users/followings", server.Feed)
+	r.GET("/feed", server.Feed)
 
 	r.Run()
 }

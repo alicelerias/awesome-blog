@@ -53,6 +53,8 @@ func TestServer(t *testing.T) {
 	router.POST("/follow/:id", server.CreateFollow)
 	router.DELETE("/follow/:id", server.Unfollow)
 
+	router.GET("/feed", server.Feed)
+
 	gin.SetMode(gin.TestMode)
 
 	// Test case 1: test 404
@@ -135,6 +137,7 @@ func TestServer(t *testing.T) {
 		Posts []*models.Post `json:"posts"`
 	}
 	json.Unmarshal([]byte(res.Body.String()), &postsData)
+
 	assert.Equal(t, "title", postsData.Posts[0].Title)
 
 	// wrong title
@@ -180,6 +183,19 @@ func TestServer(t *testing.T) {
 
 	res = performRequest("DELETE", "/follow/1", router, nil)
 	assert.Equal(t, http.StatusNoContent, res.Code)
+
+	// Test case 14: feed
+
+	res = performRequest("GET", "/feed", router, nil)
+	assert.Equal(t, http.StatusOK, res.Code)
+
+	var feedData struct {
+		Feed []*models.Post `json:"feed"`
+	}
+
+	json.Unmarshal([]byte(res.Body.String()), &feedData)
+
+	assert.Equal(t, "post", feedData.Feed[1].Title)
 
 }
 
@@ -270,5 +286,21 @@ func (s *MockRepository) Unfollow(context.Context, string, string) error {
 }
 
 func (s *MockRepository) Feed(context.Context, string) (*[]models.Post, error) {
-	return &[]models.Post{}, nil
+	return &[]models.Post{
+		{
+			Title:    "post",
+			Content:  "content",
+			AuthorID: 1,
+		},
+		{
+			Title:    "post",
+			Content:  "content",
+			AuthorID: 1,
+		},
+		{
+			Title:    "post",
+			Content:  "content",
+			AuthorID: 1,
+		},
+	}, nil
 }

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -73,7 +72,6 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 func (server *Server) GetPost(ctx *gin.Context) {
 	id := ctx.Param("id")
 	post, err := server.repository.GetPost(ctx, id)
-	fmt.Println("POST", post)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return

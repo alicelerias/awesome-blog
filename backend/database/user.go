@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/alicelerias/blog-golang/models"
 
@@ -30,7 +29,6 @@ func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.Us
 }
 
 func (s *PostgresDBRepository) FindUserByID(ctx context.Context, uid string) (user *models.User, err error) {
-	fmt.Println(user) // nil
 	user = &models.User{}
 	err = s.db.First(user, uid).Error
 	if gorm.IsRecordNotFoundError(err) {
