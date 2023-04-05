@@ -25,6 +25,8 @@ type Repository interface {
 	Follow(context.Context, *models.Following) error
 	GetFollows(context.Context, *models.Following) (*[]models.Following, error)
 	Unfollow(context.Context, string, string) error
+
+	Feed(context.Context, string) (*[]models.Post, error)
 }
 
 type PostgresDBRepository struct {

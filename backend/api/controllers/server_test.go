@@ -268,3 +268,7 @@ func (s *MockRepository) GetFollows(context.Context, *models.Following) (*[]mode
 func (s *MockRepository) Unfollow(context.Context, string, string) error {
 	return nil
 }
+
+func (s *MockRepository) Feed(context.Context, string) (*[]models.Post, error) {
+	return &[]models.Post{}, nil
+}

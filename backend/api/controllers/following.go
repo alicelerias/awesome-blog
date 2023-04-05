@@ -41,6 +41,24 @@ func (server *Server) GetFollows(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"followings": followings})
 }
 
+func (server *Server) Feed(ctx *gin.Context) {
+	followerId, exists := ctx.Get("uid")
+	if !exists {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		return
+	}
+
+	followerIdToString, _ := followerId.(string)
+
+	feed, err := server.repository.Feed(ctx, followerIdToString)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"feed": &feed})
+}
+
 func (server *Server) Unfollow(ctx *gin.Context) {
 	followerId, exists := ctx.Get("uid")
 	if !exists {
@@ -49,6 +67,7 @@ func (server *Server) Unfollow(ctx *gin.Context) {
 	}
 
 	followerIdToString, _ := followerId.(string)
+
 	followingId := ctx.Param("id")
 
 	if err := server.repository.Unfollow(ctx, followerIdToString, followingId); err != nil {
