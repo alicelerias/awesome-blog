@@ -1,18 +1,14 @@
-import { Routes, Route, Link } from "react-router-dom"
-import { HealthCheck } from "./HealthCheck"
+import React from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import { HealthCheck } from "./HealthCheck";
 
 export const Main: React.FC = () => {
-    return (
+  return (
     <>
-    <Link to="/healthcheck">
-        HealthCheck
-       </Link>
-       <Routes>
-        <Route path="/healthcheck" element={ <HealthCheck />} />
-
-       </Routes>
-       </>
-
-     
-    )
-}
+      <Link to="/healthcheck">HealthCheck</Link>
+      <Routes>
+        <Route path="/healthcheck" element={<HealthCheck />} />
+      </Routes>
+    </>
+  );
+};
