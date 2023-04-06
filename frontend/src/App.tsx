@@ -1,7 +1,8 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider} from "react-query"
-import './App.css';
-import { HealthCheck } from './components/HealthCheck';
+import './App.css'
+import { HealthCheck } from './components/HealthCheck'
+import { Main } from './components/Main';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,8 +16,7 @@ function App() {
   
   return (
    <QueryClientProvider client={queryClient}>
-    
-       <HealthCheck />
+       <Main />
    </QueryClientProvider>
   );
 }

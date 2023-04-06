@@ -6,7 +6,10 @@
     "pre-commit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"]
+    "*.js": [
+      "eslint --fix", 
+      "CI=true npm test --findRelatedTests", 
+      "git add"]
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -28,7 +31,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "husky:install": "cd .. && husky install frontend/.husky"
   },
   "eslintConfig": {
     "extends": [
