@@ -4,7 +4,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,3 +33,28 @@ jobs:
         run: |
           cd backend
           go build -ldflags="-s -w"
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x, 15.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          cd frontend
+          npm install
+      - name: Format
+      - run: |
+          cd frontend
+          npm run format
+      - name: Test
+      - run: |
+          cd frontend
+          npm test
