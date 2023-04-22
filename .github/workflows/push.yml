@@ -22,7 +22,7 @@ jobs:
       - name: Format code
         run: |
           cd backend
-          go run ./scripts/format.sh
+          ./scripts/format.sh
       - name: Build
         env:
           GO_ENV: production
