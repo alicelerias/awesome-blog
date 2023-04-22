@@ -31,7 +31,7 @@ func ErrorHandler(c *gin.Context) {
 	c.Next()
 	var message interface{}
 	for _, err := range c.Errors {
-		log.Error()
+		log.Errorf("API Error: %s \n", err.Error())
 		message = err.JSON()
 	}
 	if message != nil {

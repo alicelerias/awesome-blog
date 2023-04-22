@@ -1,9 +1,8 @@
-import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { BrowserRouter } from 'react-router-dom'
-import './App.css'
-import { HealthCheck } from './components/HealthCheck'
-import { Main } from './components/Main'
+import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter } from "react-router-dom";
+import "./App.css";
+import { Main } from "./components/Main";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -11,17 +10,18 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-})
+});
 
 function App() {
   return (
-    <BrowserRouter>
+    <div className="bg-black text-white">
       <QueryClientProvider client={queryClient}>
-        learn react
-        <Main />
+        <BrowserRouter>
+          <Main />
+        </BrowserRouter>
       </QueryClientProvider>
-    </BrowserRouter>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

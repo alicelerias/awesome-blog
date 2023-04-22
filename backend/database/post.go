@@ -26,7 +26,7 @@ func (s *PostgresDBRepository) CreatePost(ctx context.Context, post *models.Post
 
 func (s *PostgresDBRepository) GetPosts(ctx context.Context, post *models.Post) (*[]models.Post, error) {
 	posts := []models.Post{}
-	err := s.db.Debug().Model(&models.Post{}).Limit(100).Find(&posts).Error
+	err := s.db.Debug().Model(post).Order("posts.created_at DESC").Limit(10).Find(&posts).Error
 	if err != nil {
 		return &[]models.Post{}, err
 	}
@@ -55,6 +55,36 @@ func (s *PostgresDBRepository) GetPost(ctx context.Context, id string) (post *mo
 	}
 	return post, nil
 
+}
+
+func (s *PostgresDBRepository) GetPostsByUser(ctx context.Context, post *models.Post, cursor string, uid string) ([]models.Post, error) {
+	posts := []models.Post{}
+	if cursor != "" {
+		err := s.db.Debug().
+			Where("posts.created_at > ? ", cursor).
+			Order("posts.created_at DESC").
+			Limit(10).
+			Where("author_id = ?", uid).
+			Find(&posts).
+			Error
+		if err != nil {
+			return []models.Post{}, err
+		}
+
+		return posts, nil
+	} else {
+		err := s.db.Debug().
+			Order("posts.created_at DESC").
+			Limit(10).
+			Where("author_id = ?", uid).
+			Find(&posts).
+			Error
+		if err != nil {
+			return []models.Post{}, err
+		}
+
+		return posts, nil
+	}
 }
 
 func (s *PostgresDBRepository) UpdatePost(ctx context.Context, values interface{}, id string) (post *models.Post, err error) {

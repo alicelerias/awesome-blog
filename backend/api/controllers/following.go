@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/alicelerias/blog-golang/models"
 	"github.com/gin-gonic/gin"
@@ -42,6 +45,9 @@ func (server *Server) GetFollows(ctx *gin.Context) {
 }
 
 func (server *Server) Feed(ctx *gin.Context) {
+	cursor := ctx.Query("cursor")
+	limit := 10
+
 	followerId, exists := ctx.Get("uid")
 	if !exists {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
@@ -50,14 +56,45 @@ func (server *Server) Feed(ctx *gin.Context) {
 
 	followerIdToString, _ := followerId.(string)
 
-	feed, err := server.repository.Feed(ctx, followerIdToString)
+	feed, err := server.repository.Feed(ctx, cursor, followerIdToString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"feed": &feed})
+	if len(feed) == limit {
+		nextCursor := feed[len(feed)-1].CreatedAt
+
+		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"feed":        feed,
+			"next_cursor": nextCursor.Format(time.RFC3339),
+			"next_link":   nextLink,
+		})
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"feed": feed})
+	}
 }
+
+// func (server *Server) IsFollowing(ctx *gin.Context) {
+// 	followerId, exists := ctx.Get("uid")
+// 	if !exists {
+// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+// 		return
+// 	}
+
+// 	followerIdToString, _ := followerId.(string)
+
+// 	followingId := ctx.Param("id")
+
+// 	isFollowing, err := server.repository.IsFollowing(ctx, followerIdToString, followingId)
+// 	if err != nil {
+// 		ctx.AbortWithError(http.StatusInternalServerError, err)
+// 		return
+// 	}
+// 	ctx.JSON(http.StatusOK, &isFollowing)
+// }
 
 func (server *Server) Unfollow(ctx *gin.Context) {
 	followerId, exists := ctx.Get("uid")

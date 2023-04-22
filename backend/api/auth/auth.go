@@ -38,5 +38,3 @@ func passwordMatch(passwordHash []byte, salt []byte, password string) bool {
 	err := bcrypt.CompareHashAndPassword(passwordHash, saltedPassword)
 	return err == nil
 }
-
-// estudar cookie e cors

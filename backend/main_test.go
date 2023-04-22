@@ -1,8 +1,13 @@
-package main
+package main_test
 
-import "github.com/gin-gonic/gin"
+import (
+	"encoding/json"
+	"fmt"
+	"testing"
+	"time"
+)
 
-func SetUpRouter() *gin.Engine {
-	router := gin.Default()
-	return router
+func TestTime(t *testing.T) {
+	bytes, _ := json.Marshal(time.Now())
+	fmt.Println(string(bytes))
 }

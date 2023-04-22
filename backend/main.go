@@ -74,13 +74,37 @@ func main() {
 
 	r.DELETE("/posts/:id", server.DeletePost)
 
+	r.POST("/favorite/:id", server.Favorite)
+
+	r.DELETE("/favorite/:id", server.Unfavorite)
+
+	r.GET("/favorites", server.GetFavoritesPosts)
+
+	r.GET("/favorites/:id", server.GetFavoritesByPost)
+
+	r.POST("/comment/:id", server.CreateComment)
+
+	r.DELETE("/comment/:id", server.DeleteComment)
+
+	r.GET("/comment/:id", server.GetPostComments)
+
 	r.POST("/follow/:id", server.CreateFollow)
 
 	r.GET("/follows", server.GetFollows)
 
+	// r.GET("/follows/:id", server.IsFollowing)
+
 	r.DELETE("/follow/:id", server.Unfollow)
 
 	r.GET("/feed", server.Feed)
+
+	r.GET("/profile", server.GetCurrentUser)
+
+	r.PUT("/profile", server.UpdateCurrentUser)
+
+	r.GET("/posts/you", server.GetPostsByUser)
+
+	r.GET("posts/blog/:id", server.GetBlogPosts)
 
 	r.Run()
 }

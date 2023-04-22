@@ -1,0 +1,25 @@
+name: Go
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.19"
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Test with the Go CLI
+        run: go test ./...
+      - name: Format code
+        run: go run ./scripts/format.sh
+      - name: Build
+        env:
+          GO_ENV: production
+          GOOS: linux
+          GOARCH: amd64
+        run: go build -ldflags="-s -w"

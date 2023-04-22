@@ -39,6 +39,15 @@ func (s *PostgresDBRepository) GetFollows(ctx context.Context, following *models
 	return &followings, nil
 }
 
+func (s *PostgresDBRepository) IsFollowing(ctx context.Context, followerId string, followingId string) bool {
+	following := models.Following{}
+	err := s.db.Debug().Where("follower_id = ? AND following_id = ?", followerId, followingId).Find(&following).Error
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 func (s *PostgresDBRepository) Unfollow(ctx context.Context, followerId string, followingId string) error {
 	following := models.Following{}
 	err := s.db.Debug().Where("follower_id = ? AND following_id = ?", followerId, followingId).Delete(&following).Error

@@ -21,7 +21,7 @@ func (s *PostgresDBRepository) CreateUser(ctx context.Context, user *models.User
 func (s *PostgresDBRepository) FindAllUsers(ctx context.Context, user *models.User) (*[]models.User, error) {
 	var err error
 	users := []models.User{}
-	err = s.db.Debug().Model(&models.User{}).Limit(100).Find(&users).Error
+	err = s.db.Debug().Model(&models.User{}).Order("users.created_at DESC").Limit(10).Find(&users).Error
 	if err != nil {
 		return &[]models.User{}, err
 	}
