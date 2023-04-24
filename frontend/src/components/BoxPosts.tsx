@@ -1,10 +1,9 @@
-import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { AiOutlineHeart, AiOutlineComment } from "react-icons/ai";
-import { Post, Posts } from "../types";
-import { favorite } from "../api/mutations";
-import { Heart } from "./Heart";
+import { AiOutlineComment } from "react-icons/ai";
+import { Posts } from "../types";
+
+import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
+import { CommentsCount } from "./CommentsCount";
 
 type props = {
   isLoading: boolean;
@@ -53,18 +52,21 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                       {post?.title}
                     </h1>
                     <p className="text-sm italic">"{post?.content}"</p>
-                    <div className="flex justify-end p-one">
+                    <div className="flex flex-row gap-two justify-end p-one">
+                      <CommentsCount id={post.id} />
                       <AiOutlineComment
                         onClick={() => {
                           navigate(`/${url}/detail?id=${post.id}`);
                         }}
                         className="h-6 w-6 text-blue cursor-pointer"
                       />
+                      <ToggleFavoriteButton
+                        postId={post.id}
+                        isFavorite={post.is_favorite}
+                      />
                     </div>
                   </div>
-                  <div>
-                    <Heart postId={post.id} />
-                  </div>
+                  <div></div>
                 </div>
               </>
             ))}

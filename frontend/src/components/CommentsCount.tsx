@@ -1,5 +1,4 @@
-import React, { PropsWithChildren } from "react";
-import { useQuery } from "react-query";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import { getComments } from "../api/queries";
 
 type props = {
@@ -7,9 +6,12 @@ type props = {
 };
 
 export const CommentsCount: React.FC<PropsWithChildren<props>> = ({ id }) => {
-  const { data } = useQuery("getComments", () => getComments(id));
-
-  const count = data?.comments.length;
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    getComments(id).then((response) => {
+      setCount(response.comments.length);
+    });
+  }, [id]);
 
   return <span className="text-sm">{count}</span>;
 };

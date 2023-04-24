@@ -8,10 +8,9 @@ import { CreateComment } from "./CreateComment";
 import { createComment } from "../api/mutations";
 import { Comment } from "../types";
 import { FieldValues, useForm } from "react-hook-form";
-import { Heart } from "./Heart";
-import { FavoritesCount } from "./FavoritesCount";
 import { CommentsCount } from "./CommentsCount";
 import { AiOutlineComment } from "react-icons/ai";
+import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 
 type props = {};
 
@@ -57,8 +56,8 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
         <div className="flex flex-row justify-end gap-one">
           <CommentsCount id={id} />
           <AiOutlineComment className="h-6 w-6" />
-          <FavoritesCount id={id} />
-          <Heart postId={data ? data.id : ""} />
+
+          <ToggleFavoriteButton postId={id} isFavorite={data?.is_favorite} />
         </div>
       </div>
 

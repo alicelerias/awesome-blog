@@ -16,6 +16,7 @@ export type Post = {
   img: string;
   author: User;
   author_id: string;
+  is_favorite: boolean;
   created_at: string;
 };
 
