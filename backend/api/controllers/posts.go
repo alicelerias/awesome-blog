@@ -111,7 +111,7 @@ func (server *Server) GetBlogPosts(ctx *gin.Context) {
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"feed":        feed,
+			"feed":        fromModelPosts,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
@@ -152,7 +152,7 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"feed":        feed,
+			"feed":        fromModelPosts,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
