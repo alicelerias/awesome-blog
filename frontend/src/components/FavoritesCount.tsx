@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { getFavoritesCount } from "../api/queries";
 
 type props = {

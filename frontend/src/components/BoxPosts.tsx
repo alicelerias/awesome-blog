@@ -3,7 +3,7 @@ import { AiOutlineComment } from "react-icons/ai";
 import { Posts } from "../types";
 
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
-import { CommentsCount } from "./CommentsCount";
+import { useEffect, useState } from "react";
 
 type props = {
   isLoading: boolean;
@@ -53,7 +53,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                     </h1>
                     <p className="text-sm italic">"{post?.content}"</p>
                     <div className="flex flex-row gap-two justify-end p-one">
-                      <CommentsCount id={post.id} />
+                      <span> {post.comments_count} </span>
                       <AiOutlineComment
                         onClick={() => {
                           navigate(`/${url}/detail?id=${post.id}`);

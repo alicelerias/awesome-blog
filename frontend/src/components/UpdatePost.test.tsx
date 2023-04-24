@@ -22,6 +22,8 @@ describe("tests for post detail componet", () => {
     author: user,
     author_id: "jsjaj",
     is_favorite: false,
+    favorites_count: 0,
+    comments_count: 0,
     created_at: "hasahs",
   };
 

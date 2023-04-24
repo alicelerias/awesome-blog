@@ -22,6 +22,8 @@ describe("test for posts component", () => {
         img: "hahash",
         author: user,
         author_id: "jsjaj",
+        comments_count: 0,
+        favorites_count: 0,
         is_favorite: false,
         created_at: "hasahs",
       },
