@@ -1,10 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/alicelerias/blog-golang/models"
+	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -60,6 +64,7 @@ func (server *Server) GetFavoritesByPost(ctx *gin.Context) {
 
 func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
+	limit := 10
 	if !exists {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
 		return
@@ -74,6 +79,23 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"feed": &posts})
+	fromModelPosts := []*types.Post{}
 
+	for _, item := range *posts {
+		newPost := server.postFromModel(ctx, &item, &item.Author, uid.(string))
+		fromModelPosts = append(fromModelPosts, newPost)
+	}
+	if len(*posts) == limit {
+		nextCursor := fromModelPosts[len(fromModelPosts)-1].CreatedAt
+
+		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"feed":        fromModelPosts,
+			"next_cursor": nextCursor.Format(time.RFC3339),
+			"next_link":   nextLink,
+		})
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"feed": fromModelPosts})
+	}
 }
