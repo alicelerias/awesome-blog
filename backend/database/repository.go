@@ -17,7 +17,7 @@ type Repository interface {
 	DeleteUser(context.Context, string) error
 
 	CreatePost(context.Context, *models.Post) error
-	GetPosts(context.Context, *models.Post) (*[]models.Post, error)
+	GetPosts(context.Context, string, *models.Post) ([]models.Post, error)
 	GetPostsByUser(ctx context.Context, post *models.Post, cursor string, uid string) ([]models.Post, error)
 	GetPost(context.Context, string) (*models.Post, error)
 	UpdatePost(context.Context, interface{}, string) (*models.Post, error)

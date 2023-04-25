@@ -24,21 +24,39 @@ func (s *PostgresDBRepository) CreatePost(ctx context.Context, post *models.Post
 	return nil
 }
 
-func (s *PostgresDBRepository) GetPosts(ctx context.Context, post *models.Post) (*[]models.Post, error) {
+func (s *PostgresDBRepository) GetPosts(ctx context.Context, cursor string, post *models.Post) ([]models.Post, error) {
 	posts := []models.Post{}
-	err := s.db.Debug().Model(post).Order("posts.created_at DESC").Limit(10).Find(&posts).Error
-	if err != nil {
-		return &[]models.Post{}, err
+	if cursor != "" {
+		err := s.db.Debug().
+			Where("posts.created_at > ?", cursor).
+			Model(post).
+			Order("posts.created_at DESC").
+			Limit(10).
+			Find(&posts).
+			Error
+		if err != nil {
+			return []models.Post{}, err
+		}
+	} else {
+		err := s.db.Debug().
+			Model(post).
+			Order("posts.created_at DESC").
+			Limit(10).
+			Find(&posts).
+			Error
+		if err != nil {
+			return []models.Post{}, err
+		}
 	}
 	if len(posts) > 0 {
 		for i, _ := range posts {
 			err := s.db.Debug().Model(&types.User{}).Where("id = ?", posts[i].AuthorID).Take(&posts[i].Author).Error
 			if err != nil {
-				return &[]models.Post{}, err
+				return []models.Post{}, err
 			}
 		}
 	}
-	return &posts, err
+	return posts, nil
 }
 
 func (s *PostgresDBRepository) GetPost(ctx context.Context, id string) (post *models.Post, err error) {

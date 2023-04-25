@@ -71,7 +71,9 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 
 func (server *Server) GetPosts(ctx *gin.Context) {
 	post := models.Post{}
-	posts, err := server.repository.GetPosts(ctx, &post)
+	limit := 10
+	cursor := ctx.Query("cursor")
+	posts, err := server.repository.GetPosts(ctx, cursor, &post)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -84,12 +86,25 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 		return
 	}
 
-	for _, item := range *posts {
+	for _, item := range posts {
 		newPost := server.postFromModel(ctx, &item, &item.Author, uid.(string))
 		fromModelPosts = append(fromModelPosts, newPost)
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"feed": fromModelPosts})
+	if len(posts) == limit {
+		nextCursor := posts[len(posts)-1].CreatedAt
+
+		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"feed":        fromModelPosts,
+			"next_cursor": nextCursor.Format(time.RFC3339),
+			"next_link":   nextLink,
+		})
+	} else {
+
+		ctx.JSON(http.StatusOK, gin.H{"feed": fromModelPosts})
+	}
 }
 func (server *Server) GetBlogPosts(ctx *gin.Context) {
 	post := *&models.Post{}

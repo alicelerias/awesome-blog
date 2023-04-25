@@ -347,8 +347,8 @@ func (s *MockRepository) CreatePost(context.Context, *models.Post) error {
 	return nil
 }
 
-func (s *MockRepository) GetPosts(context.Context, *models.Post) (*[]models.Post, error) {
-	return &[]models.Post{
+func (s *MockRepository) GetPosts(context.Context, string, *models.Post) ([]models.Post, error) {
+	return []models.Post{
 		{
 			Title:    "title",
 			Content:  "content",
