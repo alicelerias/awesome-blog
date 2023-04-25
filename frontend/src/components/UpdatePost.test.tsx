@@ -4,6 +4,7 @@ import * as queries from "../api/queries";
 import { TestsContext } from "./testComonents/Context";
 import { PostDetail } from "./PostDetail";
 import { UpdatePost } from "./UpdatePost";
+import { time } from "console";
 
 describe("tests for post detail componet", () => {
   const user: User = {
@@ -24,7 +25,7 @@ describe("tests for post detail componet", () => {
     is_favorite: false,
     favorites_count: 0,
     comments_count: 0,
-    created_at: "hasahs",
+    created_at: "jsasj",
   };
 
   const fakeGet = jest.spyOn(queries, "getPost").mockImplementation(() => {

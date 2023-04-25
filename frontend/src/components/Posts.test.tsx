@@ -25,7 +25,7 @@ describe("test for posts component", () => {
         comments_count: 0,
         favorites_count: 0,
         is_favorite: false,
-        created_at: "hasahs",
+        created_at: "SS",
       },
     ],
   };

@@ -52,7 +52,9 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
         <span className="bg-transparent text-sm italic">"{data?.content}"</span>
 
         <span className="text-blue text-sm">{data?.author.username}</span>
-        <span className="bg-transparent text-sm">{data?.created_at}</span>
+        <span className="bg-transparent text-sm">
+          Created at: {data?.created_at.replace(/-/g, "/").replace(/T/g, " ")}
+        </span>
         <div className="flex flex-row justify-end gap-one">
           <span>{data?.comments_count}</span>
           <AiOutlineComment className="h-6 w-6" />

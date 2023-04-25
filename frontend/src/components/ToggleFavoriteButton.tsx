@@ -2,8 +2,6 @@ import React, { useState, useEffect, PropsWithChildren } from "react";
 
 import { favorite, unfavorite } from "../api/mutations";
 import { AiFillHeart } from "react-icons/ai";
-import { FavoritesCount } from "./FavoritesCount";
-import { getPost } from "../api/queries";
 
 type props = {
   postId: string | null;
@@ -28,12 +26,12 @@ export const ToggleFavoriteButton: React.FC<PropsWithChildren<props>> = ({
     if (isFavoriteConst) {
       unfavorite(postId).then(() => {
         setIsFavoriteConst(false);
-        setCount(count ? count - 1 : count);
+        setCount(count ? count - 1 : 0);
       });
     } else {
       favorite(postId).then(() => {
         setIsFavoriteConst(true);
-        setCount(count ? count + 1 : count);
+        setCount(count ? count + 1 : 1);
       });
     }
   };
