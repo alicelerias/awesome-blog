@@ -2,9 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { Post, User } from "../types";
 import * as queries from "../api/queries";
 import { TestsContext } from "./testComonents/Context";
-import { PostDetail } from "./PostDetail";
 import { UpdatePost } from "./UpdatePost";
-import { time } from "console";
 
 describe("tests for post detail componet", () => {
   const user: User = {

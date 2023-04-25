@@ -3,19 +3,18 @@ import { Routes, Route } from "react-router-dom";
 import { UsersComponent } from "./Users";
 import { Profile } from "./Profile";
 import { FeedComponent } from "./Feed";
-import { PostDetail } from "./PostDetail";
 import { CreatePost } from "./CreatePost";
 import { Layout } from "./Layout";
 import { UpdatePost } from "./UpdatePost";
 import { LoginPage } from "./LoginPage";
 import { AllPostsComponent } from "./AllPosts";
 import { PostsByUserComponent } from "./PostsByUser";
-import { UserPostDetail } from "./UserPostDetail";
 import { UserDetail } from "./UserDetail";
 import { FavoritesPosts } from "./FavoritesPosts";
 import { useQuery } from "react-query";
 import { getCurrentUser } from "../api/queries";
 import { CurrentUserContext } from "../context/CurrentUserContext";
+import { PostDetailBox } from "./PostDetailBox";
 
 export const Main: React.FC = () => {
   const { data } = useQuery("getCurrentUser", getCurrentUser);
@@ -91,17 +90,7 @@ export const Main: React.FC = () => {
             path="/posts/detail"
             element={
               <Layout title="post detail">
-                <PostDetail />
-                <UsersComponent />
-              </Layout>
-            }
-          />
-
-          <Route
-            path="/posts/you/detail"
-            element={
-              <Layout title="post detail">
-                <UserPostDetail />
+                <PostDetailBox />
                 <UsersComponent />
               </Layout>
             }

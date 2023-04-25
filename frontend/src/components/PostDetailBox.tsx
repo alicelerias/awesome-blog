@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getComments, getPost } from "../api/queries";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BoxLayout } from "./BoxLayout";
 import { Comments } from "./Comments";
 import { CreateComment } from "./CreateComment";
@@ -10,6 +10,8 @@ import { Comment } from "../types";
 import { FieldValues, useForm } from "react-hook-form";
 import { AiOutlineComment } from "react-icons/ai";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
+import { UpdateButton } from "./UpdateButton";
+import { CurrentUserContext } from "../context/CurrentUserContext";
 
 type props = {};
 
@@ -21,6 +23,8 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
   const { data } = useQuery("getPost", () => getPost(id));
   const { refetch } = useQuery("getComments", () => getComments(id));
   const navigate = useNavigate();
+
+  const currentUserContext = useContext(CurrentUserContext);
 
   const { mutate } = useMutation(
     (comment: Comment) => createComment(id, comment),
@@ -38,8 +42,11 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
 
   return (
     <BoxLayout>
-      {children}
-
+      {currentUserContext?.id === data?.author_id ? (
+        <UpdateButton id={id} />
+      ) : (
+        ""
+      )}
       <div className="flex flex-col gap-one p-two  border-b border-b-white">
         <span className="bg-transparent text-3xl text-blue ">
           {data?.title}
