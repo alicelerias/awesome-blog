@@ -1,7 +1,6 @@
 import configs from "./../configs/configs";
 import { Credential, Post, User, Comment } from "../types";
 import axios from "./axios";
-import { config } from "process";
 
 export const login = async (input: Credential) => {
   const url = new URL(configs.API_URL + "/login");

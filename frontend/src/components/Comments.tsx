@@ -2,10 +2,14 @@ import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import { getComments } from "../api/queries";
 import { BoxLayout } from "./BoxLayout";
+import { CurrentUserContext } from "../context/CurrentUserContext";
+import { useContext } from "react";
+import { AiFillHeart } from "react-icons/ai";
 
 export const Comments: React.FC<{}> = () => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
+  const currentUser = useContext(CurrentUserContext);
 
   const { data, isLoading } = useQuery("getComments", () => getComments(id));
   return (
@@ -16,6 +20,11 @@ export const Comments: React.FC<{}> = () => {
           ? "is Loading"
           : data?.comments.map((comment) => (
               <div className="flex flex-row p-two gap-two opacity-3 w-full shadow-md">
+                {currentUser?.id === comment.author.id ? (
+                  <button>Delete</button>
+                ) : (
+                  <AiFillHeart />
+                )}
                 <div className="flex flex-col">
                   <img
                     className="w-10 aspect-square"
