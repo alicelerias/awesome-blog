@@ -5,6 +5,8 @@ import { BoxLayout } from "./BoxLayout";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 import { useContext } from "react";
 import { AiFillHeart } from "react-icons/ai";
+import { BsFillTrash3Fill } from "react-icons/bs";
+import { DeleteCommentButton } from "./DeleteCommentButton";
 
 export const Comments: React.FC<{}> = () => {
   const [searchParam] = useSearchParams();
@@ -19,24 +21,29 @@ export const Comments: React.FC<{}> = () => {
         {isLoading
           ? "is Loading"
           : data?.comments.map((comment) => (
-              <div className="flex flex-row p-two gap-two opacity-3 w-full shadow-md">
-                {currentUser?.id === comment.author.id ? (
-                  <button>Delete</button>
-                ) : (
-                  <AiFillHeart />
-                )}
-                <div className="flex flex-col">
-                  <img
-                    className="w-10 aspect-square"
-                    src={
-                      comment?.author.avatar ||
-                      "https://ionicframework.com/docs/img/demos/avatar.svg"
-                    }
-                    alt=""
-                  />
-                  <p className="text-sm">@{comment.author.username}</p>
+              <div className="flex flex-col p-two gap-two opacity-3 w-full shadow-md">
+                <div className="flex justify-end w-full">
+                  {currentUser?.id === comment.author.id ? (
+                    <DeleteCommentButton commentId={comment.id} postId={id} />
+                  ) : (
+                    ""
+                  )}
                 </div>
-                <p className="text-sm italic p-one">{comment.content}</p>
+
+                <div className="flex flex-row gap-two">
+                  <div className="flex flex-col">
+                    <img
+                      className="w-10 aspect-square"
+                      src={
+                        comment?.author.avatar ||
+                        "https://ionicframework.com/docs/img/demos/avatar.svg"
+                      }
+                      alt=""
+                    />
+                    <p className="text-sm">@{comment.author.username}</p>
+                  </div>
+                  <p className="text-sm italic p-one">{comment.content}</p>
+                </div>
               </div>
             ))}
       </div>

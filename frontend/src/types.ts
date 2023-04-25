@@ -51,6 +51,7 @@ export type Favorite = {
 export type Favorites = ResultList<"feed", Favorite>;
 
 export type Comment = {
+  id: string;
   postId: string;
   authorId: string;
   author: User;
