@@ -1,6 +1,7 @@
 import configs from "./../configs/configs";
 import { Credential, Post, User, Comment } from "../types";
 import axios from "./axios";
+import { config } from "process";
 
 export const login = async (input: Credential) => {
   const url = new URL(configs.API_URL + "/login");
@@ -34,6 +35,11 @@ export const unfollow = async (id: string | null) => {
 export const createComment = async (id: string | null, input: Comment) => {
   const url = new URL(configs.API_URL + `/comment/${id}`);
   await axios.post(url.toString(), input);
+};
+
+export const deleteComment = async (id: string | null) => {
+  const url = new URL(configs.API_URL + `/comment/${id}`);
+  await axios.delete(url.toString());
 };
 
 export const updateCurrentUser = async (input: User) => {
