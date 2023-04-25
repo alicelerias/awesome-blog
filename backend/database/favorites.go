@@ -42,19 +42,34 @@ func (s *PostgresDBRepository) GetFavoritesByPost(ctx context.Context, postId ui
 	return &favorites, nil
 }
 
-func (s *PostgresDBRepository) GetFavoritesPostsByUser(ctx context.Context, userId uint32) (*[]models.Post, error) {
+func (s *PostgresDBRepository) GetFavoritesPostsByUser(ctx context.Context, cursor string, userId uint32) ([]models.Post, error) {
 	posts := []models.Post{}
-	err := s.db.Debug().
-		Limit(100).
-		Order("favorites.created_at desc").
-		Joins("JOIN favorites ON favorites.post_id = posts.id").
-		Where("favorites.user_id = ?", userId).
-		Find(&posts).
-		Error
+	if cursor != "" {
+		err := s.db.Debug().
+			Where("posts.created_at > ?", cursor).
+			Limit(10).
+			Order("favorites.created_at desc").
+			Joins("JOIN favorites ON favorites.post_id = posts.id").
+			Where("favorites.user_id = ?", userId).
+			Find(&posts).
+			Error
 
-	if err != nil {
-		return &[]models.Post{}, err
+		if err != nil {
+			return []models.Post{}, err
+		}
+	} else {
+		err := s.db.Debug().
+			Limit(10).
+			Order("favorites.created_at desc").
+			Joins("JOIN favorites ON favorites.post_id = posts.id").
+			Where("favorites.user_id = ?", userId).
+			Find(&posts).
+			Error
+
+		if err != nil {
+			return []models.Post{}, err
+		}
 	}
 
-	return &posts, nil
+	return posts, nil
 }

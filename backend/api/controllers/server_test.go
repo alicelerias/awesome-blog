@@ -320,8 +320,8 @@ func (s *MockRepository) GetFavorite(ctx context.Context, postId string, userId 
 	return true
 }
 
-func (s *MockRepository) GetFavoritesPostsByUser(ctx context.Context, userId uint32) (*[]models.Post, error) {
-	return &[]models.Post{
+func (s *MockRepository) GetFavoritesPostsByUser(ctx context.Context, cursor string, userId uint32) ([]models.Post, error) {
+	return []models.Post{
 		{
 			Title:    "title",
 			Content:  "content",

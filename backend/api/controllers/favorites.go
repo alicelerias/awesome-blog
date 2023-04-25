@@ -64,6 +64,7 @@ func (server *Server) GetFavoritesByPost(ctx *gin.Context) {
 
 func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
+	cursor := ctx.Query("cursor")
 	limit := 10
 	if !exists {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
@@ -72,7 +73,7 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 
 	uidToInt, _ := parseInt(uid.(string))
 
-	posts, err := server.repository.GetFavoritesPostsByUser(ctx, uint32(uidToInt))
+	posts, err := server.repository.GetFavoritesPostsByUser(ctx, cursor, uint32(uidToInt))
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -81,11 +82,11 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 
 	fromModelPosts := []*types.Post{}
 
-	for _, item := range *posts {
+	for _, item := range posts {
 		newPost := server.postFromModel(ctx, &item, &item.Author, uid.(string))
 		fromModelPosts = append(fromModelPosts, newPost)
 	}
-	if len(*posts) == limit {
+	if len(posts) == limit {
 		nextCursor := fromModelPosts[len(fromModelPosts)-1].CreatedAt
 
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))

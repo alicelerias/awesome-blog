@@ -27,7 +27,7 @@ type Repository interface {
 	Unfavorite(ctx context.Context, postId uint32, userId uint32) error
 	GetFavorite(ctx context.Context, postId string, userId string) bool
 	GetFavoritesByPost(ctx context.Context, postId uint32) (*[]models.Favorite, error)
-	GetFavoritesPostsByUser(ctx context.Context, userId uint32) (*[]models.Post, error)
+	GetFavoritesPostsByUser(ctx context.Context, cursor string, userId uint32) ([]models.Post, error)
 
 	CreateComment(ctx context.Context, comment *models.Comment) error
 	DeleteComment(ctx context.Context, id uint32, authorId uint32) error
