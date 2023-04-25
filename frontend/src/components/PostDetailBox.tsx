@@ -57,7 +57,11 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
           <span>{data?.comments_count}</span>
           <AiOutlineComment className="h-6 w-6" />
 
-          <ToggleFavoriteButton postId={id} isFavorite={data?.is_favorite} />
+          <ToggleFavoriteButton
+            postId={id}
+            isFavorite={data?.is_favorite}
+            favoritesCount={data?.favorites_count}
+          />
         </div>
       </div>
 

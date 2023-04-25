@@ -63,6 +63,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                       <ToggleFavoriteButton
                         postId={post.id}
                         isFavorite={post.is_favorite}
+                        favoritesCount={post.favorites_count}
                       />
                     </div>
                   </div>

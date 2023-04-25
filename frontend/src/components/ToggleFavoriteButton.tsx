@@ -8,21 +8,17 @@ import { getPost } from "../api/queries";
 type props = {
   postId: string | null;
   isFavorite: boolean | undefined;
+  favoritesCount: number | undefined;
 };
 
 export const ToggleFavoriteButton: React.FC<PropsWithChildren<props>> = ({
   postId,
   isFavorite,
+  favoritesCount,
 }) => {
   const [isFavoriteConst, setIsFavoriteConst] = useState(false);
 
-  // const [favoritesCount, setFavoritesCount] = useState(0)
-
-  // useEffect(() => {
-  //   getPost(postId).then((response) => {
-  //     setFavoritesCount(response.favorites_count)
-  //   })
-  // }, [postId, isFavorite])
+  const [count, setCount] = useState(favoritesCount);
 
   useEffect(() => {
     isFavorite ? setIsFavoriteConst(true) : setIsFavoriteConst(false);
@@ -32,17 +28,19 @@ export const ToggleFavoriteButton: React.FC<PropsWithChildren<props>> = ({
     if (isFavoriteConst) {
       unfavorite(postId).then(() => {
         setIsFavoriteConst(false);
+        setCount(count ? count - 1 : count);
       });
     } else {
       favorite(postId).then(() => {
         setIsFavoriteConst(true);
+        setCount(count ? count + 1 : count);
       });
     }
   };
 
   return (
     <>
-      <FavoritesCount id={postId} isFavorite={isFavoriteConst} />
+      <span className="text-sm">{count}</span>
       <AiFillHeart
         className={
           isFavoriteConst
