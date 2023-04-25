@@ -11,7 +11,7 @@ export const PostsByUserComponent: React.FC<{}> = () => {
     <BoxPosts
       isLoading={isLoading}
       data={data}
-      url={"posts/you"}
+      url={"posts"}
       children={<MenuPosts />}
     />
   );
