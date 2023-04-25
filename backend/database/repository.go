@@ -31,7 +31,7 @@ type Repository interface {
 
 	CreateComment(ctx context.Context, comment *models.Comment) error
 	DeleteComment(ctx context.Context, id uint32, authorId uint32) error
-	GetPostComments(ctx context.Context, postId uint32) (*[]models.Comment, error)
+	GetPostComments(ctx context.Context, cursor string, postId uint32) ([]models.Comment, error)
 
 	Follow(context.Context, *models.Following) error
 	GetFollows(context.Context, *models.Following) (*[]models.Following, error)

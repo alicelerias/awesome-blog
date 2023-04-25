@@ -384,8 +384,8 @@ func (s *MockRepository) DeleteComment(ctx context.Context, id uint32, authorId 
 	return nil
 }
 
-func (s *MockRepository) GetPostComments(ctx context.Context, postId uint32) (*[]models.Comment, error) {
-	return &[]models.Comment{
+func (s *MockRepository) GetPostComments(ctx context.Context, cursor string, postId uint32) ([]models.Comment, error) {
+	return []models.Comment{
 		{
 			Content: "comment",
 		},

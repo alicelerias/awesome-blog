@@ -22,8 +22,9 @@ func NewUser(user *models.User) *types.User {
 
 func (server *Server) postFromModel(ctx *gin.Context, post *models.Post, user *models.User, userId string) *types.Post {
 	postId := strconv.Itoa(int(post.ID))
+	cursor := ctx.Query("cursor")
 
-	commentsCount, err := server.repository.GetPostComments(ctx, uint32(post.ID))
+	commentsCount, err := server.repository.GetPostComments(ctx, cursor, uint32(post.ID))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -40,7 +41,7 @@ func (server *Server) postFromModel(ctx *gin.Context, post *models.Post, user *m
 		Author:         *NewUser(user),
 		AuthorID:       post.AuthorID,
 		IsFavorite:     server.repository.GetFavorite(ctx, postId, userId),
-		CommentsCount:  len(*commentsCount),
+		CommentsCount:  len(commentsCount),
 		FavoritesCount: len(*favoritesCount),
 		CreatedAt:      post.CreatedAt,
 		UpdatedAt:      post.UpdatedAt,
