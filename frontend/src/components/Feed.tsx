@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
-import { getPosts } from "../api/queries";
+import { getFeed } from "../api/queries";
 import { BoxPosts } from "./BoxPosts";
 import { MenuPosts } from "./MenuPosts";
 
-export const PostsComponent: React.FC<{}> = () => {
-  const { isLoading, data } = useQuery("getPosts", getPosts);
+export const FeedComponent: React.FC<{}> = () => {
+  const { isLoading, data } = useQuery("getPosts", getFeed);
 
   return (
     <BoxPosts

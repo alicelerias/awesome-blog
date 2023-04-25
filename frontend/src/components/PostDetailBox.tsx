@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getComments, getPost } from "../api/queries";
 import React, { useEffect, useState } from "react";
 import { BoxLayout } from "./BoxLayout";
@@ -20,7 +20,7 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
   const id = searchParam.get("id");
   const { data } = useQuery("getPost", () => getPost(id));
   const { refetch } = useQuery("getComments", () => getComments(id));
-  const { reset } = useForm();
+  const navigate = useNavigate();
 
   const { mutate } = useMutation(
     (comment: Comment) => createComment(id, comment),
@@ -51,7 +51,14 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
 
         <span className="bg-transparent text-sm italic">"{data?.content}"</span>
 
-        <span className="text-blue text-sm">{data?.author.username}</span>
+        <span
+          className="text-blue text-sm cursor-pointer"
+          onClick={() => {
+            navigate(`/users/detail?id=${data?.author_id}`);
+          }}
+        >
+          {data?.author.username}
+        </span>
         <span className="bg-transparent text-sm">
           Created at: {data?.created_at.replace(/-/g, "/").replace(/T/g, " ")}
         </span>
