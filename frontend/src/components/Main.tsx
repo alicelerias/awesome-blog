@@ -25,8 +25,6 @@ export const Main: React.FC = () => {
         className="flex flex-row sm:mx-three"
       >
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-
           <Route
             path="/"
             element={
