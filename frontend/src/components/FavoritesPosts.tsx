@@ -9,7 +9,6 @@ export const FavoritesPosts: React.FC<{}> = () => {
     <BoxPosts
       isLoading={isLoading}
       data={data}
-      url={"posts"}
       children={
         <div className="bg-box-color p-one flex justify-center text-2xl">
           Your favorites posts

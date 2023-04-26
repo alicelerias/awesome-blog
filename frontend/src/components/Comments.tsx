@@ -1,16 +1,18 @@
 import { useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
 import { getComments } from "../api/queries";
 import { BoxLayout } from "./BoxLayout";
-import { CurrentUserContext } from "../context/CurrentUserContext";
-import { useContext } from "react";
+import { PropsWithChildren } from "react";
 import { DeleteCommentButton } from "./DeleteCommentButton";
+import { User } from "../types";
 
-export const Comments: React.FC<{}> = () => {
-  const [searchParam] = useSearchParams();
-  const id = searchParam.get("id");
-  const currentUser = useContext(CurrentUserContext);
-
+type props = {
+  id: string | null;
+  currentUser: User | undefined;
+};
+export const Comments: React.FC<PropsWithChildren<props>> = ({
+  id,
+  currentUser,
+}) => {
   const { data, isLoading } = useQuery("getComments", () => getComments(id));
   return (
     <BoxLayout>

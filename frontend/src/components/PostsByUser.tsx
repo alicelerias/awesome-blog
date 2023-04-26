@@ -8,11 +8,6 @@ export const PostsByUserComponent: React.FC<{}> = () => {
   const { isLoading, data } = useQuery("getPostsByUser", getPostsByUser);
 
   return (
-    <BoxPosts
-      isLoading={isLoading}
-      data={data}
-      url={"posts"}
-      children={<MenuPosts />}
-    />
+    <BoxPosts isLoading={isLoading} data={data} children={<MenuPosts />} />
   );
 };

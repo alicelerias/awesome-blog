@@ -82,7 +82,7 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
       </div>
 
       <CreateComment onSubmit={onSubmit} />
-      <Comments />
+      <Comments id={id} currentUser={currentUserContext} />
     </BoxLayout>
   );
 };

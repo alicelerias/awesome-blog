@@ -3,18 +3,15 @@ import { AiOutlineComment } from "react-icons/ai";
 import { Posts } from "../types";
 
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
-import { useEffect, useState } from "react";
 
 type props = {
   isLoading: boolean;
   data: Posts | undefined;
-  url: string;
 };
 
 export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
   isLoading,
   data,
-  url,
   children,
 }) => {
   const navigate = useNavigate();
@@ -45,7 +42,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                     <img className="w-20" src={post?.img} alt="" />
                     <h1
                       onClick={() => {
-                        navigate(`/${url}/detail?id=${post.id}`);
+                        navigate(`/posts/detail?id=${post.id}`);
                       }}
                       className="text-xl text-bold cursor-pointer"
                     >
@@ -56,7 +53,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                       <span> {post.comments_count} </span>
                       <AiOutlineComment
                         onClick={() => {
-                          navigate(`/${url}/detail?id=${post.id}`);
+                          navigate(`/$posts/detail?id=${post.id}`);
                         }}
                         className="h-6 w-6 text-blue cursor-pointer"
                       />

@@ -1,9 +1,5 @@
 import React from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { QueryFunction, useMutation, UseQueryResult } from "react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { createComment } from "../api/mutations";
-import { Comment } from "../types";
 import { InputButton } from "./InputButton";
 import { InputForm } from "./InputForm";
 

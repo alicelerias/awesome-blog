@@ -8,11 +8,6 @@ export const AllPostsComponent: React.FC<{}> = () => {
   const { isLoading, data } = useQuery("getAllPosts", getAllPosts);
 
   return (
-    <BoxPosts
-      isLoading={isLoading}
-      data={data}
-      url={"posts"}
-      children={<MenuPosts />}
-    />
+    <BoxPosts isLoading={isLoading} data={data} children={<MenuPosts />} />
   );
 };
