@@ -1,6 +1,5 @@
 import React from "react";
 import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
-import { useAlert } from "./Alert";
 
 type props = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -11,8 +10,6 @@ type props = React.DetailedHTMLProps<
 };
 
 export const InputForm: React.FC<props> = ({ error, controller, ...rest }) => {
-  const [showAlert, Alert] = useAlert();
-
   return (
     <div className="flex flex-col gap-one">
       <textarea

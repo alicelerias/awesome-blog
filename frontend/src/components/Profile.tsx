@@ -56,6 +56,13 @@ export const Profile: React.FC<{}> = () => {
               }
               alt="avatar"
             />
+            {/* <input
+              type="file"
+              placeholder="New avatar"
+              {...register("avatar", {
+                required: false,
+              })} 
+            /> */}
           </div>
           <div className="flex flex-col gap-two w-4/5">
             <span>{data?.username}</span>

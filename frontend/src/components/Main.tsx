@@ -24,6 +24,8 @@ export const Main: React.FC = () => {
         data-testid={"main-component-test-id"}
         className="flex flex-row sm:mx-three"
       >
+        {/* <Route path="/login" element={<LoginPage />} /> */}
+
         <Routes>
           <Route
             path="/"

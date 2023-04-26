@@ -1,30 +1,22 @@
 import React, { PropsWithChildren, ReactNode, useState } from "react";
 
-import { useMutation } from "react-query";
-import { useNavigate } from "react-router-dom";
-import { logout } from "../api/mutations";
-import { IconType } from "react-icons";
-
 type props = {
-  name: ReactNode | string | undefined
-}
+  name: ReactNode | string | undefined;
+};
 
-export const Sidebar: React.FC<PropsWithChildren<props>> = ({children, name}) => {
+export const Sidebar: React.FC<PropsWithChildren<props>> = ({
+  children,
+  name,
+}) => {
   const [isOpen, setOpen] = useState(false);
 
   const handleDropDown = () => {
     setOpen(!isOpen);
   };
 
- 
-
   return (
     <div className="w-6">
-      <button
-        onClick={handleDropDown}
-      >
-        {name}
-      </button>
+      <button onClick={handleDropDown}>{name}</button>
 
       <div
         id="dropdown"
@@ -33,14 +25,9 @@ export const Sidebar: React.FC<PropsWithChildren<props>> = ({children, name}) =>
         }`}
       >
         <ul className=" z-10 w-32 bg-white rounded divide-y divide-gray-100 shadow ">
-          <li>
-         {children}
-          </li>
+          <li>{children}</li>
         </ul>
       </div>
     </div>
   );
 };
-
-
-
