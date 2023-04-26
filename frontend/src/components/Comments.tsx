@@ -4,8 +4,6 @@ import { getComments } from "../api/queries";
 import { BoxLayout } from "./BoxLayout";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 import { useContext } from "react";
-import { AiFillHeart } from "react-icons/ai";
-import { BsFillTrash3Fill } from "react-icons/bs";
 import { DeleteCommentButton } from "./DeleteCommentButton";
 
 export const Comments: React.FC<{}> = () => {

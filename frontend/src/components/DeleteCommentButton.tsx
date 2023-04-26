@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "react-query";
 import { deleteComment } from "../api/mutations";
 import { getComments, getPost } from "../api/queries";
 import { useNavigate } from "react-router-dom";
+import { Sidebar } from "./Sidebar";
 
 type props = {
   commentId: string;
@@ -28,8 +29,16 @@ export const DeleteCommentButton: React.FC<PropsWithChildren<props>> = ({
   );
 
   return (
-    <button onClick={() => mutate()}>
-      <BsFillTrash3Fill />
-    </button>
+    <Sidebar
+      name={"..."}
+      children={
+        <p
+          onClick={() => mutate()}
+          className="text-black text-sm block py-2 px-4 hover:text-blue cursor-pointer"
+        >
+          Delete
+        </p>
+      }
+    />
   );
 };
