@@ -35,7 +35,7 @@ export const UserDetail: React.FC<{}> = () => {
 
               <ToggleFollowButton
                 isFollowing={data?.is_following}
-                userId={id}
+                userId={id ? id : ""}
               />
               <span className="flex justify-center sm:justify-start text-title1 text-blue">
                 {data?.username}{" "}
@@ -45,7 +45,7 @@ export const UserDetail: React.FC<{}> = () => {
           </>
         )}
 
-        <BlogsPost />
+        <BlogsPost id={id} />
       </div>
     </BoxLayout>
   );

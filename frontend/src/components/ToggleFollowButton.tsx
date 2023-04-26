@@ -3,7 +3,7 @@ import React, { useState, useEffect, PropsWithChildren } from "react";
 import { Follow, unfollow } from "../api/mutations";
 
 type props = {
-  userId: string | null;
+  userId: string | undefined;
   isFollowing: boolean | undefined;
 };
 

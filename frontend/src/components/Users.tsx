@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { ToggleFollowButton } from "./ToggleFollowButton";
 export const UsersComponent: React.FC<{}> = () => {
   const { data, isLoading } = useQuery("users", getUsers);
-  const [id, setId] = useState("");
   const navigate = useNavigate();
 
   return (
@@ -32,7 +31,6 @@ export const UsersComponent: React.FC<{}> = () => {
               <div
                 className="w-full text-smm cursor-pointer hover:text-blue"
                 onClick={() => {
-                  setId(user.id);
                   navigate(`/users/detail?id=${user.id}`);
                 }}
               >

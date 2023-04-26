@@ -1,12 +1,10 @@
-import internal from "stream";
-
 export type User = {
-  id: string;
-  username: string;
-  bio: string;
-  avatar: string;
-  email: string;
-  is_following: boolean;
+  id?: string;
+  username?: string;
+  bio?: string;
+  avatar?: string;
+  email?: string;
+  is_following?: boolean;
 };
 
 export type Users = ResultList<"users", User>;
@@ -36,6 +34,8 @@ export type ResultList<K extends string, T> = {
 export type PostCreate = Pick<Post, "title" | "content" | "img">;
 
 export type PostUpdate = Partial<PostCreate>;
+
+export type UserUpdate = Partial<User>;
 
 export type Posts = ResultList<"feed", Post>;
 

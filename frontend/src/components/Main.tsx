@@ -6,7 +6,6 @@ import { FeedComponent } from "./Feed";
 import { CreatePost } from "./CreatePost";
 import { Layout } from "./Layout";
 import { UpdatePost } from "./UpdatePost";
-import { LoginPage } from "./LoginPage";
 import { AllPostsComponent } from "./AllPosts";
 import { PostsByUserComponent } from "./PostsByUser";
 import { UserDetail } from "./UserDetail";
@@ -24,8 +23,6 @@ export const Main: React.FC = () => {
         data-testid={"main-component-test-id"}
         className="flex flex-row sm:mx-three"
       >
-        {/* <Route path="/login" element={<LoginPage />} /> */}
-
         <Routes>
           <Route
             path="/"

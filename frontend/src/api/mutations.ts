@@ -21,12 +21,12 @@ export const unfavorite = async (id: string | null) => {
   await axios.delete(url.toString());
 };
 
-export const Follow = async (id: string | null) => {
+export const Follow = async (id: string | undefined) => {
   const url = new URL(configs.API_URL + `/follow/${id}`);
   await axios.post(url.toString());
 };
 
-export const unfollow = async (id: string | null) => {
+export const unfollow = async (id: string | undefined) => {
   const url = new URL(configs.API_URL + `/follow/${id}`);
   await axios.delete(url.toString());
 };

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../api/queries";
 import { FieldValues, useForm } from "react-hook-form";
 import { InputForm } from "./InputForm";
@@ -9,8 +9,6 @@ import { BoxLayout } from "./BoxLayout";
 import { InputButton } from "./InputButton";
 
 export const Profile: React.FC<{}> = () => {
-  const [searchParam] = useSearchParams();
-  const id = searchParam.get("id");
   const navigate = useNavigate();
 
   const {
@@ -56,13 +54,6 @@ export const Profile: React.FC<{}> = () => {
               }
               alt="avatar"
             />
-            {/* <input
-              type="file"
-              placeholder="New avatar"
-              {...register("avatar", {
-                required: false,
-              })} 
-            /> */}
           </div>
           <div className="flex flex-col gap-two w-4/5">
             <span>{data?.username}</span>
