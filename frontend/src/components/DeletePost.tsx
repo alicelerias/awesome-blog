@@ -1,12 +1,17 @@
 import { useMutation } from "react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { deletePost } from "../api/mutations";
-import { Post } from "../types";
+import { PropsWithChildren } from "react";
 
-export const DeletePost: React.FC<{}> = () => {
-  const [searchParam] = useSearchParams();
-  const navigate = useNavigate();
-  const id = searchParam.get("id");
+type props = {
+  id: string | null;
+  navigate: NavigateFunction;
+};
+
+export const DeletePost: React.FC<PropsWithChildren<props>> = ({
+  id,
+  navigate,
+}) => {
   const { mutate } = useMutation(() => deletePost(id), {
     onSuccess: () => {
       setTimeout(() => {

@@ -1,28 +1,29 @@
 import { useMutation, useQuery } from "react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { NavigateFunction, useSearchParams } from "react-router-dom";
 import { getComments, getPost } from "../api/queries";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { BoxLayout } from "./BoxLayout";
 import { Comments } from "./Comments";
 import { CreateComment } from "./CreateComment";
 import { createComment } from "../api/mutations";
 import { Comment } from "../types";
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { AiOutlineComment } from "react-icons/ai";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import { UpdateButton } from "./UpdateButton";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 
-type props = {};
+type props = {
+  navigate: NavigateFunction;
+};
 
 export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
-  children,
+  navigate,
 }) => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
   const { data } = useQuery("getPost", () => getPost(id));
   const { refetch } = useQuery("getComments", () => getComments(id));
-  const navigate = useNavigate();
 
   const currentUserContext = useContext(CurrentUserContext);
 
@@ -82,7 +83,7 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
       </div>
 
       <CreateComment onSubmit={onSubmit} />
-      <Comments id={id} currentUser={currentUserContext} />
+      <Comments id={id} currentUser={currentUserContext} navigate={navigate} />
     </BoxLayout>
   );
 };

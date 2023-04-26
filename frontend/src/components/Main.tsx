@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { UsersComponent } from "./Users";
 import { Profile } from "./Profile";
 import { FeedComponent } from "./Feed";
@@ -16,6 +16,7 @@ import { CurrentUserContext } from "../context/CurrentUserContext";
 import { PostDetailBox } from "./PostDetailBox";
 
 export const Main: React.FC = () => {
+  const navigate = useNavigate();
   const { data } = useQuery("getCurrentUser", getCurrentUser);
   return (
     <CurrentUserContext.Provider value={data}>
@@ -87,7 +88,7 @@ export const Main: React.FC = () => {
             path="/posts/detail"
             element={
               <Layout title="post detail">
-                <PostDetailBox />
+                <PostDetailBox navigate={navigate} />
                 <UsersComponent />
               </Layout>
             }
@@ -107,7 +108,7 @@ export const Main: React.FC = () => {
             path="/posts/new"
             element={
               <Layout title="update post">
-                <CreatePost />
+                <CreatePost navigate={navigate} />
                 <UsersComponent />
               </Layout>
             }

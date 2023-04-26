@@ -4,14 +4,17 @@ import { BoxLayout } from "./BoxLayout";
 import { PropsWithChildren } from "react";
 import { DeleteCommentButton } from "./DeleteCommentButton";
 import { User } from "../types";
+import { NavigateFunction } from "react-router-dom";
 
 type props = {
   id: string | null;
   currentUser: User | undefined;
+  navigate: NavigateFunction;
 };
 export const Comments: React.FC<PropsWithChildren<props>> = ({
   id,
   currentUser,
+  navigate,
 }) => {
   const { data, isLoading } = useQuery("getComments", () => getComments(id));
   return (
@@ -24,7 +27,10 @@ export const Comments: React.FC<PropsWithChildren<props>> = ({
               <div className="flex flex-col p-two gap-two opacity-3 w-full shadow-md">
                 <div className="flex justify-end w-full">
                   {currentUser?.id === comment.author.id ? (
-                    <DeleteCommentButton commentId={comment.id} postId={id} />
+                    <DeleteCommentButton
+                      commentId={comment.id}
+                      navigate={navigate}
+                    />
                   ) : (
                     ""
                   )}

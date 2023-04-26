@@ -1,14 +1,20 @@
 import { useMutation } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
 import { createPost } from "../api/mutations";
 import { Post } from "../types";
 import { InputForm } from "./InputForm";
 import { BoxLayout } from "./BoxLayout";
 import { InputButton } from "./InputButton";
+import { PropsWithChildren } from "react";
 
-export const CreatePost: React.FC<{}> = () => {
-  const navigate = useNavigate();
+type props = {
+  navigate: NavigateFunction;
+};
+
+export const CreatePost: React.FC<PropsWithChildren<props>> = ({
+  navigate,
+}) => {
   const { mutate } = useMutation(createPost, {
     onSuccess: () => {
       setTimeout(() => {

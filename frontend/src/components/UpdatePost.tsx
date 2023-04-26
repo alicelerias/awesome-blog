@@ -46,7 +46,7 @@ export const UpdatePost: React.FC<{}> = () => {
     <BoxLayout>
       <div className="flex justify-end">
         {" "}
-        <DeletePost />
+        <DeletePost id={id} navigate={navigate} />
       </div>
       <form
         data-testid={"update-post-component-test-id"}

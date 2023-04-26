@@ -1,21 +1,18 @@
 import React, { PropsWithChildren } from "react";
-import { BsFillTrash3Fill } from "react-icons/bs";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { deleteComment } from "../api/mutations";
-import { getComments, getPost } from "../api/queries";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 
 type props = {
   commentId: string;
-  postId: string | null;
+  navigate: NavigateFunction;
 };
 
 export const DeleteCommentButton: React.FC<PropsWithChildren<props>> = ({
   commentId,
-  postId,
+  navigate,
 }) => {
-  const navigate = useNavigate();
   const { mutate } = useMutation(
     "deleteComment",
     () => deleteComment(commentId),
