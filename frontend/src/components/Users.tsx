@@ -1,12 +1,14 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { useState } from "react";
 import { getUsers } from "../api/queries";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { ToggleFollowButton } from "./ToggleFollowButton";
-export const UsersComponent: React.FC<{}> = () => {
+
+type props = {
+  navigate: NavigateFunction;
+};
+export const UsersComponent: React.FC<props> = ({ navigate }) => {
   const { data, isLoading } = useQuery("users", getUsers);
-  const navigate = useNavigate();
 
   return (
     <div

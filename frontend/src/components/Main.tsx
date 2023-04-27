@@ -49,9 +49,8 @@ export const Main: React.FC<props> = ({
           <Route
             path="/"
             element={
-              <Layout navigate={navigate} title="posts">
+              <Layout navigate={navigate} title="posts" usersComponent={true}>
                 <FeedComponent navigate={navigate} />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -59,9 +58,12 @@ export const Main: React.FC<props> = ({
           <Route
             path="/favorites"
             element={
-              <Layout navigate={navigate} title="favorites">
+              <Layout
+                navigate={navigate}
+                title="favorites"
+                usersComponent={true}
+              >
                 <FavoritesPosts navigate={navigate} />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -69,7 +71,11 @@ export const Main: React.FC<props> = ({
           <Route
             path="/users/detail"
             element={
-              <Layout navigate={navigate} title="user detail">
+              <Layout
+                navigate={navigate}
+                title="user detail"
+                usersComponent={false}
+              >
                 <UserDetail navigate={navigate} />
               </Layout>
             }
@@ -78,9 +84,12 @@ export const Main: React.FC<props> = ({
           <Route
             path="/posts/you"
             element={
-              <Layout navigate={navigate} title="your posts">
+              <Layout
+                navigate={navigate}
+                title="your posts"
+                usersComponent={true}
+              >
                 <PostsByUserComponent navigate={navigate} />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -88,9 +97,12 @@ export const Main: React.FC<props> = ({
           <Route
             path="/posts"
             element={
-              <Layout navigate={navigate} title="all posts">
+              <Layout
+                navigate={navigate}
+                title="all posts"
+                usersComponent={true}
+              >
                 <AllPostsComponent navigate={navigate} />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -98,7 +110,11 @@ export const Main: React.FC<props> = ({
           <Route
             path="/profile"
             element={
-              <Layout title="user detail" navigate={navigate}>
+              <Layout
+                title="user detail"
+                navigate={navigate}
+                usersComponent={true}
+              >
                 <Profile
                   setValue={setValue}
                   navigate={navigate}
@@ -106,7 +122,6 @@ export const Main: React.FC<props> = ({
                   register={register}
                   reset={reset}
                 />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -114,14 +129,17 @@ export const Main: React.FC<props> = ({
           <Route
             path="/posts/detail"
             element={
-              <Layout navigate={navigate} title="post detail">
+              <Layout
+                navigate={navigate}
+                title="post detail"
+                usersComponent={true}
+              >
                 <PostDetailBox
                   navigate={navigate}
                   handleSubmit={handleSubmit}
                   register={register}
                   errors={errors}
                 />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -129,7 +147,11 @@ export const Main: React.FC<props> = ({
           <Route
             path="/posts/update"
             element={
-              <Layout navigate={navigate} title="update post">
+              <Layout
+                navigate={navigate}
+                title="update post"
+                usersComponent={true}
+              >
                 <UpdatePost
                   handleSubmit={handleSubmit}
                   register={register}
@@ -138,7 +160,6 @@ export const Main: React.FC<props> = ({
                   setValue={setValue}
                   navigate={navigate}
                 />
-                <UsersComponent />
               </Layout>
             }
           />
@@ -146,7 +167,11 @@ export const Main: React.FC<props> = ({
           <Route
             path="/posts/new"
             element={
-              <Layout navigate={navigate} title="update post">
+              <Layout
+                navigate={navigate}
+                title="update post"
+                usersComponent={true}
+              >
                 <CreatePost
                   handleSubmit={handleSubmit}
                   register={register}
@@ -154,7 +179,6 @@ export const Main: React.FC<props> = ({
                   errors={errors}
                   navigate={navigate}
                 />
-                <UsersComponent />
               </Layout>
             }
           />

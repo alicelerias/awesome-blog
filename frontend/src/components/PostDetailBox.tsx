@@ -54,10 +54,8 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
 
   return (
     <BoxLayout>
-      {currentUserContext?.id === data?.author_id ? (
+      {currentUserContext?.id === data?.author_id && (
         <UpdateButton id={id} navigate={navigate} />
-      ) : (
-        ""
       )}
       <div className="flex flex-col gap-one p-two  border-b border-b-white">
         <span className="bg-transparent text-3xl text-blue ">

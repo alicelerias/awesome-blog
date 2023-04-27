@@ -23,9 +23,10 @@ describe("test for users component", () => {
   });
 
   const renderComponent = () => {
+    const navigate = jest.fn();
     return render(
       <TestsContext>
-        <UsersComponent />
+        <UsersComponent navigate={navigate} />
       </TestsContext>
     );
   };
