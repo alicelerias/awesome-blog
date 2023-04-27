@@ -1,6 +1,13 @@
 import { useMutation } from "react-query";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { FieldValues, useForm } from "react-hook-form";
+import { NavigateFunction } from "react-router-dom";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+  useForm,
+} from "react-hook-form";
 import { createPost } from "../api/mutations";
 import { Post } from "../types";
 import { InputForm } from "./InputForm";
@@ -10,10 +17,18 @@ import { PropsWithChildren } from "react";
 
 type props = {
   navigate: NavigateFunction;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
+  reset: UseFormReset<FieldValues>;
 };
 
 export const CreatePost: React.FC<PropsWithChildren<props>> = ({
   navigate,
+  handleSubmit,
+  register,
+  errors,
+  reset,
 }) => {
   const { mutate } = useMutation(createPost, {
     onSuccess: () => {
@@ -22,13 +37,6 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
       }, 2000);
     },
   });
-
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-    reset,
-  } = useForm();
 
   const onSubmit = (data: FieldValues) => {
     mutate(data as Post);

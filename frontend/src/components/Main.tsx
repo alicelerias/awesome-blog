@@ -22,6 +22,7 @@ export const Main: React.FC = () => {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -121,7 +122,13 @@ export const Main: React.FC = () => {
             path="/posts/new"
             element={
               <Layout title="update post">
-                <CreatePost navigate={navigate} />
+                <CreatePost
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                  errors={errors}
+                  navigate={navigate}
+                />
                 <UsersComponent />
               </Layout>
             }
