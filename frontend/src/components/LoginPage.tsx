@@ -9,7 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { login } from "../api/mutations";
 import { Credential } from "../types";
-import { useAlert } from "./Alert";
+import { Alert } from "./Alert";
+import { useState } from "react";
 
 type props = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
@@ -18,7 +19,7 @@ type props = {
 
 export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
   const navigate = useNavigate();
-  const [showAlert, Alert] = useAlert();
+  const [alert, showAlert] = useState(false);
 
   const { mutate } = useMutation(login, {
     onSuccess: () => {
@@ -27,7 +28,10 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
       }, 2000);
     },
     onError: () => {
-      showAlert();
+      showAlert(true);
+      setTimeout(() => {
+        showAlert(false);
+      }, 5000);
     },
   });
 
@@ -42,7 +46,9 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
             !AWESOME
           </div>
           <div className="font-medium self-center text-xl sm:text-2xl">
-            <Alert message="Wrong username or password!" type="error" />
+            {alert && (
+              <Alert message="Wrong username or password!" type="error" />
+            )}
             <form onSubmit={handleSubmit(onSubmit)}>
               <span>
                 <InputForm
