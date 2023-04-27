@@ -3,11 +3,23 @@ import { getPostsByUser } from "../api/queries";
 
 import { BoxPosts } from "./BoxPosts";
 import { MenuPosts } from "./MenuPosts";
+import { PropsWithChildren } from "react";
+import { NavigateFunction } from "react-router-dom";
 
-export const PostsByUserComponent: React.FC<{}> = () => {
+type props = {
+  navigate: NavigateFunction;
+};
+export const PostsByUserComponent: React.FC<PropsWithChildren<props>> = ({
+  navigate,
+}) => {
   const { isLoading, data } = useQuery("getPostsByUser", getPostsByUser);
 
   return (
-    <BoxPosts isLoading={isLoading} data={data} children={<MenuPosts />} />
+    <BoxPosts
+      isLoading={isLoading}
+      data={data}
+      navigate={navigate}
+      children={<MenuPosts />}
+    />
   );
 };

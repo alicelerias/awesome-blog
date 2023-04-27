@@ -1,17 +1,22 @@
 import { useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
+import { NavigateFunction, useSearchParams } from "react-router-dom";
 import { getUser } from "../api/queries";
 import { BlogsPost } from "./BlogsPost";
 import { BoxLayout } from "./BoxLayout";
 import { ToggleFollowButton } from "./ToggleFollowButton";
+import { PropsWithChildren } from "react";
 
-export const UserDetail: React.FC<{}> = () => {
+type props = {
+  navigate: NavigateFunction;
+};
+
+export const UserDetail: React.FC<PropsWithChildren<props>> = ({
+  navigate,
+}) => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
 
   const { isLoading, data } = useQuery("getUser", () => getUser(id));
-
-  console.log("IS FOLLOWING", data);
 
   return (
     <BoxLayout>
@@ -45,7 +50,7 @@ export const UserDetail: React.FC<{}> = () => {
           </>
         )}
 
-        <BlogsPost id={id} />
+        <BlogsPost id={id} navigate={navigate} />
       </div>
     </BoxLayout>
   );

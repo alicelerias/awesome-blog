@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { AiOutlineComment } from "react-icons/ai";
 import { Posts } from "../types";
 
@@ -7,15 +7,15 @@ import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 type props = {
   isLoading: boolean;
   data: Posts | undefined;
+  navigate: NavigateFunction;
 };
 
 export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
   isLoading,
   data,
   children,
+  navigate,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <div className="flex flex-col gap-one sm:w-3/5">
       {children}

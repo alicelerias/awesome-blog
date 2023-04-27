@@ -14,9 +14,17 @@ import { useQuery } from "react-query";
 import { getCurrentUser } from "../api/queries";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 import { PostDetailBox } from "./PostDetailBox";
+import { useForm } from "react-hook-form";
 
 export const Main: React.FC = () => {
   const navigate = useNavigate();
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm();
+
   const { data } = useQuery("getCurrentUser", getCurrentUser);
   return (
     <CurrentUserContext.Provider value={data}>
@@ -29,7 +37,7 @@ export const Main: React.FC = () => {
             path="/"
             element={
               <Layout title="posts">
-                <FeedComponent />
+                <FeedComponent navigate={navigate} />
                 <UsersComponent />
               </Layout>
             }
@@ -39,7 +47,7 @@ export const Main: React.FC = () => {
             path="/favorites"
             element={
               <Layout title="favorites">
-                <FavoritesPosts />
+                <FavoritesPosts navigate={navigate} />
                 <UsersComponent />
               </Layout>
             }
@@ -49,7 +57,7 @@ export const Main: React.FC = () => {
             path="/users/detail"
             element={
               <Layout title="user detail">
-                <UserDetail />
+                <UserDetail navigate={navigate} />
               </Layout>
             }
           />
@@ -58,7 +66,7 @@ export const Main: React.FC = () => {
             path="/posts/you"
             element={
               <Layout title="your posts">
-                <PostsByUserComponent />
+                <PostsByUserComponent navigate={navigate} />
                 <UsersComponent />
               </Layout>
             }
@@ -68,7 +76,7 @@ export const Main: React.FC = () => {
             path="/posts"
             element={
               <Layout title="all posts">
-                <AllPostsComponent />
+                <AllPostsComponent navigate={navigate} />
                 <UsersComponent />
               </Layout>
             }
@@ -88,7 +96,12 @@ export const Main: React.FC = () => {
             path="/posts/detail"
             element={
               <Layout title="post detail">
-                <PostDetailBox navigate={navigate} />
+                <PostDetailBox
+                  navigate={navigate}
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  errors={errors}
+                />
                 <UsersComponent />
               </Layout>
             }

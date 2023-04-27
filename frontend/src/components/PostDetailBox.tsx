@@ -3,11 +3,16 @@ import { NavigateFunction, useSearchParams } from "react-router-dom";
 import { getComments, getPost } from "../api/queries";
 import React, { useContext } from "react";
 import { BoxLayout } from "./BoxLayout";
-import { Comments } from "./Comments";
+import { CommentsComponent } from "./Comments";
 import { CreateComment } from "./CreateComment";
 import { createComment } from "../api/mutations";
 import { Comment } from "../types";
-import { FieldValues } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { AiOutlineComment } from "react-icons/ai";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import { UpdateButton } from "./UpdateButton";
@@ -15,10 +20,16 @@ import { CurrentUserContext } from "../context/CurrentUserContext";
 
 type props = {
   navigate: NavigateFunction;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
 };
 
 export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
   navigate,
+  handleSubmit,
+  register,
+  errors,
 }) => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
@@ -82,8 +93,17 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
         </div>
       </div>
 
-      <CreateComment onSubmit={onSubmit} />
-      <Comments id={id} currentUser={currentUserContext} navigate={navigate} />
+      <CreateComment
+        onSubmit={onSubmit}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+      />
+      <CommentsComponent
+        id={id}
+        currentUser={currentUserContext}
+        navigate={navigate}
+      />
     </BoxLayout>
   );
 };

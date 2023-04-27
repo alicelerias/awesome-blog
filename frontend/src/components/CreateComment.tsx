@@ -1,20 +1,27 @@
 import React from "react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  useForm,
+} from "react-hook-form";
 import { InputButton } from "./InputButton";
 import { InputForm } from "./InputForm";
 
 type props = {
   onSubmit: SubmitHandler<FieldValues>;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
 };
 export const CreateComment: React.FC<React.PropsWithChildren<props>> = ({
   onSubmit,
+  handleSubmit,
+  register,
+  errors,
 }) => {
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-  } = useForm();
-
   return (
     <div>
       <form className="flex flex-col gap-one" onSubmit={handleSubmit(onSubmit)}>

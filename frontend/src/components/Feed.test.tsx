@@ -31,9 +31,10 @@ describe("test for posts component", () => {
   };
 
   const renderComponent = () => {
+    const navigate = jest.fn();
     return render(
       <TestsContext>
-        <FeedComponent />
+        <FeedComponent navigate={navigate} />
       </TestsContext>
     );
   };

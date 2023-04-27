@@ -11,7 +11,7 @@ type props = {
   currentUser: User | undefined;
   navigate: NavigateFunction;
 };
-export const Comments: React.FC<PropsWithChildren<props>> = ({
+export const CommentsComponent: React.FC<PropsWithChildren<props>> = ({
   id,
   currentUser,
   navigate,
