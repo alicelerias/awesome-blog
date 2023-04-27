@@ -1,23 +1,35 @@
 import { useMutation, useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../api/queries";
-import { FieldValues, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+  UseFormSetValue,
+  useForm,
+} from "react-hook-form";
 import { InputForm } from "./InputForm";
 import { User } from "../types";
 import { updateCurrentUser } from "../api/mutations";
 import { BoxLayout } from "./BoxLayout";
 import { InputButton } from "./InputButton";
 
-export const Profile: React.FC<{}> = () => {
-  const navigate = useNavigate();
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
+  navigate: NavigateFunction;
+  setValue: UseFormSetValue<FieldValues>;
+};
 
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-    setValue,
-  } = useForm();
-
+export const Profile: React.FC<props> = ({
+  navigate,
+  handleSubmit,
+  register,
+  setValue,
+}) => {
   const { data } = useQuery("getCurrentUser", () => getCurrentUser(), {
     onSuccess: (data) => {
       setValue("bio", data.bio);

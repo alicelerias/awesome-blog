@@ -7,9 +7,15 @@ describe("test for main component", () => {
     const handleSubmit = jest.fn();
     const register = jest.fn();
     const reset = jest.fn();
+    const setValue = jest.fn();
     render(
       <TestsContext>
-        <Main handleSubmit={handleSubmit} register={register} reset={reset} />
+        <Main
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          register={register}
+          reset={reset}
+        />
       </TestsContext>
     );
     const componentId = screen.getByTestId("main-component-test-id");

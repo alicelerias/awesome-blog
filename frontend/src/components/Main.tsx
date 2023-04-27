@@ -20,7 +20,7 @@ import {
   UseFormHandleSubmit,
   UseFormRegister,
   UseFormReset,
-  useForm,
+  UseFormSetValue,
 } from "react-hook-form";
 
 type props = {
@@ -28,11 +28,13 @@ type props = {
   register: UseFormRegister<FieldValues>;
   reset: UseFormReset<FieldValues>;
   errors?: FieldErrors<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
 };
 export const Main: React.FC<props> = ({
   handleSubmit,
   register,
   reset,
+  setValue,
   errors,
 }) => {
   const navigate = useNavigate();
@@ -97,7 +99,13 @@ export const Main: React.FC<props> = ({
             path="/profile"
             element={
               <Layout title="user detail" navigate={navigate}>
-                <Profile />
+                <Profile
+                  setValue={setValue}
+                  navigate={navigate}
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                />
                 <UsersComponent />
               </Layout>
             }

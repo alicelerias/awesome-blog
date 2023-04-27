@@ -4,7 +4,6 @@ import * as queries from "../api/queries";
 import * as mutations from "../api/mutations";
 import { TestsContext } from "./testComonents/Context";
 import { Profile } from "./Profile";
-import { act } from "react-dom/test-utils";
 
 describe("tests for user detail componet", () => {
   const user: User = {
@@ -22,14 +21,21 @@ describe("tests for user detail componet", () => {
       return Promise.resolve(user);
     });
 
-  const fakeUpdate = jest
-    .spyOn(mutations, "updateCurrentUser")
-    .mockImplementation();
-
   const renderComponent = () => {
+    const handleSubmit = jest.fn();
+    const register = jest.fn();
+    const reset = jest.fn();
+    const setValue = jest.fn();
+    const navigate = jest.fn();
     return render(
       <TestsContext>
-        <Profile />
+        <Profile
+          navigate={navigate}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          register={register}
+          reset={reset}
+        />
       </TestsContext>
     );
   };

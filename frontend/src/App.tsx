@@ -19,6 +19,7 @@ function App() {
     handleSubmit,
     register,
     reset,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -37,6 +38,7 @@ function App() {
               path="*"
               element={
                 <Main
+                  setValue={setValue}
                   handleSubmit={handleSubmit}
                   register={register}
                   reset={reset}
