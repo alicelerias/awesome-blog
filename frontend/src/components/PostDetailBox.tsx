@@ -22,7 +22,7 @@ type props = {
   navigate: NavigateFunction;
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues>;
+  errors: FieldErrors<FieldValues> | undefined;
 };
 
 export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({

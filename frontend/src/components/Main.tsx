@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, NavigateFunction } from "react-router-dom";
 import { UsersComponent } from "./Users";
 import { Profile } from "./Profile";
 import { FeedComponent } from "./Feed";
@@ -14,18 +14,28 @@ import { useQuery } from "react-query";
 import { getCurrentUser } from "../api/queries";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 import { PostDetailBox } from "./PostDetailBox";
-import { useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+  useForm,
+} from "react-hook-form";
 
-export const Main: React.FC = () => {
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
+  errors?: FieldErrors<FieldValues>;
+};
+export const Main: React.FC<props> = ({
+  handleSubmit,
+  register,
+  reset,
+  errors,
+}) => {
   const navigate = useNavigate();
-
-  const {
-    handleSubmit,
-    register,
-    reset,
-    formState: { errors },
-  } = useForm();
-
   const { data } = useQuery("getCurrentUser", getCurrentUser);
   return (
     <CurrentUserContext.Provider value={data}>
@@ -37,7 +47,7 @@ export const Main: React.FC = () => {
           <Route
             path="/"
             element={
-              <Layout title="posts">
+              <Layout navigate={navigate} title="posts">
                 <FeedComponent navigate={navigate} />
                 <UsersComponent />
               </Layout>
@@ -47,7 +57,7 @@ export const Main: React.FC = () => {
           <Route
             path="/favorites"
             element={
-              <Layout title="favorites">
+              <Layout navigate={navigate} title="favorites">
                 <FavoritesPosts navigate={navigate} />
                 <UsersComponent />
               </Layout>
@@ -57,7 +67,7 @@ export const Main: React.FC = () => {
           <Route
             path="/users/detail"
             element={
-              <Layout title="user detail">
+              <Layout navigate={navigate} title="user detail">
                 <UserDetail navigate={navigate} />
               </Layout>
             }
@@ -66,7 +76,7 @@ export const Main: React.FC = () => {
           <Route
             path="/posts/you"
             element={
-              <Layout title="your posts">
+              <Layout navigate={navigate} title="your posts">
                 <PostsByUserComponent navigate={navigate} />
                 <UsersComponent />
               </Layout>
@@ -76,7 +86,7 @@ export const Main: React.FC = () => {
           <Route
             path="/posts"
             element={
-              <Layout title="all posts">
+              <Layout navigate={navigate} title="all posts">
                 <AllPostsComponent navigate={navigate} />
                 <UsersComponent />
               </Layout>
@@ -86,7 +96,7 @@ export const Main: React.FC = () => {
           <Route
             path="/profile"
             element={
-              <Layout title="user detail">
+              <Layout title="user detail" navigate={navigate}>
                 <Profile />
                 <UsersComponent />
               </Layout>
@@ -96,7 +106,7 @@ export const Main: React.FC = () => {
           <Route
             path="/posts/detail"
             element={
-              <Layout title="post detail">
+              <Layout navigate={navigate} title="post detail">
                 <PostDetailBox
                   navigate={navigate}
                   handleSubmit={handleSubmit}
@@ -111,7 +121,7 @@ export const Main: React.FC = () => {
           <Route
             path="/posts/update"
             element={
-              <Layout title="update post">
+              <Layout navigate={navigate} title="update post">
                 <UpdatePost />
                 <UsersComponent />
               </Layout>
@@ -121,7 +131,7 @@ export const Main: React.FC = () => {
           <Route
             path="/posts/new"
             element={
-              <Layout title="update post">
+              <Layout navigate={navigate} title="update post">
                 <CreatePost
                   handleSubmit={handleSubmit}
                   register={register}

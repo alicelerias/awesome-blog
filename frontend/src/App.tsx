@@ -1,9 +1,10 @@
 import React from "react";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Main } from "./components/Main";
 import { LoginPage } from "./components/LoginPage";
+import { useForm } from "react-hook-form";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,13 +15,35 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = useForm();
+
   return (
     <div className="bg-black text-white">
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="*" element={<Main />} />
+            <Route
+              path="/login"
+              element={
+                <LoginPage handleSubmit={handleSubmit} register={register} />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <Main
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                  errors={errors}
+                />
+              }
+            />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

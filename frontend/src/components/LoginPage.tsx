@@ -1,16 +1,23 @@
 import { InputButton } from "./InputButton";
 import { InputForm } from "./InputForm";
-import { FieldValues, useForm } from "react-hook-form";
+import {
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { login } from "../api/mutations";
 import { Credential } from "../types";
 import { useAlert } from "./Alert";
 
-export const LoginPage: React.FC<{}> = () => {
-  const { handleSubmit, register } = useForm();
-  const navigate = useNavigate();
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+};
 
+export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
+  const navigate = useNavigate();
   const [showAlert, Alert] = useAlert();
 
   const { mutate } = useMutation(login, {
@@ -45,7 +52,6 @@ export const LoginPage: React.FC<{}> = () => {
                     required: false,
                   })}
                   type="text"
-                  // error={errors.title}
                 />
               </span>
 

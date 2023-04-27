@@ -2,13 +2,15 @@ import { AiOutlineUser } from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
 import { Sidebar } from "./Sidebar";
 import { MenuItem } from "./MenuItem";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { useMutation } from "react-query";
 import { logout } from "../api/mutations";
 
-export const Menu: React.FC<{}> = () => {
-  const navigate = useNavigate();
+type props = {
+  navigate: NavigateFunction;
+};
 
+export const Menu: React.FC<props> = ({ navigate }) => {
   const { mutate } = useMutation(() => logout(), {
     onSuccess: () => {
       setTimeout(() => {

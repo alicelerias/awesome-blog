@@ -13,7 +13,7 @@ type props = {
   onSubmit: SubmitHandler<FieldValues>;
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues>;
+  errors: FieldErrors<FieldValues> | undefined;
 };
 export const CreateComment: React.FC<React.PropsWithChildren<props>> = ({
   onSubmit,
@@ -29,7 +29,7 @@ export const CreateComment: React.FC<React.PropsWithChildren<props>> = ({
           controller={register("content", {
             required: true,
           })}
-          error={errors.content}
+          error={errors?.content}
         />
         <InputButton name="Comment" />
       </form>

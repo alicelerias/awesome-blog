@@ -6,7 +6,6 @@ import {
   UseFormHandleSubmit,
   UseFormRegister,
   UseFormReset,
-  useForm,
 } from "react-hook-form";
 import { createPost } from "../api/mutations";
 import { Post } from "../types";
@@ -19,7 +18,7 @@ type props = {
   navigate: NavigateFunction;
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues>;
+  errors: FieldErrors<FieldValues> | undefined;
   reset: UseFormReset<FieldValues>;
 };
 
@@ -55,7 +54,7 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
               })}
               type="text"
               placeholder="Insert title"
-              error={errors.title}
+              error={errors?.title}
             />
           </span>
 
@@ -66,7 +65,7 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
               })}
               type="text"
               placeholder="Insert content"
-              error={errors.content}
+              error={errors?.content}
             />
           </span>
           <InputButton name="save" />
