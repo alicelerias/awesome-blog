@@ -31,9 +31,20 @@ describe("tests for post detail componet", () => {
   });
 
   const renderComponent = () => {
+    const handleSubmit = jest.fn();
+    const register = jest.fn();
+    const reset = jest.fn();
+    const setValue = jest.fn();
+    const navigate = jest.fn();
     return render(
       <TestsContext>
-        <UpdatePost />
+        <UpdatePost
+          navigate={navigate}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          register={register}
+          reset={reset}
+        />
       </TestsContext>
     );
   };

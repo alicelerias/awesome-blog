@@ -55,7 +55,7 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
   return (
     <BoxLayout>
       {currentUserContext?.id === data?.author_id ? (
-        <UpdateButton id={id} />
+        <UpdateButton id={id} navigate={navigate} />
       ) : (
         ""
       )}

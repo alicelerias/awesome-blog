@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useNavigate, NavigateFunction } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { UsersComponent } from "./Users";
 import { Profile } from "./Profile";
 import { FeedComponent } from "./Feed";
@@ -130,7 +130,14 @@ export const Main: React.FC<props> = ({
             path="/posts/update"
             element={
               <Layout navigate={navigate} title="update post">
-                <UpdatePost />
+                <UpdatePost
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                  errors={errors}
+                  setValue={setValue}
+                  navigate={navigate}
+                />
                 <UsersComponent />
               </Layout>
             }

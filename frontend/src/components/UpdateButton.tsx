@@ -1,12 +1,14 @@
 import { PropsWithChildren } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 
 type props = {
   id: string | null;
+  navigate: NavigateFunction;
 };
-export const UpdateButton: React.FC<PropsWithChildren<props>> = ({ id }) => {
-  const navigate = useNavigate();
-
+export const UpdateButton: React.FC<PropsWithChildren<props>> = ({
+  id,
+  navigate,
+}) => {
   return (
     <button
       className="flex justify-end"
