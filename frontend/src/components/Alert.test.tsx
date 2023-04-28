@@ -1,5 +1,4 @@
-import React from "react";
-import { render, act, screen, renderHook } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Alert } from "./Alert";
 
 describe("test alaert component", () => {
