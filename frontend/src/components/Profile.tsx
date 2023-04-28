@@ -15,6 +15,8 @@ import { User } from "../types";
 import { updateCurrentUser } from "../api/mutations";
 import { BoxLayout } from "./BoxLayout";
 import { InputButton } from "./InputButton";
+import { useContext } from "react";
+import { CurrentUserContext } from "../context/CurrentUserContext";
 
 type props = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
@@ -30,11 +32,9 @@ export const Profile: React.FC<props> = ({
   register,
   setValue,
 }) => {
-  const { data } = useQuery("getCurrentUser", () => getCurrentUser(), {
-    onSuccess: (data) => {
-      setValue("bio", data.bio);
-    },
-  });
+  const currentUserContext = useContext(CurrentUserContext);
+
+  setValue("bio", currentUserContext?.bio);
 
   const { mutate } = useMutation((data: User) => updateCurrentUser(data), {
     onSuccess: () => {
@@ -61,14 +61,14 @@ export const Profile: React.FC<props> = ({
               data-testid={"user-detail-img-test-id"}
               className={"w-three aspect-square"}
               src={
-                data?.avatar ||
+                currentUserContext?.avatar ||
                 "https://ionicframework.com/docs/img/demos/avatar.svg"
               }
               alt="avatar"
             />
           </div>
           <div className="flex flex-col gap-two w-4/5">
-            <span>{data?.username}</span>
+            <span>{currentUserContext?.username}</span>
 
             <InputForm
               data-testid={"input-user-test-id"}

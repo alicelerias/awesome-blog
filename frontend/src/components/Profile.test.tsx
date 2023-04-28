@@ -58,11 +58,11 @@ describe("tests for user detail componet", () => {
     expect(screen.queryByTestId("bla")).not.toBeInTheDocument();
   });
 
-  it("test get post detail", async () => {
-    renderComponent();
+  // it("test get post detail", async () => {
+  //   renderComponent();
 
-    expect(fakeGet).toHaveBeenCalledTimes(1);
-  });
+  //   expect(fakeGet).toHaveBeenCalledTimes(1);
+  // });
 
   it("test update post", async () => {
     renderComponent();
