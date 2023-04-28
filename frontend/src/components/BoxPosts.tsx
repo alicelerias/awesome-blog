@@ -25,7 +25,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
       >
         {isLoading
           ? "is Loading"
-          : data?.feed.map((post) => (
+          : data?.content.map((post) => (
               <>
                 <div className={`flex gap-one pb-one`}>
                   <div className="w-auto h-auto">

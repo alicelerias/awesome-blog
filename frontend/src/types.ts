@@ -37,7 +37,7 @@ export type PostUpdate = Partial<PostCreate>;
 
 export type UserUpdate = Partial<User>;
 
-export type Posts = ResultList<"feed", Post>;
+export type Posts = ResultList<"content", Post>;
 
 export type HealthCheck = {
   status: string;
@@ -48,7 +48,7 @@ export type Favorite = {
   userId: string;
 };
 
-export type Favorites = ResultList<"feed", Favorite>;
+export type Favorites = ResultList<"content", Favorite>;
 
 export type Comment = {
   id: string;

@@ -131,7 +131,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var postsData struct {
-		Posts []*models.Post `json:"feed"`
+		Posts []*models.Post `json:"content"`
 	}
 	json.Unmarshal([]byte(res.Body.String()), &postsData)
 
@@ -183,7 +183,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var feedData struct {
-		Feed []*models.Post `json:"feed"`
+		Feed []*models.Post `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &feedData)
@@ -213,7 +213,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var favorites struct {
-		Favorites []*models.Post `json:"feed"`
+		Favorites []*models.Post `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &favorites)
@@ -228,7 +228,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var favoritesByPost struct {
-		Favorites []*models.Favorite `json:"feed"`
+		Favorites []*models.Favorite `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &favoritesByPost)

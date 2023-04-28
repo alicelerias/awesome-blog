@@ -75,12 +75,12 @@ func (server *Server) Feed(ctx *gin.Context) {
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"feed":        fromModelFeed,
+			"content":     fromModelFeed,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"feed": fromModelFeed})
+		ctx.JSON(http.StatusOK, gin.H{"content": fromModelFeed})
 	}
 }
 

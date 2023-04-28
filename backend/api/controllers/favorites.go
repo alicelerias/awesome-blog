@@ -59,7 +59,7 @@ func (server *Server) GetFavoritesByPost(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"feed": &favorites})
+	ctx.JSON(http.StatusOK, gin.H{"content": &favorites})
 }
 
 func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
@@ -92,11 +92,11 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"feed":        fromModelPosts,
+			"content":     fromModelPosts,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"feed": fromModelPosts})
+		ctx.JSON(http.StatusOK, gin.H{"content": fromModelPosts})
 	}
 }

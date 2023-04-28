@@ -14,7 +14,7 @@ describe("test for posts component", () => {
     is_following: false,
   };
   const posts: Posts = {
-    feed: [
+    content: [
       {
         id: "asa",
         title: "star wars",
