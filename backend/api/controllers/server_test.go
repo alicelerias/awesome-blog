@@ -11,6 +11,7 @@ import (
 
 	"github.com/alicelerias/blog-golang/api/controllers"
 	"github.com/alicelerias/blog-golang/models"
+	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
 	"golang.org/x/net/context"
@@ -20,6 +21,7 @@ type MockRepository struct {
 }
 
 type MockCache struct {
+	memory map[string]interface{}
 }
 
 func newMockRepository() *MockRepository {
@@ -48,6 +50,7 @@ func TestServer(t *testing.T) {
 
 	router.GET("/users", server.GetUsers)
 	router.GET("/users/:id", server.GetUser)
+	router.GET("/profile", server.GetCurrentUser)
 	router.POST("/users", server.CreateUser)
 	router.PUT("/users/:id", server.UpdateUser)
 	router.DELETE("/users/:id", server.DeleteUser)
@@ -257,7 +260,7 @@ func TestServer(t *testing.T) {
 
 	assert.Equal(t, http.StatusNoContent, res.Code)
 
-	// Test cas 21: get post comments
+	// Test case 21: get post comments
 
 	res = performRequest("GET", "/comment/1", router, nil)
 
@@ -273,17 +276,43 @@ func TestServer(t *testing.T) {
 	// wrong comment
 	assert.NotEqual(t, "wrong comment", comments.Comments[0].Content)
 
+	// Test case 22: get current user
+
+	res = performRequest("GET", "/profile", router, nil)
+	assert.Equal(t, http.StatusOK, res.Code)
+
+	// Test case 23: get current user with cache
+
+	cache := types.User{}
+	user := types.User{
+		ID:       2,
+		UserName: "tomtom",
+	}
+	mockCache.SetKey("profile", "2", user, time.Hour)
+	mockCache.GetKey("profile", "2", &cache)
+
+	assert.Equal(t, user, mockCache.memory["profile_2"])
+
 }
 
-func (c *MockCache) SetKey(key string, id string, value interface{}, expiration time.Duration) error {
+func (c *MockCache) genKey(name string, id string) string {
+	return name + "_" + id
+}
+
+func (c *MockCache) SetKey(name string, id string, value interface{}, expiration time.Duration) error {
+	key := c.genKey(name, id)
+	c.memory = make(map[string]interface{})
+	c.memory[key] = value
 	return nil
 }
 
-func (c *MockCache) GetKey(key string, id string, model interface{}) error {
+func (c *MockCache) GetKey(name string, id string, value interface{}) error {
+	key := c.genKey(name, id)
+	value = c.memory[key]
 	return nil
 }
 
-func (c *MockCache) DeleteKey(key string, id string) error {
+func (c *MockCache) DeleteKey(name string, id string) error {
 	return nil
 }
 func (s *MockRepository) GetHome() error {
@@ -307,12 +336,14 @@ func (s *MockRepository) FindAllUsers(context.Context, *models.User) (*[]models.
 
 func (s *MockRepository) FindUserByID(context.Context, string) (*models.User, error) {
 	return &models.User{
+		ID:       1,
 		UserName: "Leia Ogana",
 	}, nil
 }
 
 func (s *MockRepository) GetUser(context.Context, string) (*models.User, error) {
 	return &models.User{
+		ID:       1,
 		UserName: "Leia Ogana",
 	}, nil
 }

@@ -7,19 +7,23 @@ import (
 
 // SetKey
 // value must be json serializable
-func (s *RedisClient) SetKey(key string, id string, value interface{}, expiration time.Duration) error {
-	// TODO uma conexao por server
-	concat := key + "_" + id
+
+func (s *RedisClient) genKey(name string, id string) string {
+	return name + "_" + id
+}
+
+func (s *RedisClient) SetKey(name string, id string, value interface{}, expiration time.Duration) error {
+	key := s.genKey(name, id)
 	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
-	return s.client.Set(concat, bytes, expiration).Err()
+	return s.client.Set(key, bytes, expiration).Err()
 }
 
-func (s *RedisClient) GetKey(key string, id string, model interface{}) error {
-	concat := key + "_" + id
-	result, err := s.client.Get(concat).Result()
+func (s *RedisClient) GetKey(name string, id string, model interface{}) error {
+	key := s.genKey(name, id)
+	result, err := s.client.Get(key).Result()
 	if err != nil {
 		return err
 	}
@@ -31,9 +35,9 @@ func (s *RedisClient) GetKey(key string, id string, model interface{}) error {
 	return nil
 }
 
-func (s *RedisClient) DeleteKey(key string, id string) error {
-	concat := key + "_" + id
-	err := s.client.Del(concat).Err()
+func (s *RedisClient) DeleteKey(name string, id string) error {
+	key := s.genKey(name, id)
+	err := s.client.Del(key).Err()
 	if err != nil {
 		return err
 	}

@@ -7,9 +7,9 @@ import (
 )
 
 type Repository interface {
-	SetKey(key string, id string, value interface{}, expiration time.Duration) error
-	GetKey(key string, id string, model interface{}) error
-	DeleteKey(key string, id string) error
+	SetKey(name string, id string, value interface{}, expiration time.Duration) error
+	GetKey(name string, id string, model interface{}) error
+	DeleteKey(name string, id string) error
 }
 
 type RedisClient struct {

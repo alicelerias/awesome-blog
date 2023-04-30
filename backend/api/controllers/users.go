@@ -154,8 +154,10 @@ func (s *Server) GetCurrentUser(ctx *gin.Context) {
 	err := s.cache.GetKey(key, uid.(string), &cache)
 
 	if err == nil {
+		fmt.Println("HITTT")
 		ctx.JSON(http.StatusOK, cache)
 	} else {
+		fmt.Println("ELSEE")
 		user, err := s.repository.FindUserByID(ctx, uid.(string))
 		if err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
