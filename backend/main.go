@@ -5,9 +5,11 @@ import (
 
 	"github.com/alicelerias/blog-golang/api/controllers"
 	"github.com/alicelerias/blog-golang/api/middlewares"
+	"github.com/alicelerias/blog-golang/cache"
 	"github.com/alicelerias/blog-golang/config"
 	"github.com/alicelerias/blog-golang/database"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -33,7 +35,15 @@ func main() {
 	database.MigrateDB(connection)
 
 	postgresRepository := database.NewPostgresDBRepository(connection)
-	server := controllers.NewServer(postgresRepository)
+
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     configs.RedisPort,
+		Password: "",
+		DB:       0,
+	})
+
+	cache := cache.NewRedisClient(redisClient)
+	server := controllers.NewServer(postgresRepository, cache)
 
 	r := gin.Default()
 	r.Use(middlewares.CORSMiddleware())

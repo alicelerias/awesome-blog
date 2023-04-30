@@ -17,6 +17,7 @@ type Config struct {
 	JWTSecret    []byte
 	AuthCookie   string
 	AllowedHosts string
+	RedisPort    string
 }
 
 var config *Config
@@ -36,6 +37,7 @@ func GetConfig() *Config {
 			JWTSecret:    []byte(os.Getenv("JWT_SECRET")),
 			AuthCookie:   os.Getenv("AUTH_COOKIE"),
 			AllowedHosts: os.Getenv("ALLOWED_HOSTS"),
+			RedisPort:    os.Getenv("REDIS_PORT"),
 		}
 	}
 

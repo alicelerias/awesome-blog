@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/alicelerias/blog-golang/api/controllers"
 	"github.com/alicelerias/blog-golang/models"
@@ -18,8 +19,15 @@ import (
 type MockRepository struct {
 }
 
+type MockCache struct {
+}
+
 func newMockRepository() *MockRepository {
 	return &MockRepository{}
+}
+
+func newMockCache() *MockCache {
+	return &MockCache{}
 }
 
 func performRequest(method, path string, router *gin.Engine, payload io.Reader) *httptest.ResponseRecorder {
@@ -30,7 +38,8 @@ func performRequest(method, path string, router *gin.Engine, payload io.Reader) 
 }
 func TestServer(t *testing.T) {
 	mockRepository := newMockRepository()
-	server := controllers.NewServer(mockRepository)
+	mockCache := newMockCache()
+	server := controllers.NewServer(mockRepository, mockCache)
 	router := gin.Default()
 
 	router.Use(func(ctx *gin.Context) {
@@ -266,6 +275,17 @@ func TestServer(t *testing.T) {
 
 }
 
+func (c *MockCache) SetKey(key string, id string, value interface{}, expiration time.Duration) error {
+	return nil
+}
+
+func (c *MockCache) GetKey(key string, id string, model interface{}) error {
+	return nil
+}
+
+func (c *MockCache) DeleteKey(key string, id string) error {
+	return nil
+}
 func (s *MockRepository) GetHome() error {
 	return nil
 }

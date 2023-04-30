@@ -144,20 +144,31 @@ func (s *Server) GetUser(ctx *gin.Context) {
 
 func (s *Server) GetCurrentUser(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
-
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "problem to authenticate user"})
 		return
 	}
-	user, err := s.repository.FindUserByID(ctx, uid.(string))
+	key := "user_profile"
+	cache := types.User{}
 
-	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
+	err := s.cache.GetKey(key, uid.(string), &cache)
+
+	if err == nil {
+		ctx.JSON(http.StatusOK, cache)
+	} else {
+		user, err := s.repository.FindUserByID(ctx, uid.(string))
+		if err != nil {
+			ctx.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		userFromModel := s.userFromModel(ctx, user, uid.(string))
+		err = s.cache.SetKey(key, uid.(string), userFromModel, time.Hour)
+		if err != nil {
+			fmt.Println("ERROR SETTINGS KEY:", err.Error())
+		}
+		ctx.JSON(http.StatusOK, userFromModel)
 	}
 
-	userFromModel := s.userFromModel(ctx, user, uid.(string))
-	ctx.JSON(http.StatusOK, userFromModel)
 }
 
 func (s *Server) UpdateUser(ctx *gin.Context) {

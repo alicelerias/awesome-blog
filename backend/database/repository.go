@@ -50,8 +50,3 @@ var postgresDBRepository Repository = &PostgresDBRepository{}
 func NewPostgresDBRepository(db *gorm.DB) *PostgresDBRepository {
 	return &PostgresDBRepository{db: db}
 }
-
-// connection := GetConnection()
-// 	db, _, _:= sqlmock.New()
-// 	defer db.Close()
-// 	mockDB, err := gorm.Open("postgres", db)
