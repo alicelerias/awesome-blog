@@ -295,19 +295,19 @@ func TestServer(t *testing.T) {
 
 }
 
-func (c *MockCache) genKey(name string, id string) string {
-	return name + "_" + id
+func (c *MockCache) genKey(name string, nameSpace string) string {
+	return name + "_" + nameSpace
 }
 
-func (c *MockCache) SetKey(name string, id string, value interface{}, expiration time.Duration) error {
-	key := c.genKey(name, id)
+func (c *MockCache) SetKey(name string, nameSpace string, value interface{}, expiration time.Duration) error {
+	key := c.genKey(name, nameSpace)
 	c.memory = make(map[string]interface{})
 	c.memory[key] = value
 	return nil
 }
 
-func (c *MockCache) GetKey(name string, id string, value interface{}) error {
-	key := c.genKey(name, id)
+func (c *MockCache) GetKey(name string, nameSpace string, value interface{}) error {
+	key := c.genKey(name, nameSpace)
 	value = c.memory[key]
 	return nil
 }

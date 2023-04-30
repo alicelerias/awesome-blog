@@ -8,12 +8,12 @@ import (
 // SetKey
 // value must be json serializable
 
-func (s *RedisClient) genKey(name string, id string) string {
-	return name + "_" + id
+func (s *RedisClient) genKey(name string, nameSpace string) string {
+	return name + "_" + nameSpace
 }
 
-func (s *RedisClient) SetKey(name string, id string, value interface{}, expiration time.Duration) error {
-	key := s.genKey(name, id)
+func (s *RedisClient) SetKey(name string, nameSpace string, value interface{}, expiration time.Duration) error {
+	key := s.genKey(name, nameSpace)
 	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
@@ -21,8 +21,8 @@ func (s *RedisClient) SetKey(name string, id string, value interface{}, expirati
 	return s.client.Set(key, bytes, expiration).Err()
 }
 
-func (s *RedisClient) GetKey(name string, id string, model interface{}) error {
-	key := s.genKey(name, id)
+func (s *RedisClient) GetKey(name string, nameSpace string, model interface{}) error {
+	key := s.genKey(name, nameSpace)
 	result, err := s.client.Get(key).Result()
 	if err != nil {
 		return err
