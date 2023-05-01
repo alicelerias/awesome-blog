@@ -154,10 +154,8 @@ func (s *Server) GetCurrentUser(ctx *gin.Context) {
 	err := s.cache.GetKey(key, uid.(string), &cache)
 
 	if err == nil {
-		fmt.Println("HITTT")
 		ctx.JSON(http.StatusOK, cache)
 	} else {
-		fmt.Println("ELSEE")
 		user, err := s.repository.FindUserByID(ctx, uid.(string))
 		if err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -166,7 +164,7 @@ func (s *Server) GetCurrentUser(ctx *gin.Context) {
 		userFromModel := s.userFromModel(ctx, user, uid.(string))
 		err = s.cache.SetKey(key, uid.(string), userFromModel, time.Hour)
 		if err != nil {
-			fmt.Println("ERROR SETTINGS KEY:", err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		}
 		ctx.JSON(http.StatusOK, userFromModel)
 	}
@@ -174,30 +172,30 @@ func (s *Server) GetCurrentUser(ctx *gin.Context) {
 }
 
 func (s *Server) UpdateUser(ctx *gin.Context) {
-	id := ctx.Param("id")
+	userId, exists := ctx.Get("uid")
+	if !exists {
+		ctx.AbortWithError(http.StatusInternalServerError, errors.New("Error on authenticate user!"))
+		return
+	}
+
+	userIdToString := userId.(string)
 
 	whiteList := []string{"bio", "avatar"}
 	input, err := getValidJson(ctx.Request.Body, whiteList)
 	if err != nil {
-		fmt.Println(input)
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid data!"))
 		return
 	}
 	input["updated_at"] = time.Now()
-	user, err := s.repository.UpdateUser(ctx, input, id)
+	user, err := s.repository.UpdateUser(ctx, input, userIdToString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	followerId, exists := ctx.Get("id")
-	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+	userFromModel := s.userFromModel(ctx, user, userIdToString)
 
-	followerIdToString := followerId.(string)
-	userFromModel := s.userFromModel(ctx, user, followerIdToString)
 	ctx.JSON(http.StatusOK, userFromModel)
+
 }
 
 func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
@@ -222,6 +220,7 @@ func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 
 	userFromModel := s.userFromModel(ctx, user, uid.(string))
 	ctx.JSON(http.StatusOK, userFromModel)
+	s.cache.DeleteKey("user_profile", uid.(string))
 }
 
 func (s *Server) DeleteUser(ctx *gin.Context) {

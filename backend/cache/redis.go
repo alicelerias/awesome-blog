@@ -35,8 +35,8 @@ func (s *RedisClient) GetKey(name string, nameSpace string, model interface{}) e
 	return nil
 }
 
-func (s *RedisClient) DeleteKey(name string, id string) error {
-	key := s.genKey(name, id)
+func (s *RedisClient) DeleteKey(name string, nameSpace string) error {
+	key := s.genKey(name, nameSpace)
 	err := s.client.Del(key).Err()
 	if err != nil {
 		return err
