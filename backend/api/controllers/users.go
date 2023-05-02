@@ -97,30 +97,42 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 	}
 
 	ctx.AbortWithStatus(http.StatusCreated)
+	if err := server.cache.DeleteKey("users", "all"); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (server *Server) GetUsers(ctx *gin.Context) {
 	user := models.User{}
-	users, err := server.repository.FindAllUsers(ctx, &user)
-	if err != nil {
-		log.Error()
-		ctx.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	id, exists := ctx.Get("uid")
-	if !exists {
-		ctx.AbortWithError(http.StatusForbidden, err)
-		return
+	cache := []*types.User{}
+	name := "users"
+	nameSpace := "all"
+	if err := server.cache.GetKey(name, nameSpace, &cache); err == nil {
+		ctx.JSON(http.StatusOK, gin.H{"users": cache})
+	} else {
+		users, err := server.repository.FindAllUsers(ctx, &user)
+		if err != nil {
+			log.Error()
+			ctx.JSON(http.StatusInternalServerError, err.Error())
+			return
+		}
+		id, exists := ctx.Get("uid")
+		if !exists {
+			ctx.AbortWithError(http.StatusForbidden, err)
+			return
+		}
+
+		idToString := id.(string)
+
+		fromModelUsers := []*types.User{}
+		for _, item := range *users {
+			newItem := server.userFromModel(ctx, &item, idToString)
+			fromModelUsers = append(fromModelUsers, newItem)
+		}
+		ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
+		server.cache.SetKey(name, nameSpace, fromModelUsers, time.Hour)
 	}
 
-	idToString := id.(string)
-
-	fromModelUsers := []*types.User{}
-	for _, item := range *users {
-		newItem := server.userFromModel(ctx, &item, idToString)
-		fromModelUsers = append(fromModelUsers, newItem)
-	}
-	ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
 }
 
 func (s *Server) GetUser(ctx *gin.Context) {

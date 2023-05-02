@@ -70,8 +70,7 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 	}
 	ctx.AbortWithStatus(http.StatusCreated)
 
-	err := server.cache.DeleteKey(key, uid.(string))
-	if err != nil {
+	if err := server.cache.DeleteKey(key, uid.(string)); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
 	}
 }
