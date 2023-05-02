@@ -220,7 +220,10 @@ func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 
 	userFromModel := s.userFromModel(ctx, user, uid.(string))
 	ctx.JSON(http.StatusOK, userFromModel)
-	s.cache.DeleteKey("user_profile", uid.(string))
+	err = s.cache.DeleteKey("user_profile", uid.(string))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (s *Server) DeleteUser(ctx *gin.Context) {

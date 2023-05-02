@@ -54,7 +54,6 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-
 	uid, exists := ctx.Get("uid")
 	if !exists {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
@@ -63,11 +62,18 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 	postUid, _ := strconv.ParseUint(uid.(string), 10, 64)
 	post.AuthorID = uint32(postUid)
 
+	key := "current_user_posts"
+
 	if err := server.repository.CreatePost(ctx, post); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	ctx.AbortWithStatus(http.StatusCreated)
+
+	err := server.cache.DeleteKey(key, uid.(string))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (server *Server) GetPosts(ctx *gin.Context) {
