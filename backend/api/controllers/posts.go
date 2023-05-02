@@ -158,24 +158,34 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
-
 	uidToString, _ := uid.(string)
 
-	feed, err := server.repository.GetPostsByUser(ctx, &post, cursor, uidToString)
-	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+	key := "current_user_posts"
+	cache := []*types.Post{}
 
 	fromModelPosts := []*types.Post{}
 
-	for _, item := range feed {
-		newPost := server.postFromModel(ctx, &item, &item.Author, uid.(string))
-		fromModelPosts = append(fromModelPosts, newPost)
+	err := server.cache.GetKey(key, uidToString, &cache)
+	if err == nil {
+		fromModelPosts = cache
+	} else {
+		feed, err := server.repository.GetPostsByUser(ctx, &post, cursor, uidToString)
+		if err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+		for _, item := range feed {
+			newPost := server.postFromModel(ctx, &item, &item.Author, uid.(string))
+			fromModelPosts = append(fromModelPosts, newPost)
+		}
+		err = server.cache.SetKey(key, uidToString, fromModelPosts, time.Hour)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
 	}
 
-	if len(feed) == limit {
-		nextCursor := feed[len(feed)-1].CreatedAt
+	if len(fromModelPosts) == limit {
+		nextCursor := fromModelPosts[len(fromModelPosts)-1].CreatedAt
 
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
