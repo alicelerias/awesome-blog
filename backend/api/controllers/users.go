@@ -109,7 +109,7 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 	}
 	id, exists := ctx.Get("uid")
 	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.AbortWithError(http.StatusForbidden, err)
 		return
 	}
 
@@ -133,7 +133,7 @@ func (s *Server) GetUser(ctx *gin.Context) {
 	}
 	followerId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.AbortWithError(http.StatusForbidden, err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (s *Server) GetUser(ctx *gin.Context) {
 func (s *Server) GetCurrentUser(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	key := "user_profile"
@@ -174,7 +174,7 @@ func (s *Server) GetCurrentUser(ctx *gin.Context) {
 func (s *Server) UpdateUser(ctx *gin.Context) {
 	userId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, errors.New("Error on authenticate user!"))
+		ctx.AbortWithError(http.StatusForbidden, errors.New("Error on authenticate user!"))
 		return
 	}
 
@@ -201,7 +201,7 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	whiteList := []string{"bio", "avatar"}

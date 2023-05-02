@@ -16,7 +16,7 @@ func (server *Server) Favorite(ctx *gin.Context) {
 	favorite := &models.Favorite{}
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	uidToInt, _ := parseInt(uid.(string))
@@ -36,7 +36,7 @@ func (server *Server) Unfavorite(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	userId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 
@@ -67,7 +67,7 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 	cursor := ctx.Query("cursor")
 	limit := 10
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 

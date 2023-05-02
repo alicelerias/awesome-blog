@@ -16,7 +16,7 @@ func (server *Server) CreateFollow(ctx *gin.Context) {
 	following := &models.Following{}
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	uidToInt, _ := parseInt(uid.(string))
@@ -51,7 +51,7 @@ func (server *Server) Feed(ctx *gin.Context) {
 
 	followerId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 
@@ -84,29 +84,10 @@ func (server *Server) Feed(ctx *gin.Context) {
 	}
 }
 
-// func (server *Server) IsFollowing(ctx *gin.Context) {
-// 	followerId, exists := ctx.Get("uid")
-// 	if !exists {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
-// 		return
-// 	}
-
-// 	followerIdToString, _ := followerId.(string)
-
-// 	followingId := ctx.Param("id")
-
-// 	isFollowing, err := server.repository.IsFollowing(ctx, followerIdToString, followingId)
-// 	if err != nil {
-// 		ctx.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
-// 	ctx.JSON(http.StatusOK, &isFollowing)
-// }
-
 func (server *Server) Unfollow(ctx *gin.Context) {
 	followerId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 

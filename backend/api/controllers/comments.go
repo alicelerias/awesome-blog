@@ -20,7 +20,7 @@ func (server *Server) CreateComment(ctx *gin.Context) {
 
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Problem to authenticate user"})
 		return
 	}
 	commentAuthorId, _ := strconv.ParseUint(uid.(string), 10, 64)
@@ -40,7 +40,7 @@ func (server *Server) DeleteComment(ctx *gin.Context) {
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	userId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 

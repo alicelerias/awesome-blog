@@ -57,7 +57,7 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	postUid, _ := strconv.ParseUint(uid.(string), 10, 64)
@@ -83,7 +83,7 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 
@@ -124,7 +124,7 @@ func (server *Server) GetBlogPosts(ctx *gin.Context) {
 
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 
