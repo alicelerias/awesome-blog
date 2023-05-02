@@ -138,6 +138,7 @@ export const Main: React.FC<props> = ({
                   navigate={navigate}
                   handleSubmit={handleSubmit}
                   register={register}
+                  reset={reset}
                   errors={errors}
                 />
               </Layout>

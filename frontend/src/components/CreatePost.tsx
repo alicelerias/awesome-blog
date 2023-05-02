@@ -39,7 +39,9 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
 
   const onSubmit = (data: FieldValues) => {
     mutate(data as Post);
-    reset(data);
+    setTimeout(() => {
+      reset();
+    }, 2000);
   };
 
   return (

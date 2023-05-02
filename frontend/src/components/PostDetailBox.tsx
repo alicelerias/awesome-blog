@@ -12,6 +12,7 @@ import {
   FieldValues,
   UseFormHandleSubmit,
   UseFormRegister,
+  UseFormReset,
 } from "react-hook-form";
 import { AiOutlineComment } from "react-icons/ai";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
@@ -22,6 +23,7 @@ type props = {
   navigate: NavigateFunction;
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
   errors: FieldErrors<FieldValues> | undefined;
 };
 
@@ -29,6 +31,7 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
   navigate,
   handleSubmit,
   register,
+  reset,
   errors,
 }) => {
   const [searchParam] = useSearchParams();
@@ -49,7 +52,10 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
     }
   );
   const onSubmit = (data: FieldValues) => {
-    mutate(data as Comment);
+    setTimeout(() => {
+      mutate(data as Comment);
+      reset();
+    }, 2000);
   };
 
   return (

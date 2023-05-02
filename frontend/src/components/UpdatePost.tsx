@@ -58,7 +58,9 @@ export const UpdatePost: React.FC<props> = ({
 
   const onSubmit = (data: FieldValues) => {
     mutate(data as Post);
-    reset(data);
+    setTimeout(() => {
+      reset();
+    }, 2000);
   };
   return (
     <BoxLayout>

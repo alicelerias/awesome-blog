@@ -45,8 +45,8 @@ export const Profile: React.FC<props> = ({
     },
   });
 
-  const onSubmit = async (data: FieldValues) => {
-    await mutate(data as User);
+  const onSubmit = (data: FieldValues) => {
+    mutate(data as User);
   };
   return (
     <BoxLayout>
