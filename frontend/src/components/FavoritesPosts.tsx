@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { getFavorites } from "../api/queries";
 import { BoxPosts } from "./BoxPosts";
 import { PropsWithChildren } from "react";

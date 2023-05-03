@@ -19,7 +19,7 @@ export const Observer: React.FC<props> = ({ fetchNextPage }) => {
     });
     intersectionObserver.observe(document.querySelector("#observer")!);
     return () => intersectionObserver.disconnect();
-  }, []);
+  });
 
   return <li id="observer" className="text-black"></li>;
 };
