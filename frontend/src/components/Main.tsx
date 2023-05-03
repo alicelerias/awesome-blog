@@ -1,6 +1,5 @@
 import React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { UsersComponent } from "./Users";
 import { Profile } from "./Profile";
 import { FeedComponent } from "./Feed";
 import { CreatePost } from "./CreatePost";

@@ -4,12 +4,21 @@ import { Post, Posts } from "../types";
 
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 import React from "react";
+import { Observer } from "./IntersectionObserver";
+import {
+  FetchNextPageOptions,
+  InfiniteData,
+  InfiniteQueryObserverResult,
+} from "react-query";
 
 type props = {
   isLoading: boolean;
-  data: Post[];
+  data?: InfiniteData<Posts>;
   navigate: NavigateFunction;
-  button?: React.ReactNode;
+  hasNextPage?: boolean;
+  fetchNextPage: (
+    options?: FetchNextPageOptions | undefined
+  ) => Promise<InfiniteQueryObserverResult<Posts, unknown>>;
 };
 
 export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
@@ -17,8 +26,15 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
   data,
   children,
   navigate,
-  button,
+  fetchNextPage,
+  hasNextPage,
 }) => {
+  const posts =
+    data?.pages.reduce(
+      (previous, current) => [...previous, ...current.content],
+      [] as Post[]
+    ) || [];
+
   return (
     <div className="flex flex-col gap-one sm:w-3/5">
       {children}
@@ -28,7 +44,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
       >
         {isLoading
           ? "is Loading"
-          : data.map((post) => (
+          : posts.map((post) => (
               <div key={post.id} className={`flex gap-one pb-one`}>
                 <div className="w-auto h-auto">
                   <img
@@ -70,7 +86,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
               </div>
             ))}
       </div>
-      {button}
+      <Observer fetchNextPage={fetchNextPage} />
     </div>
   );
 };

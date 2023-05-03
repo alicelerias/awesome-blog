@@ -1,4 +1,4 @@
-import { QueryFunction, QueryFunctionContext } from "react-query";
+import { QueryFunctionContext } from "react-query";
 import configs from "../configs/configs";
 import {
   HealthCheck,
@@ -62,16 +62,20 @@ export const getCurrentUser = async (): Promise<User> => {
   return data;
 };
 
-export const getAllPosts = async (): Promise<Posts> => {
-  const url = new URL(configs.API_URL + "/posts");
+export const getAllPosts = async ({
+  pageParam = "/posts",
+}: QueryFunctionContext): Promise<Posts> => {
+  const url = new URL(configs.API_URL + pageParam);
 
   const { data } = await axios.get<Posts>(url.toString());
 
   return data;
 };
 
-export const getPostsByUser = async (): Promise<Posts> => {
-  const url = new URL(configs.API_URL + "/posts/you");
+export const getPostsByUser = async ({
+  pageParam = "/posts/you",
+}: QueryFunctionContext): Promise<Posts> => {
+  const url = new URL(configs.API_URL + pageParam);
 
   const { data } = await axios.get<Posts>(url.toString());
 

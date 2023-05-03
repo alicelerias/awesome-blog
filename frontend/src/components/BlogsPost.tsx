@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { getBlogsPost } from "../api/queries";
 import { BoxPosts } from "./BoxPosts";
 import { PropsWithChildren } from "react";
@@ -12,12 +12,21 @@ export const BlogsPost: React.FC<PropsWithChildren<props>> = ({
   id,
   navigate,
 }) => {
-  const { isLoading, data } = useQuery("getBlogsPost", () => getBlogsPost(id));
+  const { isLoading, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    "getBlogsPost",
+    () => getBlogsPost(id),
+    {
+      getNextPageParam: (data) => data.next_link,
+    }
+  );
+
   return (
     <BoxPosts
       isLoading={isLoading}
-      data={data?.content || []}
+      data={data}
       navigate={navigate}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage}
     />
   );
 };

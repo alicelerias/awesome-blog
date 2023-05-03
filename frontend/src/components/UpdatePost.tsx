@@ -1,9 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import {
-  useSearchParams,
-  useNavigate,
-  NavigateFunction,
-} from "react-router-dom";
+import { useSearchParams, NavigateFunction } from "react-router-dom";
 import { getPost } from "../api/queries";
 import {
   FieldErrors,
@@ -12,7 +8,6 @@ import {
   UseFormRegister,
   UseFormReset,
   UseFormSetValue,
-  useForm,
 } from "react-hook-form";
 import { updatePost } from "../api/mutations";
 import { Post } from "../types";
@@ -41,7 +36,7 @@ export const UpdatePost: React.FC<props> = ({
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
 
-  const { isLoading, data } = useQuery("getPost", () => getPost(id), {
+  const { data } = useQuery("getPost", () => getPost(id), {
     onSuccess: (data) => {
       setValue("title", data?.title);
       setValue("content", data?.content);

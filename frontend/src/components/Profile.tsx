@@ -1,14 +1,11 @@
-import { useMutation, useQuery } from "react-query";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../api/queries";
+import { useMutation } from "react-query";
+import { NavigateFunction } from "react-router-dom";
 import {
-  FieldErrors,
   FieldValues,
   UseFormHandleSubmit,
   UseFormRegister,
   UseFormReset,
   UseFormSetValue,
-  useForm,
 } from "react-hook-form";
 import { InputForm } from "./InputForm";
 import { User } from "../types";

@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { getAllPosts } from "../api/queries";
 
 import { BoxPosts } from "./BoxPosts";
@@ -13,12 +13,20 @@ type props = {
 export const AllPostsComponent: React.FC<PropsWithChildren<props>> = ({
   navigate,
 }) => {
-  const { isLoading, data } = useQuery("getAllPosts", getAllPosts);
+  const { isLoading, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    "getAllPosts",
+    getAllPosts,
+    {
+      getNextPageParam: (data) => data.next_link,
+    }
+  );
 
   return (
     <BoxPosts
       isLoading={isLoading}
-      data={data?.content || []}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage}
+      data={data}
       navigate={navigate}
       children={<MenuPosts />}
     />

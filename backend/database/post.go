@@ -28,7 +28,7 @@ func (s *PostgresDBRepository) GetPosts(ctx context.Context, cursor string, post
 	posts := []models.Post{}
 	if cursor != "" {
 		err := s.db.Debug().
-			Where("posts.created_at > ?", cursor).
+			Where("posts.created_at < ?", cursor).
 			Model(post).
 			Order("posts.created_at DESC").
 			Limit(10).
