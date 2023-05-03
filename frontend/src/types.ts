@@ -37,7 +37,12 @@ export type PostUpdate = Partial<PostCreate>;
 
 export type UserUpdate = Partial<User>;
 
-export type Posts = ResultList<"content", Post>;
+export type PaginationResult<T> = {
+  content: T[];
+  next_link: string;
+};
+
+export type Posts = PaginationResult<Post>;
 
 export type HealthCheck = {
   status: string;

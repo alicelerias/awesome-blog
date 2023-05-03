@@ -10,7 +10,7 @@ func (s *PostgresDBRepository) Feed(ctx context.Context, cursor string, follower
 	posts := []models.Post{}
 	if cursor != "" {
 		err := s.db.Debug().
-			Where("posts.created_at > ? ", cursor).
+			Where("posts.created_at < ? ", cursor).
 			Order("posts.created_at DESC").
 			Limit(10).
 			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").

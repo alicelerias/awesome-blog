@@ -15,7 +15,7 @@ export const FavoritesPosts: React.FC<PropsWithChildren<props>> = ({
   return (
     <BoxPosts
       isLoading={isLoading}
-      data={data}
+      data={data?.content || []}
       navigate={navigate}
       children={
         <div className="bg-box-color p-one flex justify-center text-2xl">

@@ -1,3 +1,4 @@
+import { QueryFunction, QueryFunctionContext } from "react-query";
 import configs from "../configs/configs";
 import {
   HealthCheck,
@@ -84,8 +85,11 @@ export const getBlogsPost = async (id: string | null): Promise<Posts> => {
 
   return data;
 };
-export const getFeed = async (): Promise<Posts> => {
-  const url = new URL(configs.API_URL + "/feed");
+
+export const getFeed = async ({
+  pageParam = "/feed",
+}: QueryFunctionContext): Promise<Posts> => {
+  const url = new URL(configs.API_URL + pageParam);
 
   const { data } = await axios.get<Posts>(url.toString());
 

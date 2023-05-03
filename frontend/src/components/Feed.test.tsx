@@ -28,6 +28,7 @@ describe("test for posts component", () => {
         created_at: "SS",
       },
     ],
+    next_link: "",
   };
 
   const renderComponent = () => {

@@ -17,7 +17,7 @@ export const PostsByUserComponent: React.FC<PropsWithChildren<props>> = ({
   return (
     <BoxPosts
       isLoading={isLoading}
-      data={data}
+      data={data?.content || []}
       navigate={navigate}
       children={<MenuPosts />}
     />

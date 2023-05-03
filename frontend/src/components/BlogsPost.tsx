@@ -13,5 +13,11 @@ export const BlogsPost: React.FC<PropsWithChildren<props>> = ({
   navigate,
 }) => {
   const { isLoading, data } = useQuery("getBlogsPost", () => getBlogsPost(id));
-  return <BoxPosts isLoading={isLoading} data={data} navigate={navigate} />;
+  return (
+    <BoxPosts
+      isLoading={isLoading}
+      data={data?.content || []}
+      navigate={navigate}
+    />
+  );
 };
