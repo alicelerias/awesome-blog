@@ -57,7 +57,11 @@ func (server *Server) DeleteComment(ctx *gin.Context) {
 func (server *Server) GetPostComments(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	cursor := ctx.Query("cursor")
-	limit := 10
+	getLimit := server.repository.GetLimit()
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 	comments, err := server.repository.GetPostComments(cursor, uint32(postId))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)

@@ -77,7 +77,11 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 
 func (server *Server) GetPosts(ctx *gin.Context) {
 	post := models.Post{}
-	limit := 10
+	getLimit := server.repository.GetLimit()
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 	cursor := ctx.Query("cursor")
 	posts, err := server.repository.GetPosts(cursor, &post)
 	if err != nil {
@@ -115,7 +119,11 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 func (server *Server) GetBlogPosts(ctx *gin.Context) {
 	post := *&models.Post{}
 	cursor := ctx.Query("cursor")
-	limit := 10
+	getLimit := server.repository.GetLimit()
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 
 	id := ctx.Param("id")
 
@@ -156,7 +164,11 @@ func (server *Server) GetBlogPosts(ctx *gin.Context) {
 func (server *Server) GetPostsByUser(ctx *gin.Context) {
 	post := *&models.Post{}
 	cursor := ctx.Query("cursor")
-	limit := 10
+	getLimit := server.repository.GetLimit()
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 
 	uid, exists := ctx.Get("uid")
 	if !exists {
@@ -170,7 +182,7 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 
 	fromModelPosts := []*types.Post{}
 
-	err := server.cache.GetKey(key, uidToString, &cache)
+	err = server.cache.GetKey(key, uidToString, &cache)
 	if err == nil {
 		fromModelPosts = cache
 	} else {

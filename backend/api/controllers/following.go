@@ -47,7 +47,11 @@ func (server *Server) GetFollows(ctx *gin.Context) {
 
 func (server *Server) Feed(ctx *gin.Context) {
 	cursor := ctx.Query("cursor")
-	limit := 10
+	getLimit := server.repository.GetLimit()
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 
 	followerId, exists := ctx.Get("uid")
 	if !exists {

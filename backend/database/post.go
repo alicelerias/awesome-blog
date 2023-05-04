@@ -25,10 +25,11 @@ func (s *PostgresDBRepository) CreatePost(post *models.Post) error {
 
 func (s *PostgresDBRepository) GetPosts(cursor string, post *models.Post) ([]models.Post, error) {
 	posts := []models.Post{}
+	limit := s.GetLimit()
 	if cursor != "" {
 		err := s.db.Debug().
 			Where("posts.created_at < ?", cursor).
-			Model(post).
+			Model(limit).
 			Order("posts.created_at DESC").
 			Limit(10).
 			Find(&posts).
@@ -40,7 +41,7 @@ func (s *PostgresDBRepository) GetPosts(cursor string, post *models.Post) ([]mod
 		err := s.db.Debug().
 			Model(post).
 			Order("posts.created_at DESC").
-			Limit(10).
+			Limit(limit).
 			Find(&posts).
 			Error
 		if err != nil {
@@ -76,11 +77,12 @@ func (s *PostgresDBRepository) GetPost(id string) (post *models.Post, err error)
 
 func (s *PostgresDBRepository) GetPostsByUser(post *models.Post, cursor string, uid string) ([]models.Post, error) {
 	posts := []models.Post{}
+	limit := s.GetLimit()
 	if cursor != "" {
 		err := s.db.Debug().
 			Where("posts.created_at > ? ", cursor).
 			Order("posts.created_at DESC").
-			Limit(10).
+			Limit(limit).
 			Where("author_id = ?", uid).
 			Find(&posts).
 			Error
@@ -92,7 +94,7 @@ func (s *PostgresDBRepository) GetPostsByUser(post *models.Post, cursor string, 
 	} else {
 		err := s.db.Debug().
 			Order("posts.created_at DESC").
-			Limit(10).
+			Limit(limit).
 			Where("author_id = ?", uid).
 			Find(&posts).
 			Error

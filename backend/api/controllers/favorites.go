@@ -64,13 +64,16 @@ func (server *Server) GetFavoritesByPost(ctx *gin.Context) {
 
 func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
-	cursor := ctx.Query("cursor")
-	limit := 10
 	if !exists {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
-
+	cursor := ctx.Query("cursor")
+	getLimit := server.repository.GetLimit()
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 	uidToInt, _ := parseInt(uid.(string))
 
 	posts, err := server.repository.GetFavoritesPostsByUser(cursor, uint32(uidToInt))

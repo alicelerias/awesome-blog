@@ -33,7 +33,8 @@ func (s *PostgresDBRepository) GetFavorite(postId string, userId string) bool {
 
 func (s *PostgresDBRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error) {
 	favorites := []models.Favorite{}
-	err := s.db.Debug().Model(&models.Favorite{}).Limit(100).Where("post_id = ?", postId).Find(&favorites).Error
+	limit := s.GetLimit()
+	err := s.db.Debug().Model(&models.Favorite{}).Limit(limit).Where("post_id = ?", postId).Find(&favorites).Error
 	if err != nil {
 		return &[]models.Favorite{}, err
 	}
@@ -42,10 +43,11 @@ func (s *PostgresDBRepository) GetFavoritesByPost(postId uint32) (*[]models.Favo
 
 func (s *PostgresDBRepository) GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error) {
 	posts := []models.Post{}
+	limit := s.GetLimit()
 	if cursor != "" {
 		err := s.db.Debug().
 			Where("posts.created_at > ?", cursor).
-			Limit(10).
+			Limit(limit).
 			Order("favorites.created_at desc").
 			Joins("JOIN favorites ON favorites.post_id = posts.id").
 			Where("favorites.user_id = ?", userId).
@@ -57,7 +59,7 @@ func (s *PostgresDBRepository) GetFavoritesPostsByUser(cursor string, userId uin
 		}
 	} else {
 		err := s.db.Debug().
-			Limit(10).
+			Limit(limit).
 			Order("favorites.created_at desc").
 			Joins("JOIN favorites ON favorites.post_id = posts.id").
 			Where("favorites.user_id = ?", userId).

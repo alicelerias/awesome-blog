@@ -6,11 +6,12 @@ import (
 
 func (s *PostgresDBRepository) Feed(cursor string, followerId string) ([]models.Post, error) {
 	posts := []models.Post{}
+	limit := s.GetLimit()
 	if cursor != "" {
 		err := s.db.Debug().
 			Where("posts.created_at < ? ", cursor).
 			Order("posts.created_at DESC").
-			Limit(10).
+			Limit(limit).
 			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
 			Where("followings.follower_id = ? OR posts.author_id = ?", followerId, followerId).
 			Find(&posts).
@@ -23,7 +24,7 @@ func (s *PostgresDBRepository) Feed(cursor string, followerId string) ([]models.
 	} else {
 		err := s.db.Debug().
 			Order("posts.created_at DESC").
-			Limit(10).
+			Limit(limit).
 			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
 			Where("followings.follower_id = ?  OR posts.author_id = ?", followerId, followerId).
 			Find(&posts).

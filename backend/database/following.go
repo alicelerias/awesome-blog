@@ -29,7 +29,8 @@ func (s *PostgresDBRepository) Follow(following *models.Following) error {
 
 func (s *PostgresDBRepository) GetFollows(following *models.Following) (*[]models.Following, error) {
 	followings := []models.Following{}
-	err := s.db.Debug().Model(&following).Limit(100).Find(&followings).Error
+	limit := s.GetLimit()
+	err := s.db.Debug().Model(&following).Limit(limit).Find(&followings).Error
 	if err != nil {
 		return &[]models.Following{}, err
 	}

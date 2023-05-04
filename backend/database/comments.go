@@ -39,7 +39,7 @@ func (s *PostgresDBRepository) GetPostComments(cursor string, postId uint32) ([]
 	} else {
 		err := s.db.Debug().
 			Order("comments.created_at DESC").
-			Limit(10).Where("post_id = ?", postId).
+			Limit(limit).Where("post_id = ?", postId).
 			Find(&comments).
 			Error
 		if err != nil {
