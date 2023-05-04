@@ -5,6 +5,7 @@ import { BlogsPost } from "./BlogsPost";
 import { BoxLayout } from "./BoxLayout";
 import { ToggleFollowButton } from "./ToggleFollowButton";
 import { PropsWithChildren } from "react";
+import Skeleton from "./Skeleton";
 
 type props = {
   navigate: NavigateFunction;
@@ -22,7 +23,7 @@ export const UserDetail: React.FC<PropsWithChildren<props>> = ({
     <BoxLayout>
       <div className="flex flex-col sm:flex-row justify-center gap-two">
         {isLoading ? (
-          "is Loading"
+          <Skeleton />
         ) : (
           <>
             <div className="sm:flex sm:flex-col sm:justify-center sm:gap-two sm:w-2/6 w-0"></div>
