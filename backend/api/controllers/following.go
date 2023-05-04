@@ -57,7 +57,7 @@ func (server *Server) Feed(ctx *gin.Context) {
 
 	followerIdString, _ := followerId.(string)
 
-	feed, err := server.repository.Feed(ctx, cursor, followerIdString)
+	feed, err := server.repository.Feed(cursor, followerIdString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return

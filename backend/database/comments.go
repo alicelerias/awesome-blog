@@ -26,11 +26,12 @@ func (s *PostgresDBRepository) DeleteComment(ctx context.Context, id uint32, aut
 
 func (s *PostgresDBRepository) GetPostComments(ctx context.Context, cursor string, postId uint32) ([]models.Comment, error) {
 	comments := []models.Comment{}
+	limit := s.GetLimit()
 	if cursor != "" {
 		err := s.db.Debug().
 			Where("comments.created_at > ?", cursor).
 			Order("comments.created_at DESC").
-			Limit(10).
+			Limit(limit).
 			Where("post_id = ?", postId).
 			Find(&comments).
 			Error

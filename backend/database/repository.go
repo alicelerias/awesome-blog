@@ -8,6 +8,8 @@ import (
 )
 
 type Repository interface {
+	GetLimit() string
+
 	GetHome() (err error)
 	CreateUser(context.Context, *models.User) error
 	FindAllUsers(context.Context, *models.User) (*[]models.User, error)
@@ -38,7 +40,7 @@ type Repository interface {
 	IsFollowing(ctx context.Context, followerId string, followingId string) bool
 	Unfollow(context.Context, string, string) error
 
-	Feed(ctx context.Context, cursor string, followerId string) ([]models.Post, error)
+	Feed(cursor string, followerId string) ([]models.Post, error)
 }
 
 type PostgresDBRepository struct {

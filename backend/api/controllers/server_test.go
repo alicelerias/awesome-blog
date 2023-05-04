@@ -295,6 +295,10 @@ func TestServer(t *testing.T) {
 
 }
 
+func (s *MockRepository) GetLimit() string {
+	return ""
+}
+
 func (c *MockCache) genKey(name string, nameSpace string) string {
 	return name + "_" + nameSpace
 }
@@ -459,7 +463,7 @@ func (s *MockRepository) Unfollow(context.Context, string, string) error {
 	return nil
 }
 
-func (s *MockRepository) Feed(context.Context, string, string) ([]models.Post, error) {
+func (s *MockRepository) Feed(string, string) ([]models.Post, error) {
 	return []models.Post{
 		{
 			Title:    "post",

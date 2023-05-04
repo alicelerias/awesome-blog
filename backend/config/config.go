@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	Limit        string
 	Host         string
 	Driver       string
 	Database     string
@@ -27,6 +28,7 @@ func GetConfig() *Config {
 		godotenv.Load()
 
 		config = &Config{
+			Limit:        os.Getenv("LIMIT"),
 			Host:         os.Getenv("DB_HOST"),
 			Driver:       os.Getenv("DB_DRIVER"),
 			Database:     os.Getenv("DB_NAME"),

@@ -1,12 +1,10 @@
 package database
 
 import (
-	"context"
-
 	"github.com/alicelerias/blog-golang/models"
 )
 
-func (s *PostgresDBRepository) Feed(ctx context.Context, cursor string, followerId string) ([]models.Post, error) {
+func (s *PostgresDBRepository) Feed(cursor string, followerId string) ([]models.Post, error) {
 	posts := []models.Post{}
 	if cursor != "" {
 		err := s.db.Debug().
