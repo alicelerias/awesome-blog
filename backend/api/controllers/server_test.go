@@ -485,3 +485,7 @@ func (s *MockRepository) Feed(string, string) ([]models.Post, error) {
 func (s *MockRepository) GetPostsByUser(post *models.Post, cursor string, uid string) ([]models.Post, error) {
 	return []models.Post{}, nil
 }
+
+func (s *MockRepository) Recomendations(uid string) (*[]models.User, error) {
+	return &[]models.User{}, nil
+}

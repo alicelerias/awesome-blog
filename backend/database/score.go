@@ -1,22 +1,47 @@
 package database
 
 import (
-	"github.com/alicelerias/blog-golang/types"
+	"github.com/alicelerias/blog-golang/models"
 )
 
-func (s *PostgresDBRepository) UsersScore() ([]types.UserScore, error) {
-	users := []types.UserScore{}
+func (s *PostgresDBRepository) Recomendations(uid string) (*[]models.User, error) {
+	users := []models.User{}
+	friendsOfFriends := []models.User{}
+	recomendations := []models.User{}
 
-	err := s.db.Table("users").
-		Select("users.id, users.user_name, COUNT(DISTINCT favorites.post_id) as favorites_count, COUNT(DISTINCT comments.id) as comments_count, COUNT(DISTINCT favorites.post_id) + COUNT(DISTINCT comments.id) as score").
-		Joins("LEFT JOIN posts ON posts.author_id = users.id").
-		Joins("LEFT JOIN favorites ON favorites.post_id = posts.id").
-		Joins("LEFT JOIN comments ON comments.post_id = posts.id").
-		Group("users.id").
-		Order("score DESC").
-		Scan(&users).Error
+	err := s.db.Raw(
+		`SELECT recomended_user.id, recomended_user.user_name, recomended_user.bio, recomended_user.avatar
+    FROM users AS me
+    JOIN followings As my_friends
+      ON me.id = my_friends.follower_id
+    JOIN users AS friend 
+      ON my_friends.following_id = friend.id
+    JOIN followings AS recomendations
+      ON friend.id = recomendations.follower_id 
+        AND recomendations.following_id != me.id
+    JOIN POPULARITY_SCORE AS pop
+      ON recomendations.following_id = pop.id
+    JOIN users AS recomended_user
+      ON pop.id = recomended_user.id
+    WHERE me.id = ?
+    ORDER BY pop.score DESC
+    LIMIT 5`, uid).
+		Find(&friendsOfFriends).Error
 	if err != nil {
-		return []types.UserScore{}, err
+		return &[]models.User{}, err
 	}
-	return users, nil
+
+	s.db.Raw(
+		`SELECT profile.id, profile.user_name, profile.bio, profile.avatar
+		FROM popularity_score AS pop
+			JOIN users AS profile
+				ON pop.id = profile.id
+		ORDER BY pop.score DESC
+		LIMIT 5`).
+		Find(&recomendations)
+
+	friendsOfFriends = append(friendsOfFriends, recomendations...)
+	users = append(users, friendsOfFriends...)
+
+	return &users, nil
 }

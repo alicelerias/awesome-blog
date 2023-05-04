@@ -117,5 +117,7 @@ func main() {
 
 	r.GET("posts/blog/:id", server.GetBlogPosts)
 
+	r.GET("/users/recomendations", server.GetRecomendations)
+
 	r.Run()
 }

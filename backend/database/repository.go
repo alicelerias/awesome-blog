@@ -8,6 +8,8 @@ import (
 type Repository interface {
 	GetLimit() string
 
+	Recomendations(uid string) (*[]models.User, error)
+
 	GetHome() (err error)
 	CreateUser(*models.User) error
 	FindAllUsers(*models.User) (*[]models.User, error)
