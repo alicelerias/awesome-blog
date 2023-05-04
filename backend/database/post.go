@@ -1,7 +1,6 @@
 package database
 
 import (
-	"context"
 	"errors"
 
 	"github.com/alicelerias/blog-golang/models"
@@ -9,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func (s *PostgresDBRepository) CreatePost(ctx context.Context, post *models.Post) error {
+func (s *PostgresDBRepository) CreatePost(post *models.Post) error {
 	err := s.db.Debug().Create(&post).Error
 	if err != nil {
 		return err
@@ -24,7 +23,7 @@ func (s *PostgresDBRepository) CreatePost(ctx context.Context, post *models.Post
 	return nil
 }
 
-func (s *PostgresDBRepository) GetPosts(ctx context.Context, cursor string, post *models.Post) ([]models.Post, error) {
+func (s *PostgresDBRepository) GetPosts(cursor string, post *models.Post) ([]models.Post, error) {
 	posts := []models.Post{}
 	if cursor != "" {
 		err := s.db.Debug().
@@ -59,7 +58,7 @@ func (s *PostgresDBRepository) GetPosts(ctx context.Context, cursor string, post
 	return posts, nil
 }
 
-func (s *PostgresDBRepository) GetPost(ctx context.Context, id string) (post *models.Post, err error) {
+func (s *PostgresDBRepository) GetPost(id string) (post *models.Post, err error) {
 	post = &models.Post{}
 	err = s.db.First(post, id).Error
 	if gorm.IsRecordNotFoundError(err) {
@@ -75,7 +74,7 @@ func (s *PostgresDBRepository) GetPost(ctx context.Context, id string) (post *mo
 
 }
 
-func (s *PostgresDBRepository) GetPostsByUser(ctx context.Context, post *models.Post, cursor string, uid string) ([]models.Post, error) {
+func (s *PostgresDBRepository) GetPostsByUser(post *models.Post, cursor string, uid string) ([]models.Post, error) {
 	posts := []models.Post{}
 	if cursor != "" {
 		err := s.db.Debug().
@@ -105,7 +104,7 @@ func (s *PostgresDBRepository) GetPostsByUser(ctx context.Context, post *models.
 	}
 }
 
-func (s *PostgresDBRepository) UpdatePost(ctx context.Context, values interface{}, id string) (post *models.Post, err error) {
+func (s *PostgresDBRepository) UpdatePost(values interface{}, id string) (post *models.Post, err error) {
 	post = &models.Post{}
 	err = s.db.Table("posts").Where("id = ?", id).UpdateColumns(values).Take(post).Error
 	if gorm.IsRecordNotFoundError(err) {
@@ -120,7 +119,7 @@ func (s *PostgresDBRepository) UpdatePost(ctx context.Context, values interface{
 	return
 
 }
-func (s *PostgresDBRepository) DeletePost(ctx context.Context, id string) error {
+func (s *PostgresDBRepository) DeletePost(id string) error {
 	post := &models.Post{}
 	err := s.db.Debug().Delete(post, id).Error
 	if err != nil {

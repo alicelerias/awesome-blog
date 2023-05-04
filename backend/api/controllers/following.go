@@ -25,7 +25,7 @@ func (server *Server) CreateFollow(ctx *gin.Context) {
 	followingID, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	following.FollowingID = uint32(followingID)
 
-	if err := server.repository.Follow(ctx, following); err != nil {
+	if err := server.repository.Follow(following); err != nil {
 
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -36,7 +36,7 @@ func (server *Server) CreateFollow(ctx *gin.Context) {
 
 func (server *Server) GetFollows(ctx *gin.Context) {
 	following := models.Following{}
-	followings, err := server.repository.GetFollows(ctx, &following)
+	followings, err := server.repository.GetFollows(&following)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -95,7 +95,7 @@ func (server *Server) Unfollow(ctx *gin.Context) {
 
 	followingId := ctx.Param("id")
 
-	if err := server.repository.Unfollow(ctx, followerIdToString, followingId); err != nil {
+	if err := server.repository.Unfollow(followerIdToString, followingId); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}

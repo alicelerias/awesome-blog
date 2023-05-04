@@ -18,7 +18,7 @@ func (server *Server) Login(ctx *gin.Context) {
 		})
 		return
 	}
-	token, err := auth.Authenticate(ctx, server.repository, &credentials)
+	token, err := auth.Authenticate(server.repository, &credentials)
 	if err != nil {
 		ctx.AbortWithError(http.StatusUnauthorized, err)
 		return

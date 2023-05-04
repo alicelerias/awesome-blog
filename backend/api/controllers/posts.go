@@ -24,11 +24,11 @@ func (server *Server) postFromModel(ctx *gin.Context, post *models.Post, user *m
 	postId := strconv.Itoa(int(post.ID))
 	cursor := ctx.Query("cursor")
 
-	commentsCount, err := server.repository.GetPostComments(ctx, cursor, uint32(post.ID))
+	commentsCount, err := server.repository.GetPostComments(cursor, uint32(post.ID))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
-	favoritesCount, err := server.repository.GetFavoritesByPost(ctx, uint32(post.ID))
+	favoritesCount, err := server.repository.GetFavoritesByPost(uint32(post.ID))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -40,7 +40,7 @@ func (server *Server) postFromModel(ctx *gin.Context, post *models.Post, user *m
 		Img:            post.Img,
 		Author:         *NewUser(user),
 		AuthorID:       post.AuthorID,
-		IsFavorite:     server.repository.GetFavorite(ctx, postId, userId),
+		IsFavorite:     server.repository.GetFavorite(postId, userId),
 		CommentsCount:  len(commentsCount),
 		FavoritesCount: len(*favoritesCount),
 		CreatedAt:      post.CreatedAt,
@@ -64,7 +64,7 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 
 	key := "current_user_posts"
 
-	if err := server.repository.CreatePost(ctx, post); err != nil {
+	if err := server.repository.CreatePost(post); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -79,7 +79,7 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 	post := models.Post{}
 	limit := 10
 	cursor := ctx.Query("cursor")
-	posts, err := server.repository.GetPosts(ctx, cursor, &post)
+	posts, err := server.repository.GetPosts(cursor, &post)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -119,7 +119,7 @@ func (server *Server) GetBlogPosts(ctx *gin.Context) {
 
 	id := ctx.Param("id")
 
-	feed, err := server.repository.GetPostsByUser(ctx, &post, cursor, id)
+	feed, err := server.repository.GetPostsByUser(&post, cursor, id)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -174,7 +174,7 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 	if err == nil {
 		fromModelPosts = cache
 	} else {
-		feed, err := server.repository.GetPostsByUser(ctx, &post, cursor, uidToString)
+		feed, err := server.repository.GetPostsByUser(&post, cursor, uidToString)
 		if err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
@@ -206,7 +206,7 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 
 func (server *Server) GetPost(ctx *gin.Context) {
 	id := ctx.Param("id")
-	post, err := server.repository.GetPost(ctx, id)
+	post, err := server.repository.GetPost(id)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -241,7 +241,7 @@ func (server *Server) UpdatePost(ctx *gin.Context) {
 
 	uidToString, _ := uid.(string)
 
-	post, err := server.repository.UpdatePost(ctx, input, id)
+	post, err := server.repository.UpdatePost(input, id)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -252,7 +252,7 @@ func (server *Server) UpdatePost(ctx *gin.Context) {
 func (server *Server) DeletePost(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if err := server.repository.DeletePost(ctx, id); err != nil {
+	if err := server.repository.DeletePost(id); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
 

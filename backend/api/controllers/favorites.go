@@ -25,7 +25,7 @@ func (server *Server) Favorite(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	favorite.PostId = uint32(postId)
 
-	if err := server.repository.Favorite(ctx, favorite); err != nil {
+	if err := server.repository.Favorite(favorite); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -42,7 +42,7 @@ func (server *Server) Unfavorite(ctx *gin.Context) {
 
 	userIdToUint, _ := parseInt(userId.(string))
 
-	if err := server.repository.Unfavorite(ctx, uint32(postId), uint32(userIdToUint)); err != nil {
+	if err := server.repository.Unfavorite(uint32(postId), uint32(userIdToUint)); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -53,7 +53,7 @@ func (server *Server) Unfavorite(ctx *gin.Context) {
 func (server *Server) GetFavoritesByPost(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 
-	favorites, err := server.repository.GetFavoritesByPost(ctx, uint32(postId))
+	favorites, err := server.repository.GetFavoritesByPost(uint32(postId))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -73,7 +73,7 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 
 	uidToInt, _ := parseInt(uid.(string))
 
-	posts, err := server.repository.GetFavoritesPostsByUser(ctx, cursor, uint32(uidToInt))
+	posts, err := server.repository.GetFavoritesPostsByUser(cursor, uint32(uidToInt))
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)

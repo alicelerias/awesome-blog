@@ -22,7 +22,7 @@ import (
 	en_translations "gopkg.in/go-playground/validator.v9/translations/en"
 )
 
-func (server *Server) userFromModel(ctx *gin.Context, model *models.User, followerId string) *types.User {
+func (server *Server) userFromModel(model *models.User, followerId string) *types.User {
 	followingId := strconv.Itoa(int(model.ID))
 	return &types.User{
 		ID:          model.ID,
@@ -30,7 +30,7 @@ func (server *Server) userFromModel(ctx *gin.Context, model *models.User, follow
 		Email:       model.Email,
 		Bio:         model.Bio,
 		Avatar:      model.Avatar,
-		IsFollowing: server.repository.IsFollowing(ctx, followerId, followingId),
+		IsFollowing: server.repository.IsFollowing(followerId, followingId),
 		CreatedAt:   model.CreatedAt,
 		UpdatedAt:   model.UpdatedAt,
 	}
@@ -91,7 +91,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 
 	}
 
-	if err := auth.CreateUser(ctx, server.repository, user); err != nil {
+	if err := auth.CreateUser(server.repository, user); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -110,7 +110,7 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 	if err := server.cache.GetKey(name, nameSpace, &cache); err == nil {
 		ctx.JSON(http.StatusOK, gin.H{"users": cache})
 	} else {
-		users, err := server.repository.FindAllUsers(ctx, &user)
+		users, err := server.repository.FindAllUsers(&user)
 		if err != nil {
 			log.Error()
 			ctx.JSON(http.StatusInternalServerError, err.Error())
@@ -126,7 +126,7 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 
 		fromModelUsers := []*types.User{}
 		for _, item := range *users {
-			newItem := server.userFromModel(ctx, &item, idToString)
+			newItem := server.userFromModel(&item, idToString)
 			fromModelUsers = append(fromModelUsers, newItem)
 		}
 		ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
@@ -137,7 +137,7 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 
 func (s *Server) GetUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	user, err := s.repository.FindUserByID(ctx, id)
+	user, err := s.repository.FindUserByID(id)
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -150,7 +150,7 @@ func (s *Server) GetUser(ctx *gin.Context) {
 	}
 
 	followerIdToString := followerId.(string)
-	userFromModel := s.userFromModel(ctx, user, followerIdToString)
+	userFromModel := s.userFromModel(user, followerIdToString)
 	ctx.JSON(http.StatusOK, userFromModel)
 }
 
@@ -168,12 +168,12 @@ func (s *Server) GetCurrentUser(ctx *gin.Context) {
 	if err == nil {
 		ctx.JSON(http.StatusOK, cache)
 	} else {
-		user, err := s.repository.FindUserByID(ctx, uid.(string))
+		user, err := s.repository.FindUserByID(uid.(string))
 		if err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		userFromModel := s.userFromModel(ctx, user, uid.(string))
+		userFromModel := s.userFromModel(user, uid.(string))
 		err = s.cache.SetKey(key, uid.(string), userFromModel, time.Hour)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -199,12 +199,12 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 		return
 	}
 	input["updated_at"] = time.Now()
-	user, err := s.repository.UpdateUser(ctx, input, userIdToString)
+	user, err := s.repository.UpdateUser(input, userIdToString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	userFromModel := s.userFromModel(ctx, user, userIdToString)
+	userFromModel := s.userFromModel(user, userIdToString)
 
 	ctx.JSON(http.StatusOK, userFromModel)
 
@@ -224,13 +224,13 @@ func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 		return
 	}
 	input["updated_at"] = time.Now()
-	user, err := s.repository.UpdateUser(ctx, input, uid.(string))
+	user, err := s.repository.UpdateUser(input, uid.(string))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	userFromModel := s.userFromModel(ctx, user, uid.(string))
+	userFromModel := s.userFromModel(user, uid.(string))
 	ctx.JSON(http.StatusOK, userFromModel)
 	err = s.cache.DeleteKey("user_profile", uid.(string))
 	if err != nil {
@@ -241,7 +241,7 @@ func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 func (s *Server) DeleteUser(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if err := s.repository.DeleteUser(ctx, id); err != nil {
+	if err := s.repository.DeleteUser(id); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

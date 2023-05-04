@@ -1,12 +1,10 @@
 package database
 
 import (
-	"context"
-
 	"github.com/alicelerias/blog-golang/models"
 )
 
-func (s *PostgresDBRepository) Favorite(ctx context.Context, favorite *models.Favorite) error {
+func (s *PostgresDBRepository) Favorite(favorite *models.Favorite) error {
 	err := s.db.Debug().Create(&favorite).Error
 	if err != nil {
 		return err
@@ -14,7 +12,7 @@ func (s *PostgresDBRepository) Favorite(ctx context.Context, favorite *models.Fa
 	return nil
 }
 
-func (s *PostgresDBRepository) Unfavorite(ctx context.Context, postId uint32, userId uint32) error {
+func (s *PostgresDBRepository) Unfavorite(postId uint32, userId uint32) error {
 	favorite := *&models.Favorite{}
 	err := s.db.Debug().Where("post_id = ? AND user_id =?", postId, userId).Delete(favorite).Error
 	if err != nil {
@@ -23,7 +21,7 @@ func (s *PostgresDBRepository) Unfavorite(ctx context.Context, postId uint32, us
 	return nil
 }
 
-func (s *PostgresDBRepository) GetFavorite(ctx context.Context, postId string, userId string) bool {
+func (s *PostgresDBRepository) GetFavorite(postId string, userId string) bool {
 	favorite := *&models.Favorite{}
 	err := s.db.Debug().Where("post_id = ? AND user_id = ?", postId, userId).Find(&favorite).Error
 	if err != nil {
@@ -33,7 +31,7 @@ func (s *PostgresDBRepository) GetFavorite(ctx context.Context, postId string, u
 	return true
 }
 
-func (s *PostgresDBRepository) GetFavoritesByPost(ctx context.Context, postId uint32) (*[]models.Favorite, error) {
+func (s *PostgresDBRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error) {
 	favorites := []models.Favorite{}
 	err := s.db.Debug().Model(&models.Favorite{}).Limit(100).Where("post_id = ?", postId).Find(&favorites).Error
 	if err != nil {
@@ -42,7 +40,7 @@ func (s *PostgresDBRepository) GetFavoritesByPost(ctx context.Context, postId ui
 	return &favorites, nil
 }
 
-func (s *PostgresDBRepository) GetFavoritesPostsByUser(ctx context.Context, cursor string, userId uint32) ([]models.Post, error) {
+func (s *PostgresDBRepository) GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error) {
 	posts := []models.Post{}
 	if cursor != "" {
 		err := s.db.Debug().

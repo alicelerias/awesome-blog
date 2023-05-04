@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"strconv"
 	"time"
 
@@ -14,9 +13,9 @@ type Tokens struct {
 	AccessToken string `json:"access_token"`
 }
 
-func Authenticate(ctx context.Context, repository database.Repository, creds *types.Credentials) (tokens *Tokens, err error) {
+func Authenticate(repository database.Repository, creds *types.Credentials) (tokens *Tokens, err error) {
 	tokens = &Tokens{}
-	user, err := repository.GetUser(ctx, creds.Username)
+	user, err := repository.GetUser(creds.Username)
 	if err != nil {
 		return
 	}

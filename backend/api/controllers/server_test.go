@@ -14,7 +14,6 @@ import (
 	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
-	"golang.org/x/net/context"
 )
 
 type MockRepository struct {
@@ -323,11 +322,11 @@ func (s *MockRepository) GetHome() error {
 	return nil
 }
 
-func (s *MockRepository) CreateUser(context.Context, *models.User) error {
+func (s *MockRepository) CreateUser(*models.User) error {
 	return nil
 }
 
-func (s *MockRepository) FindAllUsers(context.Context, *models.User) (*[]models.User, error) {
+func (s *MockRepository) FindAllUsers(*models.User) (*[]models.User, error) {
 	return &[]models.User{
 		{
 			ID:       1,
@@ -338,44 +337,44 @@ func (s *MockRepository) FindAllUsers(context.Context, *models.User) (*[]models.
 	}, nil
 }
 
-func (s *MockRepository) FindUserByID(context.Context, string) (*models.User, error) {
+func (s *MockRepository) FindUserByID(string) (*models.User, error) {
 	return &models.User{
 		ID:       1,
 		UserName: "Leia Ogana",
 	}, nil
 }
 
-func (s *MockRepository) GetUser(context.Context, string) (*models.User, error) {
+func (s *MockRepository) GetUser(string) (*models.User, error) {
 	return &models.User{
 		ID:       1,
 		UserName: "Leia Ogana",
 	}, nil
 }
 
-func (s *MockRepository) UpdateUser(ctx context.Context, value interface{}, id string) (*models.User, error) {
+func (s *MockRepository) UpdateUser(value interface{}, id string) (*models.User, error) {
 	data := value.(map[string]interface{})
 	return &models.User{
 		UserName: data["user_name"].(string),
 	}, nil
 }
 
-func (s *MockRepository) DeleteUser(context.Context, string) error {
+func (s *MockRepository) DeleteUser(string) error {
 	return nil
 }
 
-func (s *MockRepository) Favorite(context.Context, *models.Favorite) error {
+func (s *MockRepository) Favorite(*models.Favorite) error {
 	return nil
 }
 
-func (s *MockRepository) Unfavorite(ctx context.Context, postId uint32, userId uint32) error {
+func (s *MockRepository) Unfavorite(postId uint32, userId uint32) error {
 	return nil
 }
 
-func (s *MockRepository) GetFavorite(ctx context.Context, postId string, userId string) bool {
+func (s *MockRepository) GetFavorite(postId string, userId string) bool {
 	return true
 }
 
-func (s *MockRepository) GetFavoritesPostsByUser(ctx context.Context, cursor string, userId uint32) ([]models.Post, error) {
+func (s *MockRepository) GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error) {
 	return []models.Post{
 		{
 			Title:    "title",
@@ -390,7 +389,7 @@ func (s *MockRepository) GetFavoritesPostsByUser(ctx context.Context, cursor str
 	}, nil
 }
 
-func (s *MockRepository) GetFavoritesByPost(ctx context.Context, postId uint32) (*[]models.Favorite, error) {
+func (s *MockRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error) {
 	return &[]models.Favorite{
 		{
 			PostId: 12,
@@ -398,11 +397,11 @@ func (s *MockRepository) GetFavoritesByPost(ctx context.Context, postId uint32) 
 		},
 	}, nil
 }
-func (s *MockRepository) CreatePost(context.Context, *models.Post) error {
+func (s *MockRepository) CreatePost(*models.Post) error {
 	return nil
 }
 
-func (s *MockRepository) GetPosts(context.Context, string, *models.Post) ([]models.Post, error) {
+func (s *MockRepository) GetPosts(string, *models.Post) ([]models.Post, error) {
 	return []models.Post{
 		{
 			Title:    "title",
@@ -412,7 +411,7 @@ func (s *MockRepository) GetPosts(context.Context, string, *models.Post) ([]mode
 	}, nil
 }
 
-func (s *MockRepository) GetPost(context.Context, string) (*models.Post, error) {
+func (s *MockRepository) GetPost(string) (*models.Post, error) {
 	return &models.Post{
 		Title:    "title",
 		Content:  "content",
@@ -420,26 +419,26 @@ func (s *MockRepository) GetPost(context.Context, string) (*models.Post, error) 
 	}, nil
 }
 
-func (s *MockRepository) UpdatePost(ctx context.Context, value interface{}, id string) (*models.Post, error) {
+func (s *MockRepository) UpdatePost(value interface{}, id string) (*models.Post, error) {
 	data := value.(map[string]interface{})
 	return &models.Post{
 		Title: data["title"].(string),
 	}, nil
 }
 
-func (s *MockRepository) DeletePost(context.Context, string) error {
+func (s *MockRepository) DeletePost(string) error {
 	return nil
 }
 
-func (s *MockRepository) CreateComment(ctx context.Context, comment *models.Comment) error {
+func (s *MockRepository) CreateComment(comment *models.Comment) error {
 	return nil
 }
 
-func (s *MockRepository) DeleteComment(ctx context.Context, id uint32, authorId uint32) error {
+func (s *MockRepository) DeleteComment(id uint32, authorId uint32) error {
 	return nil
 }
 
-func (s *MockRepository) GetPostComments(ctx context.Context, cursor string, postId uint32) ([]models.Comment, error) {
+func (s *MockRepository) GetPostComments(cursor string, postId uint32) ([]models.Comment, error) {
 	return []models.Comment{
 		{
 			Content: "comment",
@@ -447,19 +446,19 @@ func (s *MockRepository) GetPostComments(ctx context.Context, cursor string, pos
 	}, nil
 }
 
-func (s *MockRepository) Follow(context.Context, *models.Following) error {
+func (s *MockRepository) Follow(*models.Following) error {
 	return nil
 }
 
-func (s *MockRepository) GetFollows(context.Context, *models.Following) (*[]models.Following, error) {
+func (s *MockRepository) GetFollows(*models.Following) (*[]models.Following, error) {
 	return &[]models.Following{}, nil
 }
 
-func (s *MockRepository) IsFollowing(ctx context.Context, followerId string, followingId string) bool {
+func (s *MockRepository) IsFollowing(followerId string, followingId string) bool {
 	return true
 }
 
-func (s *MockRepository) Unfollow(context.Context, string, string) error {
+func (s *MockRepository) Unfollow(string, string) error {
 	return nil
 }
 
@@ -483,6 +482,6 @@ func (s *MockRepository) Feed(string, string) ([]models.Post, error) {
 	}, nil
 }
 
-func (s *MockRepository) GetPostsByUser(ctx context.Context, post *models.Post, cursor string, uid string) ([]models.Post, error) {
+func (s *MockRepository) GetPostsByUser(post *models.Post, cursor string, uid string) ([]models.Post, error) {
 	return []models.Post{}, nil
 }

@@ -29,7 +29,7 @@ func (server *Server) CreateComment(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	comment.PostId = uint32(postId)
 
-	if err := server.repository.CreateComment(ctx, comment); err != nil {
+	if err := server.repository.CreateComment(comment); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -46,7 +46,7 @@ func (server *Server) DeleteComment(ctx *gin.Context) {
 
 	userIdToUint, _ := parseInt(userId.(string))
 
-	if err := server.repository.DeleteComment(ctx, uint32(id), uint32(userIdToUint)); err != nil {
+	if err := server.repository.DeleteComment(uint32(id), uint32(userIdToUint)); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -58,7 +58,7 @@ func (server *Server) GetPostComments(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	cursor := ctx.Query("cursor")
 	limit := 10
-	comments, err := server.repository.GetPostComments(ctx, cursor, uint32(postId))
+	comments, err := server.repository.GetPostComments(cursor, uint32(postId))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return

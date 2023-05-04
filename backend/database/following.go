@@ -1,12 +1,10 @@
 package database
 
 import (
-	"context"
-
 	"github.com/alicelerias/blog-golang/models"
 )
 
-func (s *PostgresDBRepository) Follow(ctx context.Context, following *models.Following) error {
+func (s *PostgresDBRepository) Follow(following *models.Following) error {
 	err := s.db.Debug().Create(&following).Error
 	if err != nil {
 		return err
@@ -29,7 +27,7 @@ func (s *PostgresDBRepository) Follow(ctx context.Context, following *models.Fol
 	return nil
 }
 
-func (s *PostgresDBRepository) GetFollows(ctx context.Context, following *models.Following) (*[]models.Following, error) {
+func (s *PostgresDBRepository) GetFollows(following *models.Following) (*[]models.Following, error) {
 	followings := []models.Following{}
 	err := s.db.Debug().Model(&following).Limit(100).Find(&followings).Error
 	if err != nil {
@@ -39,7 +37,7 @@ func (s *PostgresDBRepository) GetFollows(ctx context.Context, following *models
 	return &followings, nil
 }
 
-func (s *PostgresDBRepository) IsFollowing(ctx context.Context, followerId string, followingId string) bool {
+func (s *PostgresDBRepository) IsFollowing(followerId string, followingId string) bool {
 	following := models.Following{}
 	err := s.db.Debug().Where("follower_id = ? AND following_id = ?", followerId, followingId).Find(&following).Error
 	if err != nil {
@@ -48,7 +46,7 @@ func (s *PostgresDBRepository) IsFollowing(ctx context.Context, followerId strin
 	return true
 }
 
-func (s *PostgresDBRepository) Unfollow(ctx context.Context, followerId string, followingId string) error {
+func (s *PostgresDBRepository) Unfollow(followerId string, followingId string) error {
 	following := models.Following{}
 	err := s.db.Debug().Where("follower_id = ? AND following_id = ?", followerId, followingId).Delete(&following).Error
 	if err != nil {

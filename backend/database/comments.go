@@ -1,13 +1,11 @@
 package database
 
 import (
-	"context"
-
 	"github.com/alicelerias/blog-golang/models"
 	"github.com/alicelerias/blog-golang/types"
 )
 
-func (s *PostgresDBRepository) CreateComment(ctx context.Context, comment *models.Comment) error {
+func (s *PostgresDBRepository) CreateComment(comment *models.Comment) error {
 	err := s.db.Debug().Create(&comment).Error
 	if err != nil {
 		return err
@@ -15,7 +13,7 @@ func (s *PostgresDBRepository) CreateComment(ctx context.Context, comment *model
 	return nil
 }
 
-func (s *PostgresDBRepository) DeleteComment(ctx context.Context, id uint32, authorId uint32) error {
+func (s *PostgresDBRepository) DeleteComment(id uint32, authorId uint32) error {
 	comment := models.Comment{}
 	err := s.db.Debug().Where("id = ? AND author_id = ?", id, authorId).Delete(&comment).Error
 	if err != nil {
@@ -24,7 +22,7 @@ func (s *PostgresDBRepository) DeleteComment(ctx context.Context, id uint32, aut
 	return nil
 }
 
-func (s *PostgresDBRepository) GetPostComments(ctx context.Context, cursor string, postId uint32) ([]models.Comment, error) {
+func (s *PostgresDBRepository) GetPostComments(cursor string, postId uint32) ([]models.Comment, error) {
 	comments := []models.Comment{}
 	limit := s.GetLimit()
 	if cursor != "" {

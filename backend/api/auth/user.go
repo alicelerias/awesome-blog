@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"crypto/rand"
 	"time"
 
@@ -29,8 +28,8 @@ func hashPassword(password string) (hash, salt []byte) {
 	return hashedPassword, salt
 }
 
-func CreateUser(ctx context.Context, repository database.Repository, user *models.User) error {
-	return repository.CreateUser(ctx, userToModel(user))
+func CreateUser(repository database.Repository, user *models.User) error {
+	return repository.CreateUser(userToModel(user))
 }
 
 func userToModel(user *models.User) *models.User {
