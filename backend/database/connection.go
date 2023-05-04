@@ -14,5 +14,9 @@ func GetConnection(configs *config.Config) (db *gorm.DB, err error) {
 	if err != nil {
 		return
 	}
+
+	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxOpenConns(25)
+
 	return
 }

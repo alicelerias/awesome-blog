@@ -28,6 +28,7 @@ func main() {
 	log.SetLevel(level)
 
 	connection, err := database.GetConnection(configs)
+	defer connection.Close()
 	if err != nil {
 		log.Fatal(err)
 	}

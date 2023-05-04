@@ -25,7 +25,7 @@ func (s *PostgresDBRepository) Unfavorite(ctx context.Context, postId uint32, us
 
 func (s *PostgresDBRepository) GetFavorite(ctx context.Context, postId string, userId string) bool {
 	favorite := *&models.Favorite{}
-	err := s.db.Debug().Where("post_id = ? AND user_id = ?", postId, userId).Find(&favorite).Begin().Error
+	err := s.db.Debug().Where("post_id = ? AND user_id = ?", postId, userId).Find(&favorite).Error
 	if err != nil {
 		return false
 	}
