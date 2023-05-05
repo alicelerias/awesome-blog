@@ -9,11 +9,11 @@ func (s *PostgresDBRepository) Feed(cursor string, followerId string) ([]models.
 	limit := s.GetLimit()
 	if cursor != "" {
 		err := s.db.Debug().
+			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
 			Where("posts.created_at < ? ", cursor).
+			Where("followings.follower_id = ? OR posts.author_id = ?", followerId, followerId).
 			Order("posts.created_at DESC").
 			Limit(limit).
-			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
-			Where("followings.follower_id = ? OR posts.author_id = ?", followerId, followerId).
 			Find(&posts).
 			Error
 		if err != nil {

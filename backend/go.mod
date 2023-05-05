@@ -3,6 +3,7 @@ module github.com/alicelerias/blog-golang
 go 1.19
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.21.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-playground/assert/v2 v2.0.1
@@ -14,7 +15,6 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	golang.org/x/crypto v0.5.0
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
-	golang.org/x/net v0.8.0
 	gopkg.in/go-playground/validator.v9 v9.31.0
 )
 
@@ -36,6 +36,7 @@ require (
 	github.com/onsi/gomega v1.27.6 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/ugorji/go/codec v1.2.8 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
