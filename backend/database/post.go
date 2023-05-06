@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/alicelerias/blog-golang/models"
-	"github.com/alicelerias/blog-golang/types"
 	"github.com/jinzhu/gorm"
 )
 
@@ -26,35 +25,16 @@ func (s *PostgresDBRepository) CreatePost(post *models.Post) error {
 func (s *PostgresDBRepository) GetPosts(cursor string, post *models.Post) ([]models.Post, error) {
 	posts := []models.Post{}
 	limit := s.GetLimit()
+	query := s.db.Preload("Author").Order("posts.created_at DESC").
+		Limit(limit)
 	if cursor != "" {
-		err := s.db.Debug().
-			Where("posts.created_at < ?", cursor).
-			Model(limit).
-			Order("posts.created_at DESC").
-			Limit(10).
-			Find(&posts).
-			Error
-		if err != nil {
-			return []models.Post{}, err
-		}
-	} else {
-		err := s.db.Debug().
-			Model(post).
-			Order("posts.created_at DESC").
-			Limit(limit).
-			Find(&posts).
-			Error
-		if err != nil {
-			return []models.Post{}, err
-		}
+		query = query.Where("posts.created_at < ?", cursor)
 	}
-	if len(posts) > 0 {
-		for i, _ := range posts {
-			err := s.db.Debug().Model(&types.User{}).Where("id = ?", posts[i].AuthorID).Take(&posts[i].Author).Error
-			if err != nil {
-				return []models.Post{}, err
-			}
-		}
+	err := query.Find(&posts).
+		Error
+	if err != nil {
+		return []models.Post{}, err
+
 	}
 	return posts, nil
 }
@@ -78,32 +58,18 @@ func (s *PostgresDBRepository) GetPost(id string) (post *models.Post, err error)
 func (s *PostgresDBRepository) GetPostsByUser(post *models.Post, cursor string, uid string) ([]models.Post, error) {
 	posts := []models.Post{}
 	limit := s.GetLimit()
+	query := s.db.Preload("Author").Where("author_id = ?", uid).Order("posts.created_at DESC").
+		Limit(limit)
 	if cursor != "" {
-		err := s.db.Debug().
-			Where("posts.created_at > ? ", cursor).
-			Order("posts.created_at DESC").
-			Limit(limit).
-			Where("author_id = ?", uid).
-			Find(&posts).
-			Error
-		if err != nil {
-			return []models.Post{}, err
-		}
-
-		return posts, nil
-	} else {
-		err := s.db.Debug().
-			Order("posts.created_at DESC").
-			Limit(limit).
-			Where("author_id = ?", uid).
-			Find(&posts).
-			Error
-		if err != nil {
-			return []models.Post{}, err
-		}
-
-		return posts, nil
+		query = query.Where("posts.created_at < ?", cursor)
 	}
+	err := query.Find(&posts).
+		Error
+	if err != nil {
+		return []models.Post{}, err
+
+	}
+	return posts, nil
 }
 
 func (s *PostgresDBRepository) UpdatePost(values interface{}, id string) (post *models.Post, err error) {
