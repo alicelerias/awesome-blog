@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/brianvoe/gofakeit/v6 v6.21.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/dgryski/trifles v0.0.0-20230415055908-5afb1989f858
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-playground/assert/v2 v2.0.1
 	github.com/go-playground/locales v0.14.1

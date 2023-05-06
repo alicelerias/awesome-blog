@@ -29,19 +29,17 @@ func hashPassword(password string) (hash, salt []byte) {
 }
 
 func CreateUser(repository database.Repository, user *models.User) error {
-	return repository.CreateUser(userToModel(user))
+	userToModel(user)
+	return repository.CreateUser(user)
 }
 
-func userToModel(user *models.User) *models.User {
+func userToModel(user *models.User) {
 	hash, salt := hashPassword(user.Password)
-	return &models.User{
-		ID:           user.ID,
-		UserName:     user.UserName,
-		Email:        user.Email,
-		PasswordHash: hash,
-		Salt:         salt,
-		Disabled:     false,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-	}
+	user.Salt = salt
+	user.PasswordHash = hash
+	user.Disabled = false
+	user.Password = ""
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
 }

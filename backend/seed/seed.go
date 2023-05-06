@@ -11,7 +11,8 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 )
 
-func genUser(r database.Repository, handler func(*models.User)) (err error) {
+func GenUser(r database.Repository, handler func(*models.User)) (err error) {
+
 	model := &models.User{
 		UserName: gofakeit.Username(),
 		Password: "123456",
@@ -31,7 +32,7 @@ func genUsers(
 	r database.Repository,
 	handler func(m *models.User)) (err error) {
 	for i := 0; i < quantity; i++ {
-		err = genUser(r, handler)
+		err = GenUser(r, handler)
 		if err != nil {
 			return
 		}
@@ -143,17 +144,16 @@ func main() {
 
 	users := []*models.User{}
 
-	posts := []*models.Post{}
-
-	genUsers(1, r, func(user *models.User) {
-		genPosts(2, r, user.ID, func(post *models.Post) {
-			posts = append(posts, post)
-
-		})
+	genUsers(2, r, func(user *models.User) {
+		genPosts(2, r, user.ID, func(post *models.Post) {})
 		users = append(users, user)
 	})
-	for _, user := range users {
+
+	for i, user := range users {
 		randomIndex := rand.Intn(len(users))
+		for randomIndex == i {
+			randomIndex = rand.Intn(len(users))
+		}
 		randomFollowing := users[randomIndex]
 
 		if err := genFollowing(r, user.ID, randomFollowing.ID); err != nil {
