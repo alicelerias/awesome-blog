@@ -41,6 +41,14 @@ type Repository interface {
 	Unfollow(string, string) error
 
 	Feed(cursor string, followerId string) ([]models.Post, error)
+
+	// danger zone
+
+	DeleteUsersTable() error
+	DeletePostsTable() error
+	DeleteFollowingsTable() error
+	DeleteCommentsTable() error
+	DeleteFavoritesTable() error
 }
 
 type PostgresDBRepository struct {

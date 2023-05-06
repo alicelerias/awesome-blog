@@ -78,7 +78,8 @@ func (server *Server) GetPostComments(ctx *gin.Context) {
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"comments": &comments})
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"comments": &comments})
 }

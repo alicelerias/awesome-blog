@@ -489,3 +489,25 @@ func (s *MockRepository) GetPostsByUser(post *models.Post, cursor string, uid st
 func (s *MockRepository) Recomendations(uid string) (*[]models.User, error) {
 	return &[]models.User{}, nil
 }
+
+// danger zone
+
+func (s *MockRepository) DeleteUsersTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeletePostsTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeleteFollowingsTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeleteCommentsTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeleteFavoritesTable() error {
+	return nil
+}
