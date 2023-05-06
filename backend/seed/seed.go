@@ -128,6 +128,37 @@ func genFavorite(r database.Repository, postId uint32, userId uint32) (err error
 	return
 }
 
+func chance(perc float64) bool {
+	if rand.Float64() < perc {
+		return true
+	}
+	return false
+}
+
+func cleanDatabase(r database.Repository) (err error) {
+	if err := r.DeleteUsersTable(); err != nil {
+		return err
+	}
+
+	if err := r.DeletePostsTable(); err != nil {
+		return err
+	}
+
+	if err := r.DeleteFollowingsTable(); err != nil {
+		return err
+	}
+
+	if err := r.DeleteCommentsTable(); err != nil {
+		return err
+	}
+
+	if err := r.DeleteFavoritesTable(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func main() {
 	configs := config.GetConfig()
 	connection, err := database.GetConnection(configs)
@@ -138,41 +169,57 @@ func main() {
 	database.MigrateDB(connection)
 	r := database.NewPostgresDBRepository(connection)
 
+	// delete database
+
+	if err := cleanDatabase(r); err != nil {
+		return
+	}
+
+	// continue
+
 	var seed int64 = 0
 	gofakeit.Seed(seed)
 	rand.Seed(seed)
 
 	users := []*models.User{}
-
-	genUsers(2, r, func(user *models.User) {
-		genPosts(2, r, user.ID, func(post *models.Post) {})
+	nnu := 10000
+	genUsers(nnu, r, func(user *models.User) {
+		randomCreatePosts := rand.Intn(30)
+		genPosts(randomCreatePosts, r, user.ID, func(post *models.Post) {})
 		users = append(users, user)
 	})
 
-	for i, user := range users {
-		randomIndex := rand.Intn(len(users))
-		for randomIndex == i {
-			randomIndex = rand.Intn(len(users))
-		}
-		randomFollowing := users[randomIndex]
+	for uidx, user := range users {
+		num_followees := rand.Intn(int(float64(nnu)*0.04)) + 100
+		for i := 0; i <= num_followees; i++ {
+			randomIndex := rand.Intn(len(users))
+			for randomIndex == uidx {
+				randomIndex = rand.Intn(len(users))
+			}
+			randomFollowing := users[randomIndex]
 
-		if err := genFollowing(r, user.ID, randomFollowing.ID); err != nil {
-			return
-		}
-		fPosts, err := followingPosts(r, "", randomFollowing.ID)
-		if err != nil {
-			return
-		}
-		randomIndexPosts := rand.Intn(len(fPosts))
+			if err := genFollowing(r, user.ID, randomFollowing.ID); err != nil {
+				continue
+			}
 
-		randPost := fPosts[randomIndexPosts]
+			fPosts, err := followingPosts(r, "", randomFollowing.ID)
+			if err != nil {
+				return
+			}
+			for _, post := range fPosts {
 
-		if err := genComment(r, uint32(randPost.ID), user.ID); err != nil {
-			return
-		}
+				if chance(0.5) {
+					if err := genComment(r, uint32(post.ID), user.ID); err != nil {
+						return
+					}
+				}
 
-		if err := genFavorite(r, uint32(randPost.ID), user.ID); err != nil {
-			return
+				if chance(0.5) {
+					if err := genFavorite(r, uint32(post.ID), user.ID); err != nil {
+						return
+					}
+				}
+			}
 		}
 	}
 }
