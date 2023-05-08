@@ -7,7 +7,7 @@ import (
 func (s *PostgresDBRepository) Feed(cursor string, followerId string) ([]models.Post, error) {
 	posts := []models.Post{}
 	limit := s.GetLimit()
-	query := s.db.Debug().
+	query := s.db.
 		Preload("Author").
 		Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
 		Where("followings.follower_id = ?", followerId).

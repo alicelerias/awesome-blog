@@ -5,20 +5,20 @@ import (
 )
 
 func (s *PostgresDBRepository) Follow(following *models.Following) error {
-	err := s.db.Debug().Create(&following).Error
+	err := s.db.Create(&following).Error
 	if err != nil {
 		return err
 	}
 
 	if following.FollowerID != 0 {
-		err = s.db.Debug().Model(&models.User{}).Where("id = ?", following.FollowerID).Take(&following.Follower).Error
+		err = s.db.Model(&models.User{}).Where("id = ?", following.FollowerID).Take(&following.Follower).Error
 		if err != nil {
 			return err
 		}
 	}
 
 	if following.FollowingID != 0 {
-		err = s.db.Debug().Model(&models.User{}).Where("id = ?", following.FollowingID).Take(&following.Following).Error
+		err = s.db.Model(&models.User{}).Where("id = ?", following.FollowingID).Take(&following.Following).Error
 		if err != nil {
 			return err
 		}
@@ -30,7 +30,7 @@ func (s *PostgresDBRepository) Follow(following *models.Following) error {
 func (s *PostgresDBRepository) GetFollows(following *models.Following) (*[]models.Following, error) {
 	followings := []models.Following{}
 	limit := s.GetLimit()
-	err := s.db.Debug().Model(&following).Limit(limit).Find(&followings).Error
+	err := s.db.Model(&following).Limit(limit).Find(&followings).Error
 	if err != nil {
 		return &[]models.Following{}, err
 	}
@@ -40,7 +40,7 @@ func (s *PostgresDBRepository) GetFollows(following *models.Following) (*[]model
 
 func (s *PostgresDBRepository) IsFollowing(followerId string, followingId string) bool {
 	following := models.Following{}
-	err := s.db.Debug().Where("follower_id = ? AND following_id = ?", followerId, followingId).Find(&following).Error
+	err := s.db.Where("follower_id = ? AND following_id = ?", followerId, followingId).Find(&following).Error
 	if err != nil {
 		return false
 	}
@@ -49,7 +49,7 @@ func (s *PostgresDBRepository) IsFollowing(followerId string, followingId string
 
 func (s *PostgresDBRepository) Unfollow(followerId string, followingId string) error {
 	following := models.Following{}
-	err := s.db.Debug().Where("follower_id = ? AND following_id = ?", followerId, followingId).Delete(&following).Error
+	err := s.db.Where("follower_id = ? AND following_id = ?", followerId, followingId).Delete(&following).Error
 	if err != nil {
 		return err
 	}

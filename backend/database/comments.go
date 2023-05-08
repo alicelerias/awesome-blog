@@ -34,7 +34,7 @@ func (s *PostgresDBRepository) GetPostComments(cursor string, postId uint32) ([]
 		query = query.Where("comments.created_at > ?", cursor)
 	}
 
-	err := query.Debug().Find(&comments).Error
+	err := query.Find(&comments).Error
 	if err != nil {
 		return []models.Comment{}, err
 	}
