@@ -9,23 +9,24 @@ func (s *PostgresDBRepository) Recomendations(uid string) (*[]models.User, error
 	friendsOfFriends := []models.User{}
 	recomendations := []models.User{}
 
+	// rever
+
 	err := s.db.Raw(
-		`SELECT recomended_user.id, recomended_user.user_name, recomended_user.bio, recomended_user.avatar
-    FROM users AS me
-    JOIN followings As my_friends
-      ON me.id = my_friends.follower_id
-    JOIN users AS friend 
-      ON my_friends.following_id = friend.id
-    JOIN followings AS recomendations
-      ON friend.id = recomendations.follower_id 
-        AND recomendations.following_id != me.id
-    JOIN POPULARITY_SCORE AS pop
-      ON recomendations.following_id = pop.id
-    JOIN users AS recomended_user
-      ON pop.id = recomended_user.id
-    WHERE me.id = ?
-    ORDER BY pop.score DESC
-    LIMIT 5`, uid).
+		`select distinct recomended_user.id, recomended_user.user_name, recomended_user.avatar, recomended_user.bio, pop.score from users as recomended_user
+		join popularity_score as pop
+		on recomended_user.id = pop.id
+		join followings as recomendations
+		on pop.id = recomendations.following_id
+		join users as friend
+		on recomendations.follower_id = friend.id
+		join followings as my_friends
+		on friend.id = my_friends.following_id
+		join users as me 
+		on my_friends.follower_id = me.id
+		where me.id = ? and recomendations.following_id != me.id
+		order by pop.score DESC
+		limit 5;
+		`, uid).
 		Find(&friendsOfFriends).Error
 	if err != nil {
 		return &[]models.User{}, err

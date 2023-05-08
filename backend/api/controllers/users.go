@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/alicelerias/blog-golang/api/auth"
@@ -112,7 +111,6 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 	} else {
 		users, err := server.repository.FindAllUsers(&user)
 		if err != nil {
-			log.Error()
 			ctx.JSON(http.StatusInternalServerError, err.Error())
 			return
 		}

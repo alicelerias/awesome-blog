@@ -68,7 +68,7 @@ func main() {
 
 	r.Use(middlewares.AuthenticationMiddleware())
 
-	r.GET("/users", server.GetUsers)
+	r.GET("/users", server.GetRecomendations)
 
 	r.GET("/users/:id", server.GetUser)
 
