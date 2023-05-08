@@ -1,15 +1,11 @@
 package database
 
 import (
-	"errors"
-
 	"github.com/alicelerias/blog-golang/models"
-
-	"github.com/jinzhu/gorm"
 )
 
 func (s *PostgresDBRepository) CreateUser(user *models.User) error {
-	err := s.db.Debug().Create(&user).Error
+	err := s.db.Create(&user).Error
 	if err != nil {
 		return err
 	}
@@ -18,49 +14,49 @@ func (s *PostgresDBRepository) CreateUser(user *models.User) error {
 }
 
 func (s *PostgresDBRepository) FindAllUsers(user *models.User) (*[]models.User, error) {
-	var err error
 	limit := s.GetLimit()
 	users := []models.User{}
-	err = s.db.Debug().Model(&models.User{}).Order("users.created_at DESC").Limit(limit).Find(&users).Error
+	err := s.db.Model(&models.User{}).Order("users.created_at DESC").Limit(limit).Find(&users).Error
 	if err != nil {
 		return &[]models.User{}, err
 	}
 	return &users, err
 }
 
-func (s *PostgresDBRepository) FindUserByID(uid string) (user *models.User, err error) {
-	user = &models.User{}
-	err = s.db.First(user, uid).Error
-	if gorm.IsRecordNotFoundError(err) {
-		err = errors.New("User Not Found")
+func (s *PostgresDBRepository) FindUserByID(uid string) (*models.User, error) {
+	user := &models.User{}
+	if err := s.db.First(user, uid).Error; err != nil {
+		return &models.User{}, err
 	}
-	return
+
+	return user, nil
 }
 
-func (s *PostgresDBRepository) GetUser(username string) (user *models.User, err error) {
-	user = &models.User{}
-	err = s.db.First(user, "user_name = ?", username).Error
-	if gorm.IsRecordNotFoundError(err) {
-		err = errors.New("User Not Found")
+func (s *PostgresDBRepository) GetUser(username string) (*models.User, error) {
+	user := &models.User{}
+	if err := s.db.First(user, "user_name = ?", username).Error; err != nil {
+		return &models.User{}, err
 	}
-	return
+
+	return user, nil
 }
 
-func (s *PostgresDBRepository) UpdateUser(values interface{}, uid string) (u *models.User, err error) {
-	u = &models.User{}
-	err = s.db.Table("users").
+func (s *PostgresDBRepository) UpdateUser(values interface{}, uid string) (*models.User, error) {
+	user := &models.User{}
+	if err := s.db.Table("users").
 		Where("id = ?", uid).
 		UpdateColumns(values).
-		Take(u).
-		Error
-	return
+		Take(user).
+		Error; err != nil {
+		return &models.User{}, err
+	}
+	return user, nil
 }
 
-func (s *PostgresDBRepository) DeleteUser(uid string) (err error) {
+func (s *PostgresDBRepository) DeleteUser(uid string) error {
 	user := &models.User{}
-	err = s.db.Delete(user, uid).Error
-	if err != nil {
-		return errors.New("Error")
+	if err := s.db.Delete(user, uid).Error; err != nil {
+		return err
 	}
 	return nil
 }
