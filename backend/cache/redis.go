@@ -5,9 +5,6 @@ import (
 	"time"
 )
 
-// SetKey
-// value must be json serializable
-
 func (s *RedisClient) genKey(name string, nameSpace string) string {
 	return name + "_" + nameSpace
 }

@@ -32,6 +32,13 @@ func (server *Server) CreateFollow(ctx *gin.Context) {
 	}
 
 	ctx.AbortWithStatus(http.StatusCreated)
+
+	name := "users"
+	nameSpace := "all"
+	err := server.cache.DeleteKey(name, nameSpace)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (server *Server) GetFollows(ctx *gin.Context) {
@@ -105,4 +112,11 @@ func (server *Server) Unfollow(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusNoContent, gin.H{"message": "user unfollowed"})
+
+	name := "users"
+	nameSpace := "all"
+	err := server.cache.DeleteKey(name, nameSpace)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }

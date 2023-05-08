@@ -25,6 +25,7 @@ func (s *PostgresDBRepository) Follow(following *models.Following) error {
 	}
 
 	return nil
+
 }
 
 func (s *PostgresDBRepository) GetFollows(following *models.Following) (*[]models.Following, error) {
