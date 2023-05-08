@@ -5,7 +5,7 @@ import (
 )
 
 func (s *PostgresDBRepository) CreateComment(comment *models.Comment) error {
-	err := s.db.Debug().Create(&comment).Error
+	err := s.db.Create(&comment).Error
 	if err != nil {
 		return err
 	}
@@ -14,7 +14,7 @@ func (s *PostgresDBRepository) CreateComment(comment *models.Comment) error {
 
 func (s *PostgresDBRepository) DeleteComment(id uint32, authorId uint32) error {
 	comment := models.Comment{}
-	err := s.db.Debug().Where("id = ? AND author_id = ?", id, authorId).Delete(&comment).Error
+	err := s.db.Where("id = ? AND author_id = ?", id, authorId).Delete(&comment).Error
 	if err != nil {
 		return err
 	}

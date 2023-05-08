@@ -17,6 +17,8 @@ func NewUser(user *models.User) *types.User {
 	return &types.User{
 		ID:       user.ID,
 		UserName: user.UserName,
+		Avatar:   user.Avatar,
+		Bio:      user.Bio,
 	}
 }
 
@@ -117,7 +119,7 @@ func (server *Server) GetPosts(ctx *gin.Context) {
 	}
 }
 func (server *Server) GetBlogPosts(ctx *gin.Context) {
-	post := *&models.Post{}
+	post := models.Post{}
 	cursor := ctx.Query("cursor")
 	getLimit := server.repository.GetLimit()
 	limit, err := stringToInt(getLimit)
@@ -192,7 +194,7 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 			return
 		}
 		for _, item := range feed {
-			newPost := server.postFromModel(ctx, &item, &item.Author, uid.(string))
+			newPost := server.postFromModel(ctx, &item, &item.Author, uidToString)
 			fromModelPosts = append(fromModelPosts, newPost)
 		}
 		err = server.cache.SetKey(key, uidToString, fromModelPosts, time.Hour)

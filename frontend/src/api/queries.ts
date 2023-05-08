@@ -82,13 +82,17 @@ export const getPostsByUser = async ({
   return data;
 };
 
-export const getBlogsPost = async (id: string | null): Promise<Posts> => {
-  const url = new URL(configs.API_URL + `/posts/blog/${id}`);
+export const getBlogsPost =
+  (id: string | null) =>
+  async ({
+    pageParam = `/posts/blog/${id}`,
+  }: QueryFunctionContext): Promise<Posts> => {
+    const url = new URL(configs.API_URL + pageParam);
 
-  const { data } = await axios.get<Posts>(url.toString());
+    const { data } = await axios.get<Posts>(url.toString());
 
-  return data;
-};
+    return data;
+  };
 
 export const getFeed = async ({
   pageParam = "/feed",

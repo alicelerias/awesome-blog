@@ -14,14 +14,15 @@ export const BlogsPost: React.FC<PropsWithChildren<props>> = ({
 }) => {
   const { isLoading, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
     "getBlogsPost",
-    () => getBlogsPost(id),
+    getBlogsPost(id),
     {
       getNextPageParam: (data) => data.next_link,
     }
   );
-
+  console.log("blogs", id);
   return (
     <BoxPosts
+      key={`blogs-post-${id}`}
       isLoading={isLoading}
       data={data}
       navigate={navigate}

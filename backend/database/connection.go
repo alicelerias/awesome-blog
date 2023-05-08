@@ -6,6 +6,7 @@ import (
 	"github.com/alicelerias/blog-golang/config"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	log "github.com/sirupsen/logrus"
 )
 
 func GetConnection(configs *config.Config) (db *gorm.DB, err error) {
@@ -18,9 +19,9 @@ func GetConnection(configs *config.Config) (db *gorm.DB, err error) {
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(25)
 
-	// if (loglevel > debug) {
-	// 	db = db.Debug()
-	// }
+	if log.GetLevel() >= log.DebugLevel {
+		db = db.Debug()
+	}
 
 	return
 }

@@ -7,7 +7,11 @@ import (
 func (s *PostgresDBRepository) Feed(cursor string, followerId string) ([]models.Post, error) {
 	posts := []models.Post{}
 	limit := s.GetLimit()
-	query := s.db.Preload("Author").Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").Order("posts.created_at DESC").
+	query := s.db.Debug().
+		Preload("Author").
+		Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
+		Where("followings.follower_id = ?", followerId).
+		Order("posts.created_at DESC").
 		Limit(limit)
 	if cursor != "" {
 		query = query.Where("posts.created_at < ?", cursor)
