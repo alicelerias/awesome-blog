@@ -20,7 +20,7 @@ export const UsersComponent: React.FC<props> = ({ navigate }) => {
         <p>is loading</p>
       ) : (
         data?.users.map((user) => (
-          <div className={`flex flex-row gap-two p-one w-full`}>
+          <div key={user.id} className={`flex flex-row gap-two p-one w-full`}>
             <div className="flex flex-col w-3/4">
               <img
                 className=" w-8 aspect-square"

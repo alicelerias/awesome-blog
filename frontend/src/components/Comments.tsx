@@ -26,7 +26,10 @@ export const CommentsComponent: React.FC<PropsWithChildren<props>> = ({
           <Skeleton />
         ) : (
           data?.comments.map((comment) => (
-            <div className="flex flex-col p-two gap-two opacity-3 w-full shadow-md">
+            <div
+              key={comment.id}
+              className="flex flex-col p-two gap-two opacity-3 w-full shadow-md"
+            >
               <div className="flex justify-end w-full">
                 {currentUser?.id === comment.author.id && (
                   <DeleteCommentButton
