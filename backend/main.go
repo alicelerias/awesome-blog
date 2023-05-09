@@ -60,7 +60,7 @@ func main() {
 	})
 	r.GET("/", server.Home)
 
-	r.POST("/users", server.CreateUser)
+	r.POST("/register", server.CreateUser)
 
 	r.POST("/login", server.Login)
 

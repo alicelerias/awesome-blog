@@ -52,7 +52,7 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <span>
                 <InputForm
-                  className="bg-transparent text-3xl p-one"
+                  className="bg-transparent text-2xl p-one"
                   placeholder="username"
                   controller={register("username", {
                     required: false,
@@ -63,7 +63,7 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
 
               <span>
                 <input
-                  className="bg-transparent text-3xl p-one"
+                  className="bg-transparent text-2xl p-one"
                   placeholder="password"
                   {...register("password", {
                     required: false,
@@ -71,6 +71,19 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
                   type="password"
                 />
               </span>
+
+              <span className="flex flex-row justify-end gap-one mt-two">
+                <input
+                  {...register("remember_me")}
+                  type="checkbox"
+                  className="border-2 border-blue bg-blue"
+                />
+                <div className="inline-flex sm:text-sm text-blue-500 hover:text-blue-700">
+                  {" "}
+                  Remember-me?
+                </div>
+              </span>
+
               <div className="flex justify-center m-two">
                 <InputButton name="Login" />
               </div>

@@ -25,6 +25,7 @@ export type Post = {
 export type Credential = {
   username: string;
   password: string;
+  remember_me: boolean;
 };
 
 export type ResultList<K extends string, T> = {

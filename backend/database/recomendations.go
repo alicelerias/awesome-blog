@@ -24,19 +24,19 @@ func (s *PostgresDBRepository) Recomendations(uid string) (*[]models.User, error
 		join users as me on my_friends.follower_id = me.id and me.id = ?
 		where recomendations.following_id != me.id and recomendations.follower_id != me.id
 		order by pop.score DESC
-		limit 10;
+		limit 5;
 		`, uid).
 		Find(&users).Error
 	if err != nil {
 		return &[]models.User{}, err
 	}
 
-	if len(users) < 10 {
+	if len(users) < 5 {
 		s.db.Raw(
 			`select * from popularity_score as pop
 			join users as u on pop.id = u.id
 			order by pop.score DESC
-			`).Limit(10 - len(users)).
+			`).Limit(5 - len(users)).
 			Find(&recomendations)
 
 		users = append(users, recomendations...)

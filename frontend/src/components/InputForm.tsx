@@ -14,7 +14,7 @@ export const InputForm: React.FC<props> = ({ error, controller, ...rest }) => {
     <div className="flex flex-col gap-one">
       <textarea
         data-testid={"input-form-component-test-id"}
-        className="bg-transparent text-sm w-full h-three overflow-visible p-one italic"
+        className="bg-transparent text-sm w-full h-auto overflow-visible p-one italic"
         {...controller}
         {...rest}
       />

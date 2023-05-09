@@ -5,6 +5,7 @@ import "./App.css";
 import { Main } from "./components/Main";
 import { LoginPage } from "./components/LoginPage";
 import { useForm } from "react-hook-form";
+import { Register } from "./components/RegisterPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,17 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
+            <Route
+              path="/register"
+              element={
+                <Register
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  errors={errors}
+                  reset={reset}
+                />
+              }
+            />
             <Route
               path="/login"
               element={
