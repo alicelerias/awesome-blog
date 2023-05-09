@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { registerUser } from "../api/mutations";
 import { useNavigate } from "react-router-dom";
-import { BoxLayout } from "./BoxLayout";
 import { InputForm } from "./InputForm";
 import { InputButton } from "./InputButton";
 import {
@@ -14,7 +13,6 @@ import {
 } from "react-hook-form";
 import { User } from "../types";
 import { Alert } from "./Alert";
-import { error } from "console";
 
 type props = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;

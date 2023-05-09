@@ -32,7 +32,6 @@ export const Profile: React.FC<props> = ({
   const currentUserContext = useContext(CurrentUserContext);
 
   setValue("bio", currentUserContext?.bio);
-  console.log(currentUserContext);
 
   const { mutate } = useMutation((data: User) => updateCurrentUser(data), {
     onSuccess: () => {

@@ -19,7 +19,6 @@ export const BlogsPost: React.FC<PropsWithChildren<props>> = ({
       getNextPageParam: (data) => data.next_link,
     }
   );
-  console.log("blogs", id);
   return (
     <BoxPosts
       key={`blogs-post-${id}`}
