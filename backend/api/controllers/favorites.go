@@ -53,7 +53,7 @@ func (server *Server) Unfavorite(ctx *gin.Context) {
 func (server *Server) GetFavoritesByPost(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 
-	favorites, err := server.repository.GetFavoritesByPost(uint32(postId))
+	favorites, err, _ := server.repository.GetFavoritesByPost(uint32(postId))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return

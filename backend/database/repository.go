@@ -28,12 +28,12 @@ type Repository interface {
 	Favorite(*models.Favorite) error
 	Unfavorite(postId uint32, userId uint32) error
 	GetFavorite(postId string, userId string) bool
-	GetFavoritesByPost(postId uint32) (*[]models.Favorite, error)
+	GetFavoritesByPost(postId uint32) (*[]models.Favorite, error, int)
 	GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error)
 
 	CreateComment(comment *models.Comment) error
 	DeleteComment(id uint32, authorId uint32) error
-	GetPostComments(cursor string, postId uint32) ([]models.Comment, error)
+	GetPostComments(cursor string, postId uint32) ([]models.Comment, error, int)
 
 	Follow(*models.Following) error
 	GetFollows(*models.Following) (*[]models.Following, error)

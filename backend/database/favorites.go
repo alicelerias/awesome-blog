@@ -31,14 +31,15 @@ func (s *PostgresDBRepository) GetFavorite(postId string, userId string) bool {
 	return true
 }
 
-func (s *PostgresDBRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error) {
+func (s *PostgresDBRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error, int) {
+	var count int
 	favorites := []models.Favorite{}
 	limit := s.GetLimit()
-	err := s.db.Model(&models.Favorite{}).Limit(limit).Where("post_id = ?", postId).Find(&favorites).Error
+	err := s.db.Model(&models.Favorite{}).Limit(limit).Where("post_id = ?", postId).Find(&favorites).Count(&count).Error
 	if err != nil {
-		return &[]models.Favorite{}, err
+		return &[]models.Favorite{}, err, 0
 	}
-	return &favorites, nil
+	return &favorites, nil, count
 }
 
 func (s *PostgresDBRepository) GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error) {

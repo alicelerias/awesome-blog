@@ -62,7 +62,7 @@ func (server *Server) GetPostComments(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
-	comments, err := server.repository.GetPostComments(cursor, uint32(postId))
+	comments, err, _ := server.repository.GetPostComments(cursor, uint32(postId))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return

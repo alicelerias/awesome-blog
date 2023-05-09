@@ -389,13 +389,13 @@ func (s *MockRepository) GetFavoritesPostsByUser(cursor string, userId uint32) (
 	}, nil
 }
 
-func (s *MockRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error) {
+func (s *MockRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error, int) {
 	return &[]models.Favorite{
 		{
 			PostId: 12,
 			UserId: 2,
 		},
-	}, nil
+	}, nil, 1
 }
 func (s *MockRepository) CreatePost(*models.Post) error {
 	return nil
@@ -438,12 +438,12 @@ func (s *MockRepository) DeleteComment(id uint32, authorId uint32) error {
 	return nil
 }
 
-func (s *MockRepository) GetPostComments(cursor string, postId uint32) ([]models.Comment, error) {
+func (s *MockRepository) GetPostComments(cursor string, postId uint32) ([]models.Comment, error, int) {
 	return []models.Comment{
 		{
 			Content: "comment",
 		},
-	}, nil
+	}, nil, 1
 }
 
 func (s *MockRepository) Follow(*models.Following) error {

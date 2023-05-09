@@ -26,11 +26,11 @@ func (server *Server) postFromModel(ctx *gin.Context, post *models.Post, user *m
 	postId := strconv.Itoa(int(post.ID))
 	cursor := ctx.Query("cursor")
 
-	commentsCount, err := server.repository.GetPostComments(cursor, uint32(post.ID))
+	_, err, commentsCount := server.repository.GetPostComments(cursor, uint32(post.ID))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
-	favoritesCount, err := server.repository.GetFavoritesByPost(uint32(post.ID))
+	_, err, favoritesCount := server.repository.GetFavoritesByPost(uint32(post.ID))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -43,8 +43,8 @@ func (server *Server) postFromModel(ctx *gin.Context, post *models.Post, user *m
 		Author:         *NewUser(user),
 		AuthorID:       post.AuthorID,
 		IsFavorite:     server.repository.GetFavorite(postId, userId),
-		CommentsCount:  len(commentsCount),
-		FavoritesCount: len(*favoritesCount),
+		CommentsCount:  commentsCount,
+		FavoritesCount: favoritesCount,
 		CreatedAt:      post.CreatedAt,
 		UpdatedAt:      post.UpdatedAt,
 	}
