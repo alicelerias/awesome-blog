@@ -48,7 +48,10 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
     <BoxLayout>
       <div className="flex flex-col gap-two">
         <span className="flex justify-end text-title1">New Post</span>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-four"
+        >
           <span>
             <InputForm
               controller={register("title", {

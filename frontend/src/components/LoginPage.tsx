@@ -88,6 +88,12 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
                 <InputButton name="Login" />
               </div>
             </form>
+            <div
+              className="flex justify-end text-sm text-blue cursor-pointer"
+              onClick={() => navigate("/register")}
+            >
+              Don't have a profile? Register!
+            </div>
           </div>
         </div>
       </div>
