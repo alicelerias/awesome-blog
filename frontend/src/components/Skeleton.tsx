@@ -2,7 +2,7 @@ import React from "react";
 
 const Skeleton: React.FC<{}> = () => {
   return (
-    <div className="animate-pulse">
+    <div data-testid="skeleton-test-id" className="animate-pulse">
       <div className="flex gap-one pb-one">
         <div className="w-auto h-64">
           <img

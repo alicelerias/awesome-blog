@@ -26,16 +26,18 @@ export const DeleteCommentButton: React.FC<PropsWithChildren<props>> = ({
   );
 
   return (
-    <Sidebar
-      name={"..."}
-      children={
-        <p
-          onClick={() => mutate()}
-          className="text-black text-sm block py-2 px-4 hover:text-blue cursor-pointer"
-        >
-          Delete
-        </p>
-      }
-    />
+    <div data-testid="delete-comment-button-test-id">
+      <Sidebar
+        name={"..."}
+        children={
+          <p
+            onClick={() => mutate()}
+            className="text-black text-sm block py-2 px-4 hover:text-blue cursor-pointer"
+          >
+            Delete
+          </p>
+        }
+      />
+    </div>
   );
 };

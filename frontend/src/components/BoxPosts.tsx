@@ -37,12 +37,12 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
     ) || [];
 
   return (
-    <div className="flex flex-col gap-one sm:w-3/5">
+    <div
+      data-testid="posts-component-test-id"
+      className="flex flex-col gap-one sm:w-3/5"
+    >
       {children}
-      <div
-        data-testid={"posts-component-test-id"}
-        className={`m-0 p-0 w-full sm:w-full`}
-      >
+      <div className="m-0 p-0 w-full sm:w-full">
         {isLoading ? (
           <Skeleton />
         ) : (
@@ -72,6 +72,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                 <div className="flex flex-row gap-two justify-end p-one">
                   <span> {post.comments_count} </span>
                   <AiOutlineComment
+                    data-testid="comment-icon-test-id"
                     onClick={() => {
                       navigate(`/$posts/detail?id=${post.id}`);
                     }}

@@ -21,5 +21,11 @@ export const Observer: React.FC<props> = ({ fetchNextPage }) => {
     return () => intersectionObserver.disconnect();
   });
 
-  return <li id="observer" className="text-black"></li>;
+  return (
+    <li
+      data-testid="intersection-observer-test-id"
+      id="observer"
+      className="text-black"
+    ></li>
+  );
 };

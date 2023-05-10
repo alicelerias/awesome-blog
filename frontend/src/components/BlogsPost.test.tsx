@@ -1,10 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { Posts, User } from "../types";
 import * as queries from "../api/queries";
-import { FeedComponent } from "./Feed";
 import { TestsContext } from "./testComonents/Context";
+import { BlogsPost } from "./BlogsPost";
+import { QueryFunctionContext } from "react-query";
 
-describe("test for feed component", () => {
+describe("test for posts component", () => {
   const user: User = {
     id: "64",
     username: "lukeskywalker",
@@ -35,16 +36,22 @@ describe("test for feed component", () => {
     const navigate = jest.fn();
     return render(
       <TestsContext>
-        <FeedComponent navigate={navigate} />
+        <BlogsPost id={user.id ? user.id : "0"} navigate={navigate} />
       </TestsContext>
     );
   };
 
-  const fakeGet = jest.spyOn(queries, "getFeed").mockImplementation(() => {
-    return Promise.resolve(posts);
-  });
+  const fakeGet = jest
+    .spyOn(queries, "getBlogsPost")
+    .mockImplementation((id) => {
+      return async ({
+        pageParam = `/posts/blog/${id}`,
+      }: QueryFunctionContext) => {
+        return Promise.resolve(posts);
+      };
+    });
 
-  it("test render feed", async () => {
+  it("test render posts", async () => {
     renderComponent();
 
     const componentId = screen.getByTestId("posts-component-test-id");
@@ -53,7 +60,7 @@ describe("test for feed component", () => {
     expect(screen.queryByTestId("bla")).not.toBeInTheDocument();
   });
 
-  it("test get feed", async () => {
+  it("test get posts", async () => {
     renderComponent();
     expect(fakeGet).toHaveBeenCalledTimes(1);
   });
