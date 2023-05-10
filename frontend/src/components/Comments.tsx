@@ -1,11 +1,13 @@
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { getComments } from "../api/queries";
 import { BoxLayout } from "./BoxLayout";
 import { PropsWithChildren } from "react";
 import { DeleteCommentButton } from "./DeleteCommentButton";
-import { User } from "../types";
+import { Comment, User } from "../types";
 import { NavigateFunction } from "react-router-dom";
 import Skeleton from "./Skeleton";
+import { Observer } from "./IntersectionObserver";
+import { InputButton } from "./InputButton";
 
 type props = {
   id: string | null;
@@ -17,7 +19,20 @@ export const CommentsComponent: React.FC<PropsWithChildren<props>> = ({
   currentUser,
   navigate,
 }) => {
-  const { data, isLoading } = useQuery("getComments", () => getComments(id));
+  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    "getComments",
+    getComments(id),
+    {
+      getNextPageParam: (data) => data.next_link,
+    }
+  );
+
+  const comments =
+    data?.pages.reduce(
+      (previous, current) => [...previous, ...current.content],
+      [] as Comment[]
+    ) || [];
+
   return (
     <BoxLayout>
       <h1 className="sm:text3xl">Comments</h1>
@@ -25,7 +40,7 @@ export const CommentsComponent: React.FC<PropsWithChildren<props>> = ({
         {isLoading ? (
           <Skeleton />
         ) : (
-          data?.comments.map((comment) => (
+          comments.map((comment) => (
             <div
               key={comment.id}
               className="flex flex-col p-two gap-two opacity-3 w-full shadow-md"
@@ -57,6 +72,11 @@ export const CommentsComponent: React.FC<PropsWithChildren<props>> = ({
           ))
         )}
       </div>
+      {hasNextPage && (
+        <button onClick={() => fetchNextPage()} className="p-one shadow-sm">
+          Load More...
+        </button>
+      )}
     </BoxLayout>
   );
 };

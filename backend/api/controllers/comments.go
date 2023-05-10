@@ -74,12 +74,12 @@ func (server *Server) GetPostComments(ctx *gin.Context) {
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"comments":    comments,
+			"content":     comments,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"comments": &comments})
+		ctx.JSON(http.StatusOK, gin.H{"content": &comments})
 	}
 
 }

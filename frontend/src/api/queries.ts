@@ -112,13 +112,17 @@ export const getPost = async (id: string | null): Promise<Post> => {
   return data;
 };
 
-export const getComments = async (id: string | null): Promise<Comments> => {
-  const url = new URL(configs.API_URL + `/comment/${id}`);
+export const getComments =
+  (id: string | null) =>
+  async ({
+    pageParam = `/comment/${id}`,
+  }: QueryFunctionContext): Promise<Comments> => {
+    const url = new URL(configs.API_URL + pageParam);
 
-  const { data } = await axios.get<Comments>(url.toString());
+    const { data } = await axios.get<Comments>(url.toString());
 
-  return data;
-};
+    return data;
+  };
 
 export const healthCheck = async (): Promise<HealthCheck> => {
   const url = new URL(configs.API_URL + "/healthcheck");

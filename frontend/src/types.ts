@@ -65,4 +65,4 @@ export type Comment = {
   created_at: string;
 };
 
-export type Comments = ResultList<"comments", Comment>;
+export type Comments = PaginationResult<Comment>;
