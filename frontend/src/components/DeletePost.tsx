@@ -23,7 +23,11 @@ export const DeletePost: React.FC<PropsWithChildren<props>> = ({
     mutate();
   };
   return (
-    <button className={` bg-yellow p-1 w-1/5 text-sm`} onClick={onClick}>
+    <button
+      data-testid="delete-component-button-test-id"
+      className={` bg-yellow p-1 w-1/5 text-sm`}
+      onClick={onClick}
+    >
       Delete Post
     </button>
   );

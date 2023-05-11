@@ -37,7 +37,7 @@ export const ToggleFavoriteButton: React.FC<PropsWithChildren<props>> = ({
   };
 
   return (
-    <div data-testid="favorite-button-testid">
+    <div className="flex flex-row gap-one" data-testid="follow-button-testid">
       <span className="text-sm">{count}</span>
       <AiFillHeart
         className={

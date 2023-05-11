@@ -31,6 +31,7 @@ export const DeleteCommentButton: React.FC<PropsWithChildren<props>> = ({
         name={"..."}
         children={
           <p
+            data-testid="delete-button"
             onClick={() => mutate()}
             className="text-black text-sm block py-2 px-4 hover:text-blue cursor-pointer"
           >

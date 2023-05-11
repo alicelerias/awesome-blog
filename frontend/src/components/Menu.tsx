@@ -23,7 +23,10 @@ export const Menu: React.FC<props> = ({ navigate }) => {
     mutate();
   };
   return (
-    <div className="flex flex-row py-8 sm:py-4 space-x-6 justify-center ">
+    <div
+      data-testid="menu-component-test-id"
+      className="flex flex-row py-8 sm:py-4 space-x-6 justify-center "
+    >
       <Sidebar
         name={<AiOutlineUser className="h-6 w-6" />}
         children={

@@ -12,6 +12,7 @@
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "axios": "^0.27.2",
+    "intersection-observer": "^0.12.2",
     "jest-mock-axios": "^4.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

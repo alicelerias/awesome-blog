@@ -19,17 +19,19 @@ export const FavoritesPosts: React.FC<PropsWithChildren<props>> = ({
   );
 
   return (
-    <BoxPosts
-      isLoading={isLoading}
-      fetchNextPage={fetchNextPage}
-      hasNextPage={hasNextPage}
-      data={data}
-      navigate={navigate}
-      children={
-        <div className="bg-box-color p-one flex justify-center text-2xl">
-          Your favorites posts
-        </div>
-      }
-    />
+    <div data-testid="favorites-component-test-id">
+      <BoxPosts
+        isLoading={isLoading}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        data={data}
+        navigate={navigate}
+        children={
+          <div className="bg-box-color p-one flex justify-center text-2xl">
+            Your favorites posts
+          </div>
+        }
+      />
+    </div>
   );
 };

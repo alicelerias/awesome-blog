@@ -29,13 +29,14 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
   errors,
   reset,
 }) => {
-  const { mutate } = useMutation(createPost, {
-    onSuccess: () => {
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    },
-  });
+  const { mutate } =
+    useMutation(createPost, {
+      onSuccess: () => {
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      },
+    }) || {};
 
   const onSubmit = (data: FieldValues) => {
     mutate(data as Post);
@@ -46,7 +47,7 @@ export const CreatePost: React.FC<PropsWithChildren<props>> = ({
 
   return (
     <BoxLayout>
-      <div className="flex flex-col gap-two">
+      <div data-testid="create-post-test-id" className="flex flex-col gap-two">
         <span className="flex justify-end text-title1">New Post</span>
         <form
           onSubmit={handleSubmit(onSubmit)}

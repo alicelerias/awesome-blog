@@ -59,7 +59,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                 />
               </div>
               <div className="p-two bg-box-color w-full">
-                <img className="w-20" src={post?.img} alt="" />
+                <img className="w-600" src={post?.img} alt="" />
                 <h1
                   onClick={() => {
                     navigate(`/posts/detail?id=${post.id}`);
