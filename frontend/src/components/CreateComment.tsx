@@ -13,7 +13,7 @@ type props = {
   onSubmit: SubmitHandler<FieldValues>;
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues> | undefined;
+  errors?: FieldErrors<FieldValues> | undefined;
 };
 export const CreateComment: React.FC<React.PropsWithChildren<props>> = ({
   onSubmit,
@@ -22,17 +22,19 @@ export const CreateComment: React.FC<React.PropsWithChildren<props>> = ({
   errors,
 }) => {
   return (
-    <div>
-      <form className="flex flex-col gap-one" onSubmit={handleSubmit(onSubmit)}>
-        <InputForm
-          placeholder="insert your comment"
-          controller={register("content", {
-            required: true,
-          })}
-          error={errors?.content}
-        />
-        <InputButton name="Comment" />
-      </form>
-    </div>
+    <form
+      data-testid="comment-form-test-id"
+      className="flex flex-col gap-one"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <InputForm
+        placeholder="insert your comment"
+        controller={register("content", {
+          required: true,
+        })}
+        error={errors?.content}
+      />
+      <InputButton name="Comment" />
+    </form>
   );
 };
