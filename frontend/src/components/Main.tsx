@@ -42,7 +42,7 @@ export const Main: React.FC<props> = ({
     <CurrentUserContext.Provider value={data}>
       <div
         data-testid={"main-component-test-id"}
-        className="flex flex-row sm:mx-three"
+        className="flex flex-row md:mx-three"
       >
         <Routes>
           <Route
