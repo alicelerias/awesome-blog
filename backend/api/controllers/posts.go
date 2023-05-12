@@ -80,6 +80,9 @@ func (server *Server) CreatePost(ctx *gin.Context) {
 func (server *Server) GetPosts(ctx *gin.Context) {
 	post := models.Post{}
 	getLimit := server.repository.GetLimit()
+	if getLimit == "" {
+		getLimit = "50"
+	}
 	limit, err := stringToInt(getLimit)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -122,6 +125,9 @@ func (server *Server) GetBlogPosts(ctx *gin.Context) {
 	post := models.Post{}
 	cursor := ctx.Query("cursor")
 	getLimit := server.repository.GetLimit()
+	if getLimit == "" {
+		getLimit = "50"
+	}
 	limit, err := stringToInt(getLimit)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -167,6 +173,9 @@ func (server *Server) GetPostsByUser(ctx *gin.Context) {
 	post := *&models.Post{}
 	cursor := ctx.Query("cursor")
 	getLimit := server.repository.GetLimit()
+	if getLimit == "" {
+		getLimit = "50"
+	}
 	limit, err := stringToInt(getLimit)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)

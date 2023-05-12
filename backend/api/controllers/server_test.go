@@ -47,7 +47,7 @@ func TestServer(t *testing.T) {
 		ctx.Set("uid", "1")
 	})
 
-	router.GET("/users", server.GetUsers)
+	router.GET("/users", server.GetRecomendations)
 	router.GET("/users/:id", server.GetUser)
 	router.GET("/profile", server.GetCurrentUser)
 	router.POST("/users", server.CreateUser)
@@ -266,7 +266,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var comments struct {
-		Comments []*models.Comment `json:"comments"`
+		Comments []*models.Comment `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &comments)
@@ -292,6 +292,13 @@ func TestServer(t *testing.T) {
 
 	assert.Equal(t, user, mockCache.memory["profile_2"])
 
+	// Test case 24: delete cache
+
+	mockCache.SetKey("test", "8", user, time.Hour)
+	assert.Equal(t, user, mockCache.memory["test_8"])
+	mockCache.DeleteKey("test", "8")
+	assert.NotEqual(t, user, mockCache.memory["test_8"])
+
 }
 
 func (s *MockRepository) GetLimit() string {
@@ -315,7 +322,9 @@ func (c *MockCache) GetKey(name string, nameSpace string, value interface{}) err
 	return nil
 }
 
-func (c *MockCache) DeleteKey(name string, id string) error {
+func (c *MockCache) DeleteKey(name string, nameSpace string) error {
+	key := c.genKey(name, nameSpace)
+	delete(c.memory, key)
 	return nil
 }
 func (s *MockRepository) GetHome() error {
@@ -487,7 +496,14 @@ func (s *MockRepository) GetPostsByUser(post *models.Post, cursor string, uid st
 }
 
 func (s *MockRepository) Recomendations(uid string) (*[]models.User, error) {
-	return &[]models.User{}, nil
+	return &[]models.User{
+		{
+			ID:       1,
+			UserName: "Leia Ogana",
+			Password: "leia123",
+			Email:    "leia@email.com",
+		},
+	}, nil
 }
 
 // danger zone

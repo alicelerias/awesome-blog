@@ -70,6 +70,9 @@ func (server *Server) GetFavoritesPosts(ctx *gin.Context) {
 	}
 	cursor := ctx.Query("cursor")
 	getLimit := server.repository.GetLimit()
+	if getLimit == "" {
+		getLimit = "50"
+	}
 	limit, err := stringToInt(getLimit)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)

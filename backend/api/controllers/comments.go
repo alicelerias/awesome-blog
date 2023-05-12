@@ -58,6 +58,9 @@ func (server *Server) GetPostComments(ctx *gin.Context) {
 	postId, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	cursor := ctx.Query("cursor")
 	getLimit := server.repository.GetLimit()
+	if getLimit == "" {
+		getLimit = "50"
+	}
 	limit, err := stringToInt(getLimit)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
