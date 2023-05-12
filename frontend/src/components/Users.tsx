@@ -17,7 +17,7 @@ export const UsersComponent: React.FC<props> = ({ navigate }) => {
     >
       <div className="p-one border-b border-white w-full">Who to follow?</div>
       {isLoading ? (
-        <p>is loading</p>
+        <p>Loading...</p>
       ) : (
         data?.users.map((user) => (
           <div key={user.id} className={`flex flex-row gap-two p-one w-full`}>

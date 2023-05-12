@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { Posts, User } from "../types";
 import * as queries from "../api/queries";
 import { FeedComponent } from "./Feed";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 
 describe("test for feed component", () => {
   const user: User = {

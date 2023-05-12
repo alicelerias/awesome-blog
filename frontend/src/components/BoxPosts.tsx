@@ -74,7 +74,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
                   <AiOutlineComment
                     data-testid="comment-icon-test-id"
                     onClick={() => {
-                      navigate(`/$posts/detail?id=${post.id}`);
+                      navigate(`/posts/detail?id=${post.id}`);
                     }}
                     className="h-6 w-6 text-blue cursor-pointer"
                   />

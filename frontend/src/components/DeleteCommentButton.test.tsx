@@ -1,7 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { DeleteCommentButton } from "./DeleteCommentButton";
-import { TestsContext } from "./testComonents/Context";
-import * as mutations from "../api/mutations";
+import { TestsContext } from "./testComponents/Context";
 
 describe("test for delete component button", () => {
   const renderComponent = () => {
@@ -20,13 +19,4 @@ describe("test for delete component button", () => {
     expect(componentId).toBeInTheDocument();
     expect(buttonId).toBeInTheDocument();
   });
-
-  // it("test call function", () => {
-  //   renderComponent()
-  //   const fakeDelete = jest.spyOn(mutations, "deleteComment").mockImplementation()
-
-  //   const componentId = screen.getByTestId("delete-button")
-  //   fireEvent.click(componentId)
-  //   expect(fakeDelete).toHaveBeenCalledTimes(1)
-  // })
 });

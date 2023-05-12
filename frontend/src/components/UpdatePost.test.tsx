@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Post, User } from "../types";
 import * as queries from "../api/queries";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 import { UpdatePost } from "./UpdatePost";
 
 describe("tests for post detail componet", () => {

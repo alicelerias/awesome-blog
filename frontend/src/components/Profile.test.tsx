@@ -1,26 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { User } from "../types";
-import * as queries from "../api/queries";
-import * as mutations from "../api/mutations";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 import { Profile } from "./Profile";
 
 describe("tests for user detail componet", () => {
-  const user: User = {
-    id: "64",
-    username: "lukeskywalker",
-    email: "email@email.com",
-    bio: "hsajash",
-    avatar: "hasashh",
-    is_following: false,
-  };
-
-  const fakeGet = jest
-    .spyOn(queries, "getCurrentUser")
-    .mockImplementation(() => {
-      return Promise.resolve(user);
-    });
-
   const renderComponent = () => {
     const handleSubmit = jest.fn();
     const register = jest.fn();
@@ -57,12 +39,6 @@ describe("tests for user detail componet", () => {
 
     expect(screen.queryByTestId("bla")).not.toBeInTheDocument();
   });
-
-  // it("test get post detail", async () => {
-  //   renderComponent();
-
-  //   expect(fakeGet).toHaveBeenCalledTimes(1);
-  // });
 
   it("test update post", async () => {
     renderComponent();

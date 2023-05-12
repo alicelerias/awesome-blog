@@ -1,11 +1,11 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { NavigateFunction } from "react-router-dom";
-import { QueryClientProvider, QueryClient, InfiniteData } from "react-query";
+import { InfiniteData } from "react-query";
 import { Posts, User } from "../types";
 import { BoxPosts } from "./BoxPosts";
+import { TestsContext } from "./testComponents/Context";
 
 describe("BoxPosts", () => {
-  const queryClient = new QueryClient();
   const navigate = jest.fn();
 
   const user: User = {
@@ -84,27 +84,27 @@ describe("BoxPosts", () => {
 
   const renderComponent = () => {
     render(
-      <QueryClientProvider client={queryClient}>
+      <TestsContext>
         <BoxPosts
           isLoading={props.isLoading}
           data={posts}
           fetchNextPage={props.fetchNextPage}
           navigate={props.navigate}
         />
-      </QueryClientProvider>
+      </TestsContext>
     );
   };
 
   it("loading posts", () => {
     render(
-      <QueryClientProvider client={queryClient}>
+      <TestsContext>
         <BoxPosts
           isLoading={true}
           data={posts}
           fetchNextPage={props.fetchNextPage}
           navigate={props.navigate}
         />
-      </QueryClientProvider>
+      </TestsContext>
     );
     expect(screen.getByTestId("skeleton-test-id")).toBeInTheDocument();
   });
@@ -128,7 +128,7 @@ describe("BoxPosts", () => {
     renderComponent();
 
     fireEvent.click(screen.getAllByTestId("comment-icon-test-id")[1]);
-    expect(navigate).toHaveBeenCalledWith("/$posts/detail?id=2");
+    expect(navigate).toHaveBeenCalledWith("/posts/detail?id=2");
   });
 
   it("should fetch next page when intersection observer is triggered", () => {
@@ -138,8 +138,5 @@ describe("BoxPosts", () => {
       "intersection-observer-test-id"
     );
     expect(intersectionObserverElement).toBeInTheDocument();
-    // fireEvent.scroll(intersectionObserverElement)
-
-    // expect(fetchNextPage).toHaveBeenCalled();
   });
 });

@@ -1,8 +1,6 @@
-import React from "react";
-import { render, fireEvent, screen, waitFor } from "@testing-library/react";
+import { render, fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CreatePost } from "./CreatePost";
-import * as mutations from "../api/mutations";
 
 jest.mock("react-query");
 
@@ -47,7 +45,6 @@ describe("CreatePost component", () => {
 
   it("submits the form when the save button is clicked", async () => {
     renderComponent();
-    // const fakePost = jest.spyOn(mutations, "createPost").mockImplementation()
 
     const titleInput = screen.getByPlaceholderText("Insert title");
     const contentInput = screen.getByPlaceholderText("Insert content");

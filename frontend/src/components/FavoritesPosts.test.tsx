@@ -1,8 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { Posts, User } from "../types";
 import * as queries from "../api/queries";
-import { TestsContext } from "./testComonents/Context";
-import { AllPostsComponent } from "./AllPosts";
+import { TestsContext } from "./testComponents/Context";
 import { FavoritesPosts } from "./FavoritesPosts";
 
 describe("test for posts component", () => {

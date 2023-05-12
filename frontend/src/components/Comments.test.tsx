@@ -1,13 +1,9 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { CommentsComponent } from "./Comments";
 import { Comments, User } from "../types";
 import * as queries from "./../api/queries";
-import {
-  InfiniteData,
-  QueryClient,
-  QueryClientProvider,
-  QueryFunctionContext,
-} from "react-query";
+import { QueryFunctionContext } from "react-query";
+import { TestsContext } from "./testComponents/Context";
 
 describe("Tests for commements component", () => {
   const user: User = {
@@ -41,7 +37,6 @@ describe("Tests for commements component", () => {
     next_link: "/comments?page=2",
   };
 
-  const queryClient = new QueryClient();
   const navigate = jest.fn();
 
   beforeEach(() => {
@@ -50,9 +45,9 @@ describe("Tests for commements component", () => {
 
   const renderComponent = () =>
     render(
-      <QueryClientProvider client={queryClient}>
+      <TestsContext>
         <CommentsComponent id="1" currentUser={user} navigate={navigate} />
-      </QueryClientProvider>
+      </TestsContext>
     );
 
   const fakeGet = jest

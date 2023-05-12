@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { Layout } from "./Layout";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 
 describe("test for Layout component", () => {
   it("test render layout with users component", () => {

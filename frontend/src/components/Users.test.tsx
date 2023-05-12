@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { Users } from "../types";
 import * as queries from "./../api/queries";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 import { UsersComponent } from "./Users";
 
 describe("test for users component", () => {

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { Main } from "./Main";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 
 describe("test for main component", () => {
   it("test render maain", async () => {
