@@ -104,8 +104,6 @@ func main() {
 
 	r.GET("/follows", server.GetFollows)
 
-	// r.GET("/follows/:id", server.IsFollowing)
-
 	r.DELETE("/follow/:id", server.Unfollow)
 
 	r.GET("/feed", server.Feed)
