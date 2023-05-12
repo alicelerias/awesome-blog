@@ -15,7 +15,7 @@ func (s *PostgresDBRepository) CreatePost(post *models.Post) error {
 func (s *PostgresDBRepository) GetPosts(cursor string, post *models.Post) ([]models.Post, error) {
 	posts := []models.Post{}
 	limit := s.GetLimit()
-	query := s.db.Preload("Author").Order("posts.created_at DESC").
+	query := s.db.Preload("Author").Joins("JOIN popularity_score on posts.author_id = popularity_score.id").Order("popularity_score.score DESC, posts.created_at DESC").
 		Limit(limit)
 	if cursor != "" {
 		query = query.Where("posts.created_at < ?", cursor)
