@@ -31,7 +31,7 @@ export const ToggleFollowButton: React.FC<PropsWithChildren<props>> = ({
 
   return (
     <button
-      className="bg-blue p-1 w-1/5 text-smm h-6 truncate"
+      className="bg-blue p-1 w-1/5 text-smm h-6 truncate transition duration-150 ease-in"
       onClick={handleClick}
     >
       {isFollowingConst ? "Unfollow" : "Follow"}

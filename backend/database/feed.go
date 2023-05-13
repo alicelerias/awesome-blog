@@ -14,7 +14,7 @@ func (s *PostgresDBRepository) Feed(ctx context.Context, cursor string, follower
 			Order("posts.created_at ASC").
 			Limit(10).
 			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
-			Where("followings.follower_id = ?", followerId).
+			Where("followings.follower_id = ? OR posts.author_id = ?", followerId, followerId).
 			Find(&posts).
 			Error
 		if err != nil {
@@ -27,7 +27,7 @@ func (s *PostgresDBRepository) Feed(ctx context.Context, cursor string, follower
 			Order("posts.created_at ASC").
 			Limit(10).
 			Joins("JOIN users ON posts.author_id = users.id JOIN followings ON users.id = followings.following_id").
-			Where("followings.follower_id = ?", followerId).
+			Where("followings.follower_id = ?  OR posts.author_id = ?", followerId, followerId).
 			Find(&posts).
 			Error
 		if err != nil {

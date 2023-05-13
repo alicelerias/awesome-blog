@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/alicelerias/blog-golang/models"
+	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -54,26 +55,32 @@ func (server *Server) Feed(ctx *gin.Context) {
 		return
 	}
 
-	followerIdToString, _ := followerId.(string)
+	followerIdString, _ := followerId.(string)
 
-	feed, err := server.repository.Feed(ctx, cursor, followerIdToString)
+	feed, err := server.repository.Feed(ctx, cursor, followerIdString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
+	fromModelFeed := []*types.Post{}
+
+	for _, item := range feed {
+		newPost := server.postFromModel(ctx, &item, &item.Author, followerIdString)
+		fromModelFeed = append(fromModelFeed, newPost)
+	}
 	if len(feed) == limit {
 		nextCursor := feed[len(feed)-1].CreatedAt
 
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"feed":        feed,
+			"feed":        fromModelFeed,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"feed": feed})
+		ctx.JSON(http.StatusOK, gin.H{"feed": fromModelFeed})
 	}
 }
 

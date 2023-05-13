@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { UsersComponent } from "./Users";
 import { Profile } from "./Profile";
-import { PostsComponent } from "./Posts";
+import { FeedComponent } from "./Feed";
 import { PostDetail } from "./PostDetail";
 import { CreatePost } from "./CreatePost";
 import { Layout } from "./Layout";
@@ -24,10 +24,10 @@ export const Main: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
 
         <Route
-          path="/posts"
+          path="/"
           element={
             <Layout title="posts">
-              <PostsComponent />
+              <FeedComponent />
               <UsersComponent />
             </Layout>
           }
@@ -63,7 +63,7 @@ export const Main: React.FC = () => {
         />
 
         <Route
-          path="/"
+          path="/posts"
           element={
             <Layout title="all posts">
               <AllPostsComponent />

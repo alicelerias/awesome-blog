@@ -84,7 +84,7 @@ export const getBlogsPost = async (id: string | null): Promise<Posts> => {
 
   return data;
 };
-export const getPosts = async (): Promise<Posts> => {
+export const getFeed = async (): Promise<Posts> => {
   const url = new URL(configs.API_URL + "/feed");
 
   const { data } = await axios.get<Posts>(url.toString());

@@ -1,3 +1,5 @@
+import internal from "stream";
+
 export type User = {
   id: string;
   username: string;
@@ -16,6 +18,9 @@ export type Post = {
   img: string;
   author: User;
   author_id: string;
+  is_favorite: boolean;
+  comments_count: number;
+  favorites_count: number;
   created_at: string;
 };
 

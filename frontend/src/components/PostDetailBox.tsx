@@ -1,17 +1,15 @@
 import { useMutation, useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getComments, getPost } from "../api/queries";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BoxLayout } from "./BoxLayout";
 import { Comments } from "./Comments";
 import { CreateComment } from "./CreateComment";
 import { createComment } from "../api/mutations";
 import { Comment } from "../types";
 import { FieldValues, useForm } from "react-hook-form";
-import { Heart } from "./Heart";
-import { FavoritesCount } from "./FavoritesCount";
-import { CommentsCount } from "./CommentsCount";
 import { AiOutlineComment } from "react-icons/ai";
+import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
 
 type props = {};
 
@@ -22,7 +20,8 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
   const id = searchParam.get("id");
   const { data } = useQuery("getPost", () => getPost(id));
   const { refetch } = useQuery("getComments", () => getComments(id));
-  const { reset } = useForm();
+  const navigate = useNavigate();
+
   const { mutate } = useMutation(
     (comment: Comment) => createComment(id, comment),
     {
@@ -52,13 +51,26 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
 
         <span className="bg-transparent text-sm italic">"{data?.content}"</span>
 
-        <span className="text-blue text-sm">{data?.author.username}</span>
-        <span className="bg-transparent text-sm">{data?.created_at}</span>
+        <span
+          className="text-blue text-sm cursor-pointer"
+          onClick={() => {
+            navigate(`/users/detail?id=${data?.author_id}`);
+          }}
+        >
+          {data?.author.username}
+        </span>
+        <span className="bg-transparent text-sm">
+          Created at: {data?.created_at.replace(/-/g, "/").replace(/T/g, " ")}
+        </span>
         <div className="flex flex-row justify-end gap-one">
-          <CommentsCount id={id} />
+          <span>{data?.comments_count}</span>
           <AiOutlineComment className="h-6 w-6" />
-          <FavoritesCount id={id} />
-          <Heart postId={data ? data.id : ""} />
+
+          <ToggleFavoriteButton
+            postId={id}
+            isFavorite={data?.is_favorite}
+            favoritesCount={data?.favorites_count}
+          />
         </div>
       </div>
 

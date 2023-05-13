@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Posts, User } from "../types";
-import * as queries from "./../api/queries";
-import { PostsComponent } from "./Posts";
+import * as queries from "../api/queries";
+import { FeedComponent } from "./Feed";
 import { TestsContext } from "./testComonents/Context";
 
 describe("test for posts component", () => {
@@ -22,7 +22,10 @@ describe("test for posts component", () => {
         img: "hahash",
         author: user,
         author_id: "jsjaj",
-        created_at: "hasahs",
+        comments_count: 0,
+        favorites_count: 0,
+        is_favorite: false,
+        created_at: "SS",
       },
     ],
   };
@@ -30,12 +33,12 @@ describe("test for posts component", () => {
   const renderComponent = () => {
     return render(
       <TestsContext>
-        <PostsComponent />
+        <FeedComponent />
       </TestsContext>
     );
   };
 
-  const fakeGet = jest.spyOn(queries, "getPosts").mockImplementation(() => {
+  const fakeGet = jest.spyOn(queries, "getFeed").mockImplementation(() => {
     return Promise.resolve(posts);
   });
 

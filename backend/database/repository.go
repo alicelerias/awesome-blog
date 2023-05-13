@@ -45,7 +45,7 @@ type PostgresDBRepository struct {
 	db *gorm.DB
 }
 
-var ostgresDBRepository Repository = &PostgresDBRepository{}
+var postgresDBRepository Repository = &PostgresDBRepository{}
 
 func NewPostgresDBRepository(db *gorm.DB) *PostgresDBRepository {
 	return &PostgresDBRepository{db: db}
