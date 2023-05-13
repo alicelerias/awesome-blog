@@ -1,12 +1,10 @@
-import internal from "stream";
-
 export type User = {
-  id: string;
-  username: string;
-  bio: string;
-  avatar: string;
-  email: string;
-  is_following: boolean;
+  id?: string;
+  username?: string;
+  bio?: string;
+  avatar?: string;
+  email?: string;
+  is_following?: boolean;
 };
 
 export type Users = ResultList<"users", User>;
@@ -27,6 +25,7 @@ export type Post = {
 export type Credential = {
   username: string;
   password: string;
+  remember_me: boolean;
 };
 
 export type ResultList<K extends string, T> = {
@@ -37,7 +36,14 @@ export type PostCreate = Pick<Post, "title" | "content" | "img">;
 
 export type PostUpdate = Partial<PostCreate>;
 
-export type Posts = ResultList<"feed", Post>;
+export type UserUpdate = Partial<User>;
+
+export type PaginationResult<T> = {
+  content: T[];
+  next_link: string;
+};
+
+export type Posts = PaginationResult<Post>;
 
 export type HealthCheck = {
   status: string;
@@ -48,9 +54,10 @@ export type Favorite = {
   userId: string;
 };
 
-export type Favorites = ResultList<"feed", Favorite>;
+export type Favorites = ResultList<"content", Favorite>;
 
 export type Comment = {
+  id: string;
   postId: string;
   authorId: string;
   author: User;
@@ -58,4 +65,4 @@ export type Comment = {
   created_at: string;
 };
 
-export type Comments = ResultList<"comments", Comment>;
+export type Comments = PaginationResult<Comment>;

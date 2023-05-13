@@ -7,19 +7,28 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/alicelerias/blog-golang/api/controllers"
 	"github.com/alicelerias/blog-golang/models"
+	"github.com/alicelerias/blog-golang/types"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
-	"golang.org/x/net/context"
 )
 
 type MockRepository struct {
 }
 
+type MockCache struct {
+	memory map[string]interface{}
+}
+
 func newMockRepository() *MockRepository {
 	return &MockRepository{}
+}
+
+func newMockCache() *MockCache {
+	return &MockCache{}
 }
 
 func performRequest(method, path string, router *gin.Engine, payload io.Reader) *httptest.ResponseRecorder {
@@ -30,15 +39,17 @@ func performRequest(method, path string, router *gin.Engine, payload io.Reader) 
 }
 func TestServer(t *testing.T) {
 	mockRepository := newMockRepository()
-	server := controllers.NewServer(mockRepository)
+	mockCache := newMockCache()
+	server := controllers.NewServer(mockRepository, mockCache)
 	router := gin.Default()
 
 	router.Use(func(ctx *gin.Context) {
 		ctx.Set("uid", "1")
 	})
 
-	router.GET("/users", server.GetUsers)
+	router.GET("/users", server.GetRecomendations)
 	router.GET("/users/:id", server.GetUser)
+	router.GET("/profile", server.GetCurrentUser)
 	router.POST("/users", server.CreateUser)
 	router.PUT("/users/:id", server.UpdateUser)
 	router.DELETE("/users/:id", server.DeleteUser)
@@ -131,7 +142,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var postsData struct {
-		Posts []*models.Post `json:"feed"`
+		Posts []*models.Post `json:"content"`
 	}
 	json.Unmarshal([]byte(res.Body.String()), &postsData)
 
@@ -183,7 +194,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var feedData struct {
-		Feed []*models.Post `json:"feed"`
+		Feed []*models.Post `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &feedData)
@@ -213,7 +224,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var favorites struct {
-		Favorites []*models.Post `json:"feed"`
+		Favorites []*models.Post `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &favorites)
@@ -228,7 +239,7 @@ func TestServer(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var favoritesByPost struct {
-		Favorites []*models.Favorite `json:"feed"`
+		Favorites []*models.Favorite `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &favoritesByPost)
@@ -248,14 +259,14 @@ func TestServer(t *testing.T) {
 
 	assert.Equal(t, http.StatusNoContent, res.Code)
 
-	// Test cas 21: get post comments
+	// Test case 21: get post comments
 
 	res = performRequest("GET", "/comment/1", router, nil)
 
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	var comments struct {
-		Comments []*models.Comment `json:"comments"`
+		Comments []*models.Comment `json:"content"`
 	}
 
 	json.Unmarshal([]byte(res.Body.String()), &comments)
@@ -264,17 +275,67 @@ func TestServer(t *testing.T) {
 	// wrong comment
 	assert.NotEqual(t, "wrong comment", comments.Comments[0].Content)
 
+	// Test case 22: get current user
+
+	res = performRequest("GET", "/profile", router, nil)
+	assert.Equal(t, http.StatusOK, res.Code)
+
+	// Test case 23: get current user with cache
+
+	cache := types.User{}
+	user := types.User{
+		ID:       2,
+		UserName: "tomtom",
+	}
+	mockCache.SetKey("profile", "2", user, time.Hour)
+	mockCache.GetKey("profile", "2", &cache)
+
+	assert.Equal(t, user, mockCache.memory["profile_2"])
+
+	// Test case 24: delete cache
+
+	mockCache.SetKey("test", "8", user, time.Hour)
+	assert.Equal(t, user, mockCache.memory["test_8"])
+	mockCache.DeleteKey("test", "8")
+	assert.NotEqual(t, user, mockCache.memory["test_8"])
+
 }
 
+func (s *MockRepository) GetLimit() string {
+	return ""
+}
+
+func (c *MockCache) genKey(name string, nameSpace string) string {
+	return name + "_" + nameSpace
+}
+
+func (c *MockCache) SetKey(name string, nameSpace string, value interface{}, expiration time.Duration) error {
+	key := c.genKey(name, nameSpace)
+	c.memory = make(map[string]interface{})
+	c.memory[key] = value
+	return nil
+}
+
+func (c *MockCache) GetKey(name string, nameSpace string, value interface{}) error {
+	key := c.genKey(name, nameSpace)
+	value = c.memory[key]
+	return nil
+}
+
+func (c *MockCache) DeleteKey(name string, nameSpace string) error {
+	key := c.genKey(name, nameSpace)
+	delete(c.memory, key)
+	return nil
+}
 func (s *MockRepository) GetHome() error {
 	return nil
 }
 
-func (s *MockRepository) CreateUser(context.Context, *models.User) error {
+func (s *MockRepository) CreateUser(*models.User) error {
 	return nil
 }
 
-func (s *MockRepository) FindAllUsers(context.Context, *models.User) (*[]models.User, error) {
+func (s *MockRepository) FindAllUsers(*models.User) (*[]models.User, error) {
 	return &[]models.User{
 		{
 			ID:       1,
@@ -285,43 +346,45 @@ func (s *MockRepository) FindAllUsers(context.Context, *models.User) (*[]models.
 	}, nil
 }
 
-func (s *MockRepository) FindUserByID(context.Context, string) (*models.User, error) {
+func (s *MockRepository) FindUserByID(string) (*models.User, error) {
 	return &models.User{
+		ID:       1,
 		UserName: "Leia Ogana",
 	}, nil
 }
 
-func (s *MockRepository) GetUser(context.Context, string) (*models.User, error) {
+func (s *MockRepository) GetUser(string) (*models.User, error) {
 	return &models.User{
+		ID:       1,
 		UserName: "Leia Ogana",
 	}, nil
 }
 
-func (s *MockRepository) UpdateUser(ctx context.Context, value interface{}, id string) (*models.User, error) {
+func (s *MockRepository) UpdateUser(value interface{}, id string) (*models.User, error) {
 	data := value.(map[string]interface{})
 	return &models.User{
 		UserName: data["user_name"].(string),
 	}, nil
 }
 
-func (s *MockRepository) DeleteUser(context.Context, string) error {
+func (s *MockRepository) DeleteUser(string) error {
 	return nil
 }
 
-func (s *MockRepository) Favorite(context.Context, *models.Favorite) error {
+func (s *MockRepository) Favorite(*models.Favorite) error {
 	return nil
 }
 
-func (s *MockRepository) Unfavorite(ctx context.Context, postId uint32, userId uint32) error {
+func (s *MockRepository) Unfavorite(postId uint32, userId uint32) error {
 	return nil
 }
 
-func (s *MockRepository) GetFavorite(ctx context.Context, postId string, userId string) bool {
+func (s *MockRepository) GetFavorite(postId string, userId string) bool {
 	return true
 }
 
-func (s *MockRepository) GetFavoritesPostsByUser(ctx context.Context, userId uint32) (*[]models.Post, error) {
-	return &[]models.Post{
+func (s *MockRepository) GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error) {
+	return []models.Post{
 		{
 			Title:    "title",
 			Content:  "content",
@@ -335,20 +398,20 @@ func (s *MockRepository) GetFavoritesPostsByUser(ctx context.Context, userId uin
 	}, nil
 }
 
-func (s *MockRepository) GetFavoritesByPost(ctx context.Context, postId uint32) (*[]models.Favorite, error) {
+func (s *MockRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error, int) {
 	return &[]models.Favorite{
 		{
 			PostId: 12,
 			UserId: 2,
 		},
-	}, nil
+	}, nil, 1
 }
-func (s *MockRepository) CreatePost(context.Context, *models.Post) error {
+func (s *MockRepository) CreatePost(*models.Post) error {
 	return nil
 }
 
-func (s *MockRepository) GetPosts(context.Context, *models.Post) (*[]models.Post, error) {
-	return &[]models.Post{
+func (s *MockRepository) GetPosts(string, *models.Post) ([]models.Post, error) {
+	return []models.Post{
 		{
 			Title:    "title",
 			Content:  "content",
@@ -357,7 +420,7 @@ func (s *MockRepository) GetPosts(context.Context, *models.Post) (*[]models.Post
 	}, nil
 }
 
-func (s *MockRepository) GetPost(context.Context, string) (*models.Post, error) {
+func (s *MockRepository) GetPost(string) (*models.Post, error) {
 	return &models.Post{
 		Title:    "title",
 		Content:  "content",
@@ -365,50 +428,50 @@ func (s *MockRepository) GetPost(context.Context, string) (*models.Post, error) 
 	}, nil
 }
 
-func (s *MockRepository) UpdatePost(ctx context.Context, value interface{}, id string) (*models.Post, error) {
+func (s *MockRepository) UpdatePost(value interface{}, id string) (*models.Post, error) {
 	data := value.(map[string]interface{})
 	return &models.Post{
 		Title: data["title"].(string),
 	}, nil
 }
 
-func (s *MockRepository) DeletePost(context.Context, string) error {
+func (s *MockRepository) DeletePost(string) error {
 	return nil
 }
 
-func (s *MockRepository) CreateComment(ctx context.Context, comment *models.Comment) error {
+func (s *MockRepository) CreateComment(comment *models.Comment) error {
 	return nil
 }
 
-func (s *MockRepository) DeleteComment(ctx context.Context, id uint32, authorId uint32) error {
+func (s *MockRepository) DeleteComment(id uint32, authorId uint32) error {
 	return nil
 }
 
-func (s *MockRepository) GetPostComments(ctx context.Context, postId uint32) (*[]models.Comment, error) {
-	return &[]models.Comment{
+func (s *MockRepository) GetPostComments(cursor string, postId uint32) ([]models.Comment, error, int) {
+	return []models.Comment{
 		{
 			Content: "comment",
 		},
-	}, nil
+	}, nil, 1
 }
 
-func (s *MockRepository) Follow(context.Context, *models.Following) error {
+func (s *MockRepository) Follow(*models.Following) error {
 	return nil
 }
 
-func (s *MockRepository) GetFollows(context.Context, *models.Following) (*[]models.Following, error) {
+func (s *MockRepository) GetFollows(*models.Following) (*[]models.Following, error) {
 	return &[]models.Following{}, nil
 }
 
-func (s *MockRepository) IsFollowing(ctx context.Context, followerId string, followingId string) bool {
+func (s *MockRepository) IsFollowing(followerId string, followingId string) bool {
 	return true
 }
 
-func (s *MockRepository) Unfollow(context.Context, string, string) error {
+func (s *MockRepository) Unfollow(string, string) error {
 	return nil
 }
 
-func (s *MockRepository) Feed(context.Context, string, string) ([]models.Post, error) {
+func (s *MockRepository) Feed(string, string) ([]models.Post, error) {
 	return []models.Post{
 		{
 			Title:    "post",
@@ -428,6 +491,39 @@ func (s *MockRepository) Feed(context.Context, string, string) ([]models.Post, e
 	}, nil
 }
 
-func (s *MockRepository) GetPostsByUser(ctx context.Context, post *models.Post, cursor string, uid string) ([]models.Post, error) {
+func (s *MockRepository) GetPostsByUser(post *models.Post, cursor string, uid string) ([]models.Post, error) {
 	return []models.Post{}, nil
+}
+
+func (s *MockRepository) Recomendations(uid string) (*[]models.User, error) {
+	return &[]models.User{
+		{
+			ID:       1,
+			UserName: "Leia Ogana",
+			Password: "leia123",
+			Email:    "leia@email.com",
+		},
+	}, nil
+}
+
+// danger zone
+
+func (s *MockRepository) DeleteUsersTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeletePostsTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeleteFollowingsTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeleteCommentsTable() error {
+	return nil
+}
+
+func (s *MockRepository) DeleteFavoritesTable() error {
+	return nil
 }

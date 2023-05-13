@@ -14,6 +14,10 @@ func parseInt(value string) (int64, error) {
 	return strconv.ParseInt(value, 10, 64)
 }
 
+func stringToInt(value string) (int, error) {
+	return strconv.Atoi(value)
+}
+
 func getValidJson(reader io.Reader, validKeys []string) (data map[string]interface{}, err error) {
 	data, err = toJson(reader)
 	if err != nil {

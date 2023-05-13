@@ -1,31 +1,29 @@
 package database
 
 import (
-	"context"
-
 	"github.com/alicelerias/blog-golang/models"
 )
 
-func (s *PostgresDBRepository) Favorite(ctx context.Context, favorite *models.Favorite) error {
-	err := s.db.Debug().Create(&favorite).Error
+func (s *PostgresDBRepository) Favorite(favorite *models.Favorite) error {
+	err := s.db.Create(&favorite).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *PostgresDBRepository) Unfavorite(ctx context.Context, postId uint32, userId uint32) error {
+func (s *PostgresDBRepository) Unfavorite(postId uint32, userId uint32) error {
 	favorite := *&models.Favorite{}
-	err := s.db.Debug().Where("post_id = ? AND user_id =?", postId, userId).Delete(favorite).Error
+	err := s.db.Where("post_id = ? AND user_id =?", postId, userId).Delete(favorite).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *PostgresDBRepository) GetFavorite(ctx context.Context, postId string, userId string) bool {
+func (s *PostgresDBRepository) GetFavorite(postId string, userId string) bool {
 	favorite := *&models.Favorite{}
-	err := s.db.Debug().Where("post_id = ? AND user_id = ?", postId, userId).Find(&favorite).Begin().Error
+	err := s.db.Where("post_id = ? AND user_id = ?", postId, userId).Find(&favorite).Error
 	if err != nil {
 		return false
 	}
@@ -33,28 +31,32 @@ func (s *PostgresDBRepository) GetFavorite(ctx context.Context, postId string, u
 	return true
 }
 
-func (s *PostgresDBRepository) GetFavoritesByPost(ctx context.Context, postId uint32) (*[]models.Favorite, error) {
+func (s *PostgresDBRepository) GetFavoritesByPost(postId uint32) (*[]models.Favorite, error, int) {
+	var count int
 	favorites := []models.Favorite{}
-	err := s.db.Debug().Model(&models.Favorite{}).Limit(100).Where("post_id = ?", postId).Find(&favorites).Error
+	limit := s.GetLimit()
+	err := s.db.Model(&models.Favorite{}).Limit(limit).Where("post_id = ?", postId).Find(&favorites).Count(&count).Error
 	if err != nil {
-		return &[]models.Favorite{}, err
+		return &[]models.Favorite{}, err, 0
 	}
-	return &favorites, nil
+	return &favorites, nil, count
 }
 
-func (s *PostgresDBRepository) GetFavoritesPostsByUser(ctx context.Context, userId uint32) (*[]models.Post, error) {
+func (s *PostgresDBRepository) GetFavoritesPostsByUser(cursor string, userId uint32) ([]models.Post, error) {
 	posts := []models.Post{}
-	err := s.db.Debug().
-		Limit(100).
-		Order("favorites.created_at desc").
-		Joins("JOIN favorites ON favorites.post_id = posts.id").
+	limit := s.GetLimit()
+	query := s.db.Joins("JOIN favorites ON favorites.post_id = posts.id").
 		Where("favorites.user_id = ?", userId).
-		Find(&posts).
+		Order("favorites.created_at desc").
+		Limit(limit)
+	if cursor != "" {
+		query = query.Where("posts.created_at > ?", cursor)
+	}
+	err := query.Find(&posts).
 		Error
-
 	if err != nil {
-		return &[]models.Post{}, err
+		return []models.Post{}, err
 	}
 
-	return &posts, nil
+	return posts, nil
 }

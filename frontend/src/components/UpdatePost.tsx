@@ -1,7 +1,14 @@
 import { useMutation, useQuery } from "react-query";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, NavigateFunction } from "react-router-dom";
 import { getPost } from "../api/queries";
-import { FieldValues, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 import { updatePost } from "../api/mutations";
 import { Post } from "../types";
 import { InputForm } from "./InputForm";
@@ -9,21 +16,27 @@ import { InputButton } from "./InputButton";
 import { BoxLayout } from "./BoxLayout";
 import { DeletePost } from "./DeletePost";
 
-export const UpdatePost: React.FC<{}> = () => {
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
+  errors?: FieldErrors<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
+  navigate: NavigateFunction;
+};
+
+export const UpdatePost: React.FC<props> = ({
+  handleSubmit,
+  register,
+  reset,
+  errors,
+  setValue,
+  navigate,
+}) => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
 
-  const navigate = useNavigate();
-
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-    reset,
-    setValue,
-  } = useForm();
-
-  const { isLoading, data } = useQuery("getPost", () => getPost(id), {
+  const { data } = useQuery("getPost", () => getPost(id), {
     onSuccess: (data) => {
       setValue("title", data?.title);
       setValue("content", data?.content);
@@ -40,13 +53,15 @@ export const UpdatePost: React.FC<{}> = () => {
 
   const onSubmit = (data: FieldValues) => {
     mutate(data as Post);
-    reset(data);
+    setTimeout(() => {
+      reset();
+    }, 2000);
   };
   return (
     <BoxLayout>
       <div className="flex justify-end">
         {" "}
-        <DeletePost />
+        <DeletePost id={id} navigate={navigate} />
       </div>
       <form
         data-testid={"update-post-component-test-id"}
@@ -60,7 +75,7 @@ export const UpdatePost: React.FC<{}> = () => {
             controller={register("title", {
               required: false,
             })}
-            error={errors.title}
+            error={errors?.title}
           />
         </span>
 

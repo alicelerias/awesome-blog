@@ -1,3 +1,4 @@
+import { QueryFunctionContext } from "react-query";
 import configs from "../configs/configs";
 import {
   HealthCheck,
@@ -61,31 +62,42 @@ export const getCurrentUser = async (): Promise<User> => {
   return data;
 };
 
-export const getAllPosts = async (): Promise<Posts> => {
-  const url = new URL(configs.API_URL + "/posts");
+export const getAllPosts = async ({
+  pageParam = "/posts",
+}: QueryFunctionContext): Promise<Posts> => {
+  const url = new URL(configs.API_URL + pageParam);
 
   const { data } = await axios.get<Posts>(url.toString());
 
   return data;
 };
 
-export const getPostsByUser = async (): Promise<Posts> => {
-  const url = new URL(configs.API_URL + "/posts/you");
+export const getPostsByUser = async ({
+  pageParam = "/posts/you",
+}: QueryFunctionContext): Promise<Posts> => {
+  const url = new URL(configs.API_URL + pageParam);
 
   const { data } = await axios.get<Posts>(url.toString());
 
   return data;
 };
 
-export const getBlogsPost = async (id: string | null): Promise<Posts> => {
-  const url = new URL(configs.API_URL + `/posts/blog/${id}`);
+export const getBlogsPost =
+  (id: string | null) =>
+  async ({
+    pageParam = `/posts/blog/${id}`,
+  }: QueryFunctionContext): Promise<Posts> => {
+    const url = new URL(configs.API_URL + pageParam);
 
-  const { data } = await axios.get<Posts>(url.toString());
+    const { data } = await axios.get<Posts>(url.toString());
 
-  return data;
-};
-export const getFeed = async (): Promise<Posts> => {
-  const url = new URL(configs.API_URL + "/feed");
+    return data;
+  };
+
+export const getFeed = async ({
+  pageParam = "/feed",
+}: QueryFunctionContext): Promise<Posts> => {
+  const url = new URL(configs.API_URL + pageParam);
 
   const { data } = await axios.get<Posts>(url.toString());
 
@@ -100,13 +112,17 @@ export const getPost = async (id: string | null): Promise<Post> => {
   return data;
 };
 
-export const getComments = async (id: string | null): Promise<Comments> => {
-  const url = new URL(configs.API_URL + `/comment/${id}`);
+export const getComments =
+  (id: string | null) =>
+  async ({
+    pageParam = `/comment/${id}`,
+  }: QueryFunctionContext): Promise<Comments> => {
+    const url = new URL(configs.API_URL + pageParam);
 
-  const { data } = await axios.get<Comments>(url.toString());
+    const { data } = await axios.get<Comments>(url.toString());
 
-  return data;
-};
+    return data;
+  };
 
 export const healthCheck = async (): Promise<HealthCheck> => {
   const url = new URL(configs.API_URL + "/healthcheck");

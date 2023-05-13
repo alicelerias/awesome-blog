@@ -1,26 +1,45 @@
 import { useMutation, useQuery } from "react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { NavigateFunction, useSearchParams } from "react-router-dom";
 import { getComments, getPost } from "../api/queries";
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { BoxLayout } from "./BoxLayout";
-import { Comments } from "./Comments";
+import { CommentsComponent } from "./Comments";
 import { CreateComment } from "./CreateComment";
 import { createComment } from "../api/mutations";
 import { Comment } from "../types";
-import { FieldValues, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+} from "react-hook-form";
 import { AiOutlineComment } from "react-icons/ai";
 import { ToggleFavoriteButton } from "./ToggleFavoriteButton";
+import { UpdateButton } from "./UpdateButton";
+import { CurrentUserContext } from "../context/CurrentUserContext";
 
-type props = {};
+type props = {
+  navigate: NavigateFunction;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
+  errors: FieldErrors<FieldValues> | undefined;
+};
 
 export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
-  children,
+  navigate,
+  handleSubmit,
+  register,
+  reset,
+  errors,
 }) => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
   const { data } = useQuery("getPost", () => getPost(id));
   const { refetch } = useQuery("getComments", () => getComments(id));
-  const navigate = useNavigate();
+
+  const currentUserContext = useContext(CurrentUserContext);
 
   const { mutate } = useMutation(
     (comment: Comment) => createComment(id, comment),
@@ -33,13 +52,17 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
     }
   );
   const onSubmit = (data: FieldValues) => {
-    mutate(data as Comment);
+    setTimeout(() => {
+      mutate(data as Comment);
+      reset();
+    }, 2000);
   };
 
   return (
     <BoxLayout>
-      {children}
-
+      {currentUserContext?.id === data?.author_id && (
+        <UpdateButton id={id} navigate={navigate} />
+      )}
       <div className="flex flex-col gap-one p-two  border-b border-b-white">
         <span className="bg-transparent text-3xl text-blue ">
           {data?.title}
@@ -74,8 +97,17 @@ export const PostDetailBox: React.FC<React.PropsWithChildren<props>> = ({
         </div>
       </div>
 
-      <CreateComment onSubmit={onSubmit} />
-      <Comments />
+      <CreateComment
+        onSubmit={onSubmit}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+      />
+      <CommentsComponent
+        id={id}
+        currentUser={currentUserContext}
+        navigate={navigate}
+      />
     </BoxLayout>
   );
 };

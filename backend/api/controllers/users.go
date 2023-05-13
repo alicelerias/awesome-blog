@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/alicelerias/blog-golang/api/auth"
@@ -22,7 +21,7 @@ import (
 	en_translations "gopkg.in/go-playground/validator.v9/translations/en"
 )
 
-func (server *Server) userFromModel(ctx *gin.Context, model *models.User, followerId string) *types.User {
+func (server *Server) userFromModel(model *models.User, followerId string) *types.User {
 	followingId := strconv.Itoa(int(model.ID))
 	return &types.User{
 		ID:          model.ID,
@@ -30,7 +29,7 @@ func (server *Server) userFromModel(ctx *gin.Context, model *models.User, follow
 		Email:       model.Email,
 		Bio:         model.Bio,
 		Avatar:      model.Avatar,
-		IsFollowing: server.repository.IsFollowing(ctx, followerId, followingId),
+		IsFollowing: server.repository.IsFollowing(followerId, followingId),
 		CreatedAt:   model.CreatedAt,
 		UpdatedAt:   model.UpdatedAt,
 	}
@@ -91,41 +90,52 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 
 	}
 
-	if err := auth.CreateUser(ctx, server.repository, user); err != nil {
+	if err := auth.CreateUser(server.repository, user); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	ctx.AbortWithStatus(http.StatusCreated)
+	if err := server.cache.DeleteKey("users", "all"); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (server *Server) GetUsers(ctx *gin.Context) {
 	user := models.User{}
-	users, err := server.repository.FindAllUsers(ctx, &user)
-	if err != nil {
-		log.Error()
-		ctx.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	id, exists := ctx.Get("uid")
-	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
+	cache := []*types.User{}
+	name := "users"
+	nameSpace := "all"
+	if err := server.cache.GetKey(name, nameSpace, &cache); err == nil {
+		ctx.JSON(http.StatusOK, gin.H{"users": cache})
+	} else {
+		users, err := server.repository.FindAllUsers(&user)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, err.Error())
+			return
+		}
+		id, exists := ctx.Get("uid")
+		if !exists {
+			ctx.AbortWithError(http.StatusForbidden, err)
+			return
+		}
+
+		idToString := id.(string)
+
+		fromModelUsers := []*types.User{}
+		for _, item := range *users {
+			newItem := server.userFromModel(&item, idToString)
+			fromModelUsers = append(fromModelUsers, newItem)
+		}
+		ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
+		server.cache.SetKey(name, nameSpace, fromModelUsers, time.Hour)
 	}
 
-	idToString := id.(string)
-
-	fromModelUsers := []*types.User{}
-	for _, item := range *users {
-		newItem := server.userFromModel(ctx, &item, idToString)
-		fromModelUsers = append(fromModelUsers, newItem)
-	}
-	ctx.JSON(http.StatusOK, gin.H{"users": fromModelUsers})
 }
 
 func (s *Server) GetUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	user, err := s.repository.FindUserByID(ctx, id)
+	user, err := s.repository.FindUserByID(id)
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -133,64 +143,75 @@ func (s *Server) GetUser(ctx *gin.Context) {
 	}
 	followerId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.AbortWithError(http.StatusForbidden, err)
 		return
 	}
 
 	followerIdToString := followerId.(string)
-	userFromModel := s.userFromModel(ctx, user, followerIdToString)
+	userFromModel := s.userFromModel(user, followerIdToString)
 	ctx.JSON(http.StatusOK, userFromModel)
 }
 
 func (s *Server) GetCurrentUser(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
-
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
-	user, err := s.repository.FindUserByID(ctx, uid.(string))
+	key := "user_profile"
+	cache := types.User{}
 
-	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
+	err := s.cache.GetKey(key, uid.(string), &cache)
+
+	if err == nil {
+		ctx.JSON(http.StatusOK, cache)
+	} else {
+		user, err := s.repository.FindUserByID(uid.(string))
+		if err != nil {
+			ctx.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		userFromModel := s.userFromModel(user, uid.(string))
+		err = s.cache.SetKey(key, uid.(string), userFromModel, time.Hour)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
+		ctx.JSON(http.StatusOK, userFromModel)
 	}
 
-	userFromModel := s.userFromModel(ctx, user, uid.(string))
-	ctx.JSON(http.StatusOK, userFromModel)
 }
 
 func (s *Server) UpdateUser(ctx *gin.Context) {
-	id := ctx.Param("id")
+	userId, exists := ctx.Get("uid")
+	if !exists {
+		ctx.AbortWithError(http.StatusForbidden, errors.New("Error on authenticate user!"))
+		return
+	}
+
+	userIdToString := userId.(string)
 
 	whiteList := []string{"bio", "avatar"}
 	input, err := getValidJson(ctx.Request.Body, whiteList)
 	if err != nil {
-		fmt.Println(input)
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid data!"))
 		return
 	}
 	input["updated_at"] = time.Now()
-	user, err := s.repository.UpdateUser(ctx, input, id)
+	user, err := s.repository.UpdateUser(input, userIdToString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	followerId, exists := ctx.Get("id")
-	if !exists {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+	userFromModel := s.userFromModel(user, userIdToString)
 
-	followerIdToString := followerId.(string)
-	userFromModel := s.userFromModel(ctx, user, followerIdToString)
 	ctx.JSON(http.StatusOK, userFromModel)
+
 }
 
 func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	whiteList := []string{"bio", "avatar"}
@@ -201,20 +222,24 @@ func (s *Server) UpdateCurrentUser(ctx *gin.Context) {
 		return
 	}
 	input["updated_at"] = time.Now()
-	user, err := s.repository.UpdateUser(ctx, input, uid.(string))
+	user, err := s.repository.UpdateUser(input, uid.(string))
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	userFromModel := s.userFromModel(ctx, user, uid.(string))
+	userFromModel := s.userFromModel(user, uid.(string))
 	ctx.JSON(http.StatusOK, userFromModel)
+	err = s.cache.DeleteKey("user_profile", uid.(string))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (s *Server) DeleteUser(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if err := s.repository.DeleteUser(ctx, id); err != nil {
+	if err := s.repository.DeleteUser(id); err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

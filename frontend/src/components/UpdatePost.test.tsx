@@ -1,10 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Post, User } from "../types";
 import * as queries from "../api/queries";
-import { TestsContext } from "./testComonents/Context";
-import { PostDetail } from "./PostDetail";
+import { TestsContext } from "./testComponents/Context";
 import { UpdatePost } from "./UpdatePost";
-import { time } from "console";
 
 describe("tests for post detail componet", () => {
   const user: User = {
@@ -33,9 +31,20 @@ describe("tests for post detail componet", () => {
   });
 
   const renderComponent = () => {
+    const handleSubmit = jest.fn();
+    const register = jest.fn();
+    const reset = jest.fn();
+    const setValue = jest.fn();
+    const navigate = jest.fn();
     return render(
       <TestsContext>
-        <UpdatePost />
+        <UpdatePost
+          navigate={navigate}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          register={register}
+          reset={reset}
+        />
       </TestsContext>
     );
   };

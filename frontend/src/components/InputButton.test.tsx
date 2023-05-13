@@ -1,6 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { InputButton } from "./InputButton";
-import { TestsContext } from "./testComonents/Context";
+import { TestsContext } from "./testComponents/Context";
 
 describe("test for input form component", () => {
   const renderComponent = () => {

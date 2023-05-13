@@ -1,17 +1,25 @@
 import { InputButton } from "./InputButton";
 import { InputForm } from "./InputForm";
-import { FieldValues, useForm } from "react-hook-form";
+import {
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { login } from "../api/mutations";
 import { Credential } from "../types";
-import { useAlert } from "./Alert";
+import { Alert } from "./Alert";
+import { useState } from "react";
 
-export const LoginPage: React.FC<{}> = () => {
-  const { handleSubmit, register } = useForm();
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+};
+
+export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
   const navigate = useNavigate();
-
-  const [showAlert, Alert] = useAlert();
+  const [alert, showAlert] = useState(false);
 
   const { mutate } = useMutation(login, {
     onSuccess: () => {
@@ -20,7 +28,10 @@ export const LoginPage: React.FC<{}> = () => {
       }, 2000);
     },
     onError: () => {
-      showAlert();
+      showAlert(true);
+      setTimeout(() => {
+        showAlert(false);
+      }, 5000);
     },
   });
 
@@ -35,23 +46,24 @@ export const LoginPage: React.FC<{}> = () => {
             !AWESOME
           </div>
           <div className="font-medium self-center text-xl sm:text-2xl">
-            <Alert message="Wrong username or password!" type="error" />
+            {alert && (
+              <Alert message="Wrong username or password!" type="error" />
+            )}
             <form onSubmit={handleSubmit(onSubmit)}>
               <span>
                 <InputForm
-                  className="bg-transparent text-3xl p-one"
+                  className="bg-transparent text-2xl p-one"
                   placeholder="username"
                   controller={register("username", {
                     required: false,
                   })}
                   type="text"
-                  // error={errors.title}
                 />
               </span>
 
               <span>
                 <input
-                  className="bg-transparent text-3xl p-one"
+                  className="bg-transparent text-2xl p-one"
                   placeholder="password"
                   {...register("password", {
                     required: false,
@@ -59,10 +71,29 @@ export const LoginPage: React.FC<{}> = () => {
                   type="password"
                 />
               </span>
+
+              <span className="flex flex-row justify-end gap-one mt-two">
+                <input
+                  {...register("remember_me")}
+                  type="checkbox"
+                  className="border-2 border-blue bg-blue"
+                />
+                <div className="inline-flex text-sm text-blue-500 hover:text-blue-700">
+                  {" "}
+                  Remember-me?
+                </div>
+              </span>
+
               <div className="flex justify-center m-two">
                 <InputButton name="Login" />
               </div>
             </form>
+            <div
+              className="flex justify-end text-sm text-blue cursor-pointer"
+              onClick={() => navigate("/register")}
+            >
+              Don't have a profile? Register!
+            </div>
           </div>
         </div>
       </div>

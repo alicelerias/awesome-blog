@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	Limit        string
 	Host         string
 	Driver       string
 	Database     string
@@ -17,6 +18,7 @@ type Config struct {
 	JWTSecret    []byte
 	AuthCookie   string
 	AllowedHosts string
+	RedisPort    string
 }
 
 var config *Config
@@ -26,6 +28,7 @@ func GetConfig() *Config {
 		godotenv.Load()
 
 		config = &Config{
+			Limit:        os.Getenv("LIMIT"),
 			Host:         os.Getenv("DB_HOST"),
 			Driver:       os.Getenv("DB_DRIVER"),
 			Database:     os.Getenv("DB_NAME"),
@@ -36,6 +39,7 @@ func GetConfig() *Config {
 			JWTSecret:    []byte(os.Getenv("JWT_SECRET")),
 			AuthCookie:   os.Getenv("AUTH_COOKIE"),
 			AllowedHosts: os.Getenv("ALLOWED_HOSTS"),
+			RedisPort:    os.Getenv("REDIS_PORT"),
 		}
 	}
 

@@ -1,36 +1,40 @@
 import React from "react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { QueryFunction, useMutation, UseQueryResult } from "react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { createComment } from "../api/mutations";
-import { Comment } from "../types";
+import {
+  FieldErrors,
+  FieldValues,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { InputButton } from "./InputButton";
 import { InputForm } from "./InputForm";
 
 type props = {
   onSubmit: SubmitHandler<FieldValues>;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  errors?: FieldErrors<FieldValues> | undefined;
 };
 export const CreateComment: React.FC<React.PropsWithChildren<props>> = ({
   onSubmit,
+  handleSubmit,
+  register,
+  errors,
 }) => {
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-  } = useForm();
-
   return (
-    <div>
-      <form className="flex flex-col gap-one" onSubmit={handleSubmit(onSubmit)}>
-        <InputForm
-          placeholder="insert your comment"
-          controller={register("content", {
-            required: true,
-          })}
-          error={errors.content}
-        />
-        <InputButton name="Comment" />
-      </form>
-    </div>
+    <form
+      data-testid="comment-form-test-id"
+      className="flex flex-col gap-one"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <InputForm
+        placeholder="insert your comment"
+        controller={register("content", {
+          required: true,
+        })}
+        error={errors?.content}
+      />
+      <InputButton name="Comment" />
+    </form>
   );
 };

@@ -16,7 +16,7 @@ func (server *Server) CreateFollow(ctx *gin.Context) {
 	following := &models.Following{}
 	uid, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 	uidToInt, _ := parseInt(uid.(string))
@@ -25,18 +25,25 @@ func (server *Server) CreateFollow(ctx *gin.Context) {
 	followingID, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	following.FollowingID = uint32(followingID)
 
-	if err := server.repository.Follow(ctx, following); err != nil {
+	if err := server.repository.Follow(following); err != nil {
 
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	ctx.AbortWithStatus(http.StatusCreated)
+
+	name := "users"
+	nameSpace := "all"
+	err := server.cache.DeleteKey(name, nameSpace)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }
 
 func (server *Server) GetFollows(ctx *gin.Context) {
 	following := models.Following{}
-	followings, err := server.repository.GetFollows(ctx, &following)
+	followings, err := server.repository.GetFollows(&following)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -47,17 +54,24 @@ func (server *Server) GetFollows(ctx *gin.Context) {
 
 func (server *Server) Feed(ctx *gin.Context) {
 	cursor := ctx.Query("cursor")
-	limit := 10
+	getLimit := server.repository.GetLimit()
+	if getLimit == "" {
+		getLimit = "50"
+	}
+	limit, err := stringToInt(getLimit)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 
 	followerId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 
 	followerIdString, _ := followerId.(string)
 
-	feed, err := server.repository.Feed(ctx, cursor, followerIdString)
+	feed, err := server.repository.Feed(cursor, followerIdString)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -75,38 +89,19 @@ func (server *Server) Feed(ctx *gin.Context) {
 		nextLink := fmt.Sprintf("/feed?cursor=%s", url.QueryEscape(nextCursor.Format(time.RFC3339Nano)))
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"feed":        fromModelFeed,
+			"content":     fromModelFeed,
 			"next_cursor": nextCursor.Format(time.RFC3339),
 			"next_link":   nextLink,
 		})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"feed": fromModelFeed})
+		ctx.JSON(http.StatusOK, gin.H{"content": fromModelFeed})
 	}
 }
-
-// func (server *Server) IsFollowing(ctx *gin.Context) {
-// 	followerId, exists := ctx.Get("uid")
-// 	if !exists {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
-// 		return
-// 	}
-
-// 	followerIdToString, _ := followerId.(string)
-
-// 	followingId := ctx.Param("id")
-
-// 	isFollowing, err := server.repository.IsFollowing(ctx, followerIdToString, followingId)
-// 	if err != nil {
-// 		ctx.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
-// 	ctx.JSON(http.StatusOK, &isFollowing)
-// }
 
 func (server *Server) Unfollow(ctx *gin.Context) {
 	followerId, exists := ctx.Get("uid")
 	if !exists {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "problem to authenticate user"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "problem to authenticate user"})
 		return
 	}
 
@@ -114,10 +109,17 @@ func (server *Server) Unfollow(ctx *gin.Context) {
 
 	followingId := ctx.Param("id")
 
-	if err := server.repository.Unfollow(ctx, followerIdToString, followingId); err != nil {
+	if err := server.repository.Unfollow(followerIdToString, followingId); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	ctx.JSON(http.StatusNoContent, gin.H{"message": "user unfollowed"})
+
+	name := "users"
+	nameSpace := "all"
+	err := server.cache.DeleteKey(name, nameSpace)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	}
 }

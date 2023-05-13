@@ -5,9 +5,11 @@ import (
 
 	"github.com/alicelerias/blog-golang/api/controllers"
 	"github.com/alicelerias/blog-golang/api/middlewares"
+	"github.com/alicelerias/blog-golang/cache"
 	"github.com/alicelerias/blog-golang/config"
 	"github.com/alicelerias/blog-golang/database"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,6 +28,8 @@ func main() {
 	log.SetLevel(level)
 
 	connection, err := database.GetConnection(configs)
+
+	defer connection.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,7 +37,15 @@ func main() {
 	database.MigrateDB(connection)
 
 	postgresRepository := database.NewPostgresDBRepository(connection)
-	server := controllers.NewServer(postgresRepository)
+
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     configs.RedisPort,
+		Password: "",
+		DB:       0,
+	})
+
+	cache := cache.NewRedisClient(redisClient)
+	server := controllers.NewServer(postgresRepository, cache)
 
 	r := gin.Default()
 	r.Use(middlewares.CORSMiddleware())
@@ -48,7 +60,7 @@ func main() {
 	})
 	r.GET("/", server.Home)
 
-	r.POST("/users", server.CreateUser)
+	r.POST("/register", server.CreateUser)
 
 	r.POST("/login", server.Login)
 
@@ -56,7 +68,7 @@ func main() {
 
 	r.Use(middlewares.AuthenticationMiddleware())
 
-	r.GET("/users", server.GetUsers)
+	r.GET("/users", server.GetRecomendations)
 
 	r.GET("/users/:id", server.GetUser)
 
@@ -92,8 +104,6 @@ func main() {
 
 	r.GET("/follows", server.GetFollows)
 
-	// r.GET("/follows/:id", server.IsFollowing)
-
 	r.DELETE("/follow/:id", server.Unfollow)
 
 	r.GET("/feed", server.Feed)
@@ -105,6 +115,8 @@ func main() {
 	r.GET("/posts/you", server.GetPostsByUser)
 
 	r.GET("posts/blog/:id", server.GetBlogPosts)
+
+	r.GET("/users/recomendations", server.GetRecomendations)
 
 	r.Run()
 }

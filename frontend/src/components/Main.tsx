@@ -1,127 +1,189 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-import { UsersComponent } from "./Users";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { Profile } from "./Profile";
 import { FeedComponent } from "./Feed";
-import { PostDetail } from "./PostDetail";
 import { CreatePost } from "./CreatePost";
 import { Layout } from "./Layout";
 import { UpdatePost } from "./UpdatePost";
-import { LoginPage } from "./LoginPage";
 import { AllPostsComponent } from "./AllPosts";
 import { PostsByUserComponent } from "./PostsByUser";
-import { UserPostDetail } from "./UserPostDetail";
 import { UserDetail } from "./UserDetail";
 import { FavoritesPosts } from "./FavoritesPosts";
+import { useQuery } from "react-query";
+import { getCurrentUser } from "../api/queries";
+import { CurrentUserContext } from "../context/CurrentUserContext";
+import { PostDetailBox } from "./PostDetailBox";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-export const Main: React.FC = () => {
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
+  errors?: FieldErrors<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
+};
+export const Main: React.FC<props> = ({
+  handleSubmit,
+  register,
+  reset,
+  setValue,
+  errors,
+}) => {
+  const navigate = useNavigate();
+  const { data } = useQuery("getCurrentUser", getCurrentUser);
   return (
-    <div
-      data-testid={"main-component-test-id"}
-      className="flex flex-row sm:mx-three"
-    >
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
+    <CurrentUserContext.Provider value={data}>
+      <div
+        data-testid={"main-component-test-id"}
+        className="flex flex-row md:mx-three"
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Layout navigate={navigate} title="posts" usersComponent={true}>
+                <FeedComponent navigate={navigate} />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/"
-          element={
-            <Layout title="posts">
-              <FeedComponent />
-              <UsersComponent />
-            </Layout>
-          }
-        />
+          <Route
+            path="/favorites"
+            element={
+              <Layout
+                navigate={navigate}
+                title="favorites"
+                usersComponent={true}
+              >
+                <FavoritesPosts navigate={navigate} />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/favorites"
-          element={
-            <Layout title="favorites">
-              <FavoritesPosts />
-              <UsersComponent />
-            </Layout>
-          }
-        />
+          <Route
+            path="/users/detail"
+            element={
+              <Layout
+                navigate={navigate}
+                title="user detail"
+                usersComponent={false}
+              >
+                <UserDetail navigate={navigate} />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/users/detail"
-          element={
-            <Layout title="user detail">
-              <UserDetail />
-            </Layout>
-          }
-        />
+          <Route
+            path="/posts/you"
+            element={
+              <Layout
+                navigate={navigate}
+                title="your posts"
+                usersComponent={true}
+              >
+                <PostsByUserComponent navigate={navigate} />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/posts/you"
-          element={
-            <Layout title="your posts">
-              <PostsByUserComponent />
-              <UsersComponent />
-            </Layout>
-          }
-        />
+          <Route
+            path="/posts"
+            element={
+              <Layout
+                navigate={navigate}
+                title="all posts"
+                usersComponent={true}
+              >
+                <AllPostsComponent navigate={navigate} />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/posts"
-          element={
-            <Layout title="all posts">
-              <AllPostsComponent />
-              <UsersComponent />
-            </Layout>
-          }
-        />
+          <Route
+            path="/profile"
+            element={
+              <Layout
+                title="user detail"
+                navigate={navigate}
+                usersComponent={true}
+              >
+                <Profile
+                  setValue={setValue}
+                  navigate={navigate}
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/profile"
-          element={
-            <Layout title="user detail">
-              <Profile />
-              <UsersComponent />
-            </Layout>
-          }
-        />
+          <Route
+            path="/posts/detail"
+            element={
+              <Layout
+                navigate={navigate}
+                title="post detail"
+                usersComponent={true}
+              >
+                <PostDetailBox
+                  navigate={navigate}
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                  errors={errors}
+                />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/posts/detail"
-          element={
-            <Layout title="post detail">
-              <PostDetail />
-              <UsersComponent />
-            </Layout>
-          }
-        />
+          <Route
+            path="/posts/update"
+            element={
+              <Layout
+                navigate={navigate}
+                title="update post"
+                usersComponent={true}
+              >
+                <UpdatePost
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                  errors={errors}
+                  setValue={setValue}
+                  navigate={navigate}
+                />
+              </Layout>
+            }
+          />
 
-        <Route
-          path="/posts/you/detail"
-          element={
-            <Layout title="post detail">
-              <UserPostDetail />
-              <UsersComponent />
-            </Layout>
-          }
-        />
-
-        <Route
-          path="/posts/update"
-          element={
-            <Layout title="update post">
-              <UpdatePost />
-              <UsersComponent />
-            </Layout>
-          }
-        />
-
-        <Route
-          path="/posts/new"
-          element={
-            <Layout title="update post">
-              <CreatePost />
-              <UsersComponent />
-            </Layout>
-          }
-        />
-      </Routes>
-    </div>
+          <Route
+            path="/posts/new"
+            element={
+              <Layout
+                navigate={navigate}
+                title="update post"
+                usersComponent={true}
+              >
+                <CreatePost
+                  handleSubmit={handleSubmit}
+                  register={register}
+                  reset={reset}
+                  errors={errors}
+                  navigate={navigate}
+                />
+              </Layout>
+            }
+          />
+        </Routes>
+      </div>
+    </CurrentUserContext.Provider>
   );
 };

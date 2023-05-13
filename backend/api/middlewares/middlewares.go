@@ -51,7 +51,7 @@ func AuthenticationMiddleware() gin.HandlerFunc {
 		}
 		sub, ok := claims["sub"]
 		if !ok {
-			panic("Invalid claims")
+			ctx.AbortWithError(http.StatusInternalServerError, gin.Error{})
 		}
 
 		ctx.Set("uid", sub)

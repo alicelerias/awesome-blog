@@ -1,23 +1,29 @@
 import { useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
+import { NavigateFunction, useSearchParams } from "react-router-dom";
 import { getUser } from "../api/queries";
 import { BlogsPost } from "./BlogsPost";
 import { BoxLayout } from "./BoxLayout";
 import { ToggleFollowButton } from "./ToggleFollowButton";
+import { PropsWithChildren } from "react";
+import Skeleton from "./Skeleton";
 
-export const UserDetail: React.FC<{}> = () => {
+type props = {
+  navigate: NavigateFunction;
+};
+
+export const UserDetail: React.FC<PropsWithChildren<props>> = ({
+  navigate,
+}) => {
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
 
   const { isLoading, data } = useQuery("getUser", () => getUser(id));
 
-  console.log("IS FOLLOWING", data);
-
   return (
     <BoxLayout>
       <div className="flex flex-col sm:flex-row justify-center gap-two">
         {isLoading ? (
-          "is Loading"
+          <Skeleton />
         ) : (
           <>
             <div className="sm:flex sm:flex-col sm:justify-center sm:gap-two sm:w-2/6 w-0"></div>
@@ -35,7 +41,7 @@ export const UserDetail: React.FC<{}> = () => {
 
               <ToggleFollowButton
                 isFollowing={data?.is_following}
-                userId={id}
+                userId={id ? id : ""}
               />
               <span className="flex justify-center sm:justify-start text-title1 text-blue">
                 {data?.username}{" "}
@@ -45,7 +51,7 @@ export const UserDetail: React.FC<{}> = () => {
           </>
         )}
 
-        <BlogsPost />
+        <BlogsPost id={id} navigate={navigate} />
       </div>
     </BoxLayout>
   );

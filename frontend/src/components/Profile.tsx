@@ -1,30 +1,37 @@
-import { useMutation, useQuery } from "react-query";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../api/queries";
-import { FieldValues, useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { NavigateFunction } from "react-router-dom";
+import {
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 import { InputForm } from "./InputForm";
 import { User } from "../types";
 import { updateCurrentUser } from "../api/mutations";
 import { BoxLayout } from "./BoxLayout";
 import { InputButton } from "./InputButton";
+import { useContext } from "react";
+import { CurrentUserContext } from "../context/CurrentUserContext";
 
-export const Profile: React.FC<{}> = () => {
-  const [searchParam] = useSearchParams();
-  const id = searchParam.get("id");
-  const navigate = useNavigate();
+type props = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  reset: UseFormReset<FieldValues>;
+  navigate: NavigateFunction;
+  setValue: UseFormSetValue<FieldValues>;
+};
 
-  const {
-    formState: { errors },
-    handleSubmit,
-    register,
-    setValue,
-  } = useForm();
+export const Profile: React.FC<props> = ({
+  navigate,
+  handleSubmit,
+  register,
+  setValue,
+}) => {
+  const currentUserContext = useContext(CurrentUserContext);
 
-  const { data } = useQuery("getCurrentUser", () => getCurrentUser(), {
-    onSuccess: (data) => {
-      setValue("bio", data.bio);
-    },
-  });
+  setValue("bio", currentUserContext?.bio);
 
   const { mutate } = useMutation((data: User) => updateCurrentUser(data), {
     onSuccess: () => {
@@ -34,8 +41,8 @@ export const Profile: React.FC<{}> = () => {
     },
   });
 
-  const onSubmit = async (data: FieldValues) => {
-    await mutate(data as User);
+  const onSubmit = (data: FieldValues) => {
+    mutate(data as User);
   };
   return (
     <BoxLayout>
@@ -51,14 +58,14 @@ export const Profile: React.FC<{}> = () => {
               data-testid={"user-detail-img-test-id"}
               className={"w-three aspect-square"}
               src={
-                data?.avatar ||
+                currentUserContext?.avatar ||
                 "https://ionicframework.com/docs/img/demos/avatar.svg"
               }
               alt="avatar"
             />
           </div>
           <div className="flex flex-col gap-two w-4/5">
-            <span>{data?.username}</span>
+            <span>{currentUserContext?.username}</span>
 
             <InputForm
               data-testid={"input-user-test-id"}
