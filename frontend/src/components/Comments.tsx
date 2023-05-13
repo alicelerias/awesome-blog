@@ -34,7 +34,7 @@ export const CommentsComponent: React.FC<PropsWithChildren<props>> = ({
   return (
     <BoxLayout>
       <div data-testid="comments-component-test-id">
-        <h1 className="sm:text3xl">Comments</h1>
+        <h1 className="text3xl">Comments</h1>
         <div>
           {isLoading ? (
             <Skeleton />

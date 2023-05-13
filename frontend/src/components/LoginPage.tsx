@@ -78,7 +78,7 @@ export const LoginPage: React.FC<props> = ({ handleSubmit, register }) => {
                   type="checkbox"
                   className="border-2 border-blue bg-blue"
                 />
-                <div className="inline-flex sm:text-sm text-blue-500 hover:text-blue-700">
+                <div className="inline-flex text-sm text-blue-500 hover:text-blue-700">
                   {" "}
                   Remember-me?
                 </div>

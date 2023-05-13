@@ -23,7 +23,7 @@ export const Layout: React.FC<React.PropsWithChildren<props>> = ({
           <Link to="/"> !AWESOME</Link>
         </div>
 
-        <div className="sm:fixed sm:right-24 sm:top-2">
+        <div className="sm:fixed right-24 top-2">
           <Menu navigate={navigate} />
         </div>
       </div>

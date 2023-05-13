@@ -42,7 +42,7 @@ export const BoxPosts: React.FC<React.PropsWithChildren<props>> = ({
       className="flex flex-col gap-one sm:w-3/5"
     >
       {children}
-      <div className="m-0 p-0 w-full sm:w-full">
+      <div className="m-0 p-0 w-full">
         {isLoading ? (
           <Skeleton />
         ) : (
